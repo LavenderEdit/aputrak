@@ -12,6 +12,20 @@ export const Utils = {
         return d.toISOString().split('T')[0];
     },
 
+    getDatesOfWeek: (weekId: string) => {
+        const startDate = new Date(weekId + 'T00:00:00');
+        const dates = [];
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(startDate);
+            d.setDate(d.getDate() + i);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = String(d.getFullYear()).slice(-2);
+            dates.push(`${day}/${month}/${year}`);
+        }
+        return dates;
+    },
+
     loadExportScripts: async () => {
         const loadScript = (src: string) => new Promise<void>((resolve, reject) => {
             if (document.querySelector(`script[src="${src}"]`)) return resolve();
