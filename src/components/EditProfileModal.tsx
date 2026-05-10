@@ -7,6 +7,7 @@ interface EditProfileModalProps {
   onClose: () => void;
   currentName: string;
   onSave: (newName: string) => void;
+  t: (key: any) => string;
 }
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({
@@ -14,6 +15,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   onClose,
   currentName,
   onSave,
+  t,
 }) => {
   const [name, setName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +33,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="bg-indigo-600 px-6 py-4 flex justify-between items-center">
-          <h3 className="text-lg font-bold text-white">Editar Perfil</h3>
+          <h3 className="text-lg font-bold text-white">{t("editProfile")}</h3>
           <button
             onClick={onClose}
             className="text-indigo-100 hover:text-white transition-colors"
@@ -52,7 +54,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-indigo-500 mb-6 font-medium text-slate-800"
-            placeholder="Tu nombre..."
+            placeholder={t("yourName")}
             required
           />
           <div className="flex justify-end gap-3">
@@ -61,13 +63,13 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onClick={onClose}
               className="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-colors"
             >
-              Cancelar
+              {t("cancel")}
             </button>
             <button
               type="submit"
               className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-sm"
             >
-              Guardar
+              {t("save")}
             </button>
           </div>
         </form>
