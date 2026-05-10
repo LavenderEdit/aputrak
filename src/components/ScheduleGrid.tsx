@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
-import { DAYS_OF_WEEK, THEME_COLORS } from "@/lib/constants";
+import { THEME_COLORS } from "@/lib/constants";
 import { Utils } from "@/lib/utils";
 
 interface SettingsType {
@@ -13,6 +13,8 @@ interface SettingsType {
 interface ScheduleGridProps {
   settings: SettingsType;
   activities: Record<string, string>;
+  weekId: string;
+  getDayName: (index: number) => string;
   onCellClick: (day: number, hour: number, activity?: string) => void;
   onDeleteActivity: (day: number, hour: number) => void;
 }
@@ -20,6 +22,8 @@ interface ScheduleGridProps {
 export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   settings,
   activities,
+  weekId,
+  getDayName,
   onCellClick,
   onDeleteActivity,
 }) => {
@@ -27,6 +31,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     { length: settings.endHour - settings.startHour },
     (_, i) => i + settings.startHour,
   );
+  const weekDates = Utils.getDatesOfWeek(weekId);
 
   return (
     <div
@@ -35,22 +40,24 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
     >
       <div id="schedule-container" className="min-w-max bg-white">
         <table className="w-full border-collapse" style={{ minWidth: "800px" }}>
-          {}
           <thead>
             <tr>
               <th className="w-20 bg-white border-b border-r border-slate-200"></th>
-              {settings.activeDays.map((dayIdx) => (
+              {settings.activeDays.map((dayIdx: number) => (
                 <th
                   key={dayIdx}
                   className={`${THEME_COLORS[dayIdx]} text-white font-bold py-3 px-2 text-xs uppercase tracking-wider border border-slate-200 border-t-0`}
                 >
-                  {DAYS_OF_WEEK[dayIdx]}
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span>{getDayName(dayIdx)}</span>
+                    <span className="text-[10px] font-medium opacity-90 normal-case tracking-normal">
+                      {weekDates[dayIdx]}
+                    </span>
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
-
-          {}
           <tbody>
             {hoursRange.map((hour) => (
               <tr key={hour} className="group">
@@ -58,7 +65,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                   {Utils.formatTime(hour)}
                 </td>
 
-                {settings.activeDays.map((dayIdx) => {
+                {settings.activeDays.map((dayIdx: number) => {
                   const key = `${dayIdx}-${hour}`;
                   const activity = activities[key];
 
