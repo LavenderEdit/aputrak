@@ -15,6 +15,8 @@ interface ControlsProps {
   updateSettings: (newSettings: SettingsType) => void;
   weekId: string;
   changeWeek: (direction: number) => void;
+  t: (key: any) => string;
+  getDayName: (index: number) => string;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -22,6 +24,8 @@ export const Controls: React.FC<ControlsProps> = ({
   updateSettings,
   weekId,
   changeWeek,
+  t,
+  getDayName,
 }) => {
   const toggleDay = (index: number) => {
     let newDays = [...settings.activeDays];
@@ -49,7 +53,7 @@ export const Controls: React.FC<ControlsProps> = ({
     <div className="bg-white p-5 rounded-xl shadow-sm mb-6 no-print grid grid-cols-1 lg:grid-cols-3 gap-6 border border-slate-100">
       <div className="col-span-1 lg:border-r lg:border-slate-100 lg:pr-6">
         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-          Navegación de Semana
+          {t("weekNav")}
         </label>
         <div className="flex items-center justify-between bg-slate-50 rounded-lg p-1.5 border border-slate-200">
           <button
@@ -59,7 +63,7 @@ export const Controls: React.FC<ControlsProps> = ({
             <ChevronLeft size={18} />
           </button>
           <span className="font-semibold text-sm text-slate-700">
-            Lunes {weekId.split("-").reverse().join("/")}
+            {getDayName(0)} {weekId.split("-").reverse().join("/")}
           </span>
           <button
             onClick={() => changeWeek(1)}
@@ -73,10 +77,10 @@ export const Controls: React.FC<ControlsProps> = ({
       <div className="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-            Días Activos
+            {t("activeDays")}
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {DAYS_OF_WEEK.map((day, idx) => (
+            {DAYS_OF_WEEK.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => toggleDay(idx)}
@@ -86,7 +90,7 @@ export const Controls: React.FC<ControlsProps> = ({
                     : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
                 }`}
               >
-                {day.slice(0, 3)}
+                {getDayName(idx).slice(0, 3)}
               </button>
             ))}
           </div>
@@ -95,7 +99,7 @@ export const Controls: React.FC<ControlsProps> = ({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-              Hora Inicio
+              {t("startHour")}
             </label>
             <select
               value={settings.startHour}
@@ -111,7 +115,7 @@ export const Controls: React.FC<ControlsProps> = ({
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-              Hora Fin
+              {t("endHour")}
             </label>
             <select
               value={settings.endHour}
