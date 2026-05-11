@@ -14,6 +14,7 @@ import { ActivityModal } from "../components/ActivityModal";
 import { Toast } from "../components/ui/Toast";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 import { EditProfileModal } from "../components/EditProfileModal";
+import { SettingsModal } from "../components/SettingsModal";
 
 export default function App() {
   const { profile, saveUsername, loadingAuth } = useOfflineAuth();
@@ -22,6 +23,7 @@ export default function App() {
   const { lang, toggleLanguage, t, getDayName } = useLanguage();
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const {
     modalState,
@@ -57,13 +59,10 @@ export default function App() {
           onImportJSON={handleImportJSON}
         />
         <Controls
-          settings={scheduleData.settings}
-          updateSettings={scheduleData.updateSettings}
           weekId={scheduleData.weekId}
           changeWeek={scheduleData.changeWeek}
-          t={
-            t
-          }
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          t={t}
           getDayName={getDayName}
         />
 
@@ -72,9 +71,7 @@ export default function App() {
             settings={scheduleData.settings}
             activities={scheduleData.activities}
             weekId={scheduleData.weekId}
-            getDayName={
-              getDayName
-            }
+            getDayName={getDayName}
             onCellClick={(day: number, hour: number, text?: string) =>
               setModalState({ isOpen: true, day, hour, text: text || "" })
             }
@@ -107,6 +104,15 @@ export default function App() {
           saveUsername(newName);
           setIsEditProfileOpen(false);
         }}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={scheduleData.settings}
+        updateSettings={scheduleData.updateSettings}
+        t={t}
+        getDayName={getDayName}
       />
 
       <LoadingOverlay visible={exportLoading} message={t("processing")} />
