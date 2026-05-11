@@ -1,21 +1,43 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { translations, Language } from "../lib/i18n";
+import { SPANISH_SPEAKING_COUNTRIES } from "@/lib/constants";
 
 export const useLanguage = () => {
     const [lang, setLang] = useState<Language>("es");
 
     useEffect(() => {
-        const savedLang = localStorage.getItem("quipu_lang") as Language;
-        if (savedLang && (savedLang === "es" || savedLang === "en")) {
-            setLang(savedLang);
-        }
+        const initLanguage = async () => {
+            const savedLang = localStorage.getItem("aputrak_lang") as Language;
+            if (savedLang && (savedLang === "es" || savedLang === "en")) {
+                setLang(savedLang);
+                return;
+            }
+
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const countryCode = data.country_code;
+
+                if (countryCode && SPANISH_SPEAKING_COUNTRIES.includes(countryCode)) {
+                    setLang('es');
+                } else {
+                    setLang('en');
+                }
+            } catch (error) {
+                console.error('Error detectando la ubicación, usando idioma del navegador:', error);
+                const browserLang = navigator.language.startsWith('es') ? 'es' : 'en';
+                setLang(browserLang);
+            }
+        };
+
+        initLanguage();
     }, []);
 
     const toggleLanguage = () => {
         const newLang = lang === "es" ? "en" : "es";
         setLang(newLang);
-        localStorage.setItem("quipu_lang", newLang);
+        localStorage.setItem("aputrak_lang", newLang);
     };
 
     const t = useCallback((key: keyof typeof translations.es): string => {
