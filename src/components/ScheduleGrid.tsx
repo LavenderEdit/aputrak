@@ -69,25 +69,53 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                   const key = `${dayIdx}-${hour}`;
                   const activity = activities[key];
 
+                  const tasks = activity
+                    ? activity.split("\n").filter((t) => t.trim() !== "")
+                    : [];
+                  const isSingle = tasks.length === 1;
+
                   return (
                     <td
                       key={key}
-                      className="border border-slate-200 relative h-16 hover:bg-slate-50 transition-colors cursor-pointer p-1.5"
+                      className="border border-slate-200 relative h-16 hover:bg-slate-50 transition-colors cursor-pointer p-1.5 align-top"
                       onClick={() => onCellClick(dayIdx, hour, activity)}
                     >
                       <div className="absolute top-1/2 left-0 right-0 border-t border-dashed border-slate-200 pointer-events-none z-0"></div>
 
-                      {activity && (
-                        <div className="relative z-10 w-full h-full min-h-[44px] bg-indigo-50 border border-indigo-200 rounded-md p-1.5 flex items-center justify-center text-center shadow-sm group/item transition-all hover:shadow-md">
-                          <span className="text-xs font-bold text-indigo-900 leading-tight line-clamp-2">
-                            {activity}
-                          </span>
+                      {tasks.length > 0 && (
+                        <div
+                          className={`relative z-10 w-full h-full min-h-[44px] bg-indigo-50 border border-indigo-200 rounded-md shadow-sm group/item transition-all hover:shadow-md flex ${
+                            isSingle
+                              ? "items-center justify-center p-1.5 text-center"
+                              : "flex-col gap-1 p-2 justify-start"
+                          }`}
+                        >
+                          {isSingle ? (
+                            <span className="text-xs font-bold text-indigo-900 leading-tight line-clamp-2">
+                              {tasks[0]}
+                            </span>
+                          ) : (
+                            <div className="flex flex-col gap-1.5 w-full">
+                              {tasks.map((task, i) => (
+                                <div
+                                  key={i}
+                                  className="flex items-start gap-1.5 text-left w-full"
+                                >
+                                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1 shrink-0"></div>
+                                  <span className="text-[10px] font-bold text-indigo-900 leading-tight break-words flex-1 line-clamp-2">
+                                    {task}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               onDeleteActivity(dayIdx, hour);
                             }}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity shadow-md hover:bg-red-600 no-print"
+                            className="absolute -top-2 -right-2 z-20 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity shadow-md hover:bg-red-600 no-print"
                           >
                             <X size={12} strokeWidth={3} />
                           </button>
