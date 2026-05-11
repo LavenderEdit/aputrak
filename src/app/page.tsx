@@ -15,6 +15,7 @@ import { Toast } from "../components/ui/Toast";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { SettingsModal } from "../components/SettingsModal";
+import { CalendarPlus } from "lucide-react";
 
 export default function App() {
   const { profile, saveUsername, loadingAuth } = useOfflineAuth();
@@ -65,6 +66,22 @@ export default function App() {
           t={t}
           getDayName={getDayName}
         />
+
+        {/* ESTADO VACÍO (Empty State) */}
+        {Object.keys(scheduleData.activities).length === 0 &&
+          !scheduleData.loadingData && (
+            <div className="bg-indigo-50/80 border border-indigo-100 rounded-2xl p-8 mb-6 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 slide-in-from-top-4 shadow-sm">
+              <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                <CalendarPlus className="text-indigo-500" size={32} />
+              </div>
+              <h3 className="text-indigo-900 font-bold text-xl mb-2">
+                {t("emptyTitle")}
+              </h3>
+              <p className="text-indigo-700/80 text-sm max-w-md font-medium leading-relaxed">
+                {t("emptyDesc")}
+              </p>
+            </div>
+          )}
 
         <div className="relative">
           <ScheduleGrid
