@@ -96,7 +96,7 @@ Interfaz diseñada con enfoque en experiencia de usuario:
 ## 🔑 Pantalla de Inicio de Sesión
 
 <p align="center">
-  <img src="./docs/images/logi.png" alt="Login Screen" width="85%" />
+  <img src="./docs/images/login.png" alt="Login Screen" width="85%" />
 </p>
 
 ---
