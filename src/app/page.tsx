@@ -67,7 +67,6 @@ export default function App() {
           getDayName={getDayName}
         />
 
-        {/* ESTADO VACÍO (Empty State) */}
         {Object.keys(scheduleData.activities).length === 0 &&
           !scheduleData.loadingData && (
             <div className="bg-indigo-50/80 border border-indigo-100 rounded-2xl p-8 mb-6 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 slide-in-from-top-4 shadow-sm">
@@ -106,8 +105,11 @@ export default function App() {
         hourStr={Utils.formatTime(modalState.hour)}
         initialText={modalState.text}
         t={t}
-        onSave={(newText: string) => {
-          scheduleData.saveActivity(modalState.day, modalState.hour, newText);
+        onSave={(newText: string, color: string) => {
+          const payload = newText.trim()
+            ? JSON.stringify({ text: newText, color })
+            : "";
+          scheduleData.saveActivity(modalState.day, modalState.hour, payload);
           setModalState({ ...modalState, isOpen: false });
         }}
       />
