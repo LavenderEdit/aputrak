@@ -14,6 +14,8 @@ import { ActivityModal } from "../components/ActivityModal";
 import { Toast } from "../components/ui/Toast";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 import { EditProfileModal } from "../components/EditProfileModal";
+import { SettingsModal } from "../components/SettingsModal";
+import { CalendarPlus, Copy } from "lucide-react";
 
 export default function App() {
   const { profile, saveUsername, loadingAuth } = useOfflineAuth();
@@ -22,12 +24,14 @@ export default function App() {
   const { lang, toggleLanguage, t, getDayName } = useLanguage();
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const {
     modalState,
     setModalState,
     exportLoading,
     toast,
+    showToast,
     handleGraphicExport,
     handleExportJSON,
     handleImportJSON,
@@ -57,30 +61,86 @@ export default function App() {
           onImportJSON={handleImportJSON}
         />
         <Controls
-          settings={scheduleData.settings}
-          updateSettings={scheduleData.updateSettings}
           weekId={scheduleData.weekId}
           changeWeek={scheduleData.changeWeek}
-          t={
-            t
-          }
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          t={t}
           getDayName={getDayName}
         />
+
+        {Object.keys(scheduleData.activities).length === 0 &&
+          !scheduleData.loadingData && (
+            <div className="bg-indigo-50/80 border border-indigo-100 rounded-2xl p-8 mb-6 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 slide-in-from-top-4 shadow-sm">
+              <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                <CalendarPlus className="text-indigo-500" size={32} />
+              </div>
+              <h3 className="text-indigo-900 font-bold text-xl mb-2">
+                {t("emptyTitle")}
+              </h3>
+              <p className="text-indigo-700/80 text-sm max-w-md font-medium leading-relaxed mb-6">
+                {t("emptyDesc")}
+              </p>
+
+              <button
+                onClick={async () => {
+                  const success = await scheduleData.copyPreviousWeek();
+                  if (success) {
+                    showToast(t("cloneSuccess"), "success");
+                  } else {
+                    showToast(t("cloneError"), "error");
+                  }
+                }}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl transition-colors shadow-sm"
+              >
+                <Copy size={18} />
+                {t("cloneWeek")}
+              </button>
+            </div>
+          )}
 
         <div className="relative">
           <ScheduleGrid
             settings={scheduleData.settings}
             activities={scheduleData.activities}
             weekId={scheduleData.weekId}
-            getDayName={
-              getDayName
-            }
+            getDayName={getDayName}
             onCellClick={(day: number, hour: number, text?: string) =>
               setModalState({ isOpen: true, day, hour, text: text || "" })
             }
             onDeleteActivity={(day: number, hour: number) =>
               scheduleData.saveActivity(day, hour, "")
             }
+            onToggleComplete={(
+              day: number,
+              hour: number,
+              taskIndex: number,
+            ) => {
+              const currentActivity = scheduleData.activities[`${day}-${hour}`];
+              if (!currentActivity) return;
+
+              let parsed = {
+                text: currentActivity,
+                color: "indigo",
+                completed: [] as boolean[],
+              };
+              if (currentActivity.startsWith("{")) {
+                try {
+                  parsed = JSON.parse(currentActivity);
+                  parsed.completed = parsed.completed || [];
+                } catch (e) {}
+              }
+
+              parsed.completed[taskIndex] = !parsed.completed[taskIndex];
+              scheduleData.saveActivity(day, hour, JSON.stringify(parsed));
+            }}
+            onMoveActivity={(
+              fromDay: number,
+              fromHour: number,
+              toDay: number,
+              toHour: number,
+            ) => {
+              scheduleData.moveActivity(fromDay, fromHour, toDay, toHour);
+            }}
           />
         </div>
       </div>
@@ -92,8 +152,11 @@ export default function App() {
         hourStr={Utils.formatTime(modalState.hour)}
         initialText={modalState.text}
         t={t}
-        onSave={(newText: string) => {
-          scheduleData.saveActivity(modalState.day, modalState.hour, newText);
+        onSave={(newText: string, color: string) => {
+          const payload = newText.trim()
+            ? JSON.stringify({ text: newText, color })
+            : "";
+          scheduleData.saveActivity(modalState.day, modalState.hour, payload);
           setModalState({ ...modalState, isOpen: false });
         }}
       />
@@ -107,6 +170,15 @@ export default function App() {
           saveUsername(newName);
           setIsEditProfileOpen(false);
         }}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={scheduleData.settings}
+        updateSettings={scheduleData.updateSettings}
+        t={t}
+        getDayName={getDayName}
       />
 
       <LoadingOverlay visible={exportLoading} message={t("processing")} />
