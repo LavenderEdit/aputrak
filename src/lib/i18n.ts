@@ -6,15 +6,17 @@ export const translations = {
         processing: "Procesando...",
         cancel: "Cancelar",
         save: "Guardar",
+        close: "Cerrar",
+        settings: "Configuración",
 
         // Header
         scheduleOf: "Horario de",
-        savedOffline: "Guardado localmente (Offline)",
+        savedOffline: "Guardado localmente",
         backup: "Respaldar",
         restore: "Restaurar",
 
         // Controles
-        weekNav: "Navegación de Semana",
+        weekNav: "Semana",
         activeDays: "Días Activos",
         startHour: "Hora Inicio",
         endHour: "Hora Fin",
@@ -44,15 +46,17 @@ export const translations = {
         processing: "Processing...",
         cancel: "Cancel",
         save: "Save",
+        close: "Close",
+        settings: "Settings",
 
         // Header
         scheduleOf: "Schedule of",
-        savedOffline: "Saved locally (Offline)",
+        savedOffline: "Saved locally",
         backup: "Backup",
         restore: "Restore",
 
         // Controls
-        weekNav: "Week Navigation",
+        weekNav: "Week",
         activeDays: "Active Days",
         startHour: "Start Hour",
         endHour: "End Hour",
