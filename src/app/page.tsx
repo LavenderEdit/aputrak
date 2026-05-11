@@ -94,6 +94,29 @@ export default function App() {
             onDeleteActivity={(day: number, hour: number) =>
               scheduleData.saveActivity(day, hour, "")
             }
+            onToggleComplete={(
+              day: number,
+              hour: number,
+              taskIndex: number,
+            ) => {
+              const currentActivity = scheduleData.activities[`${day}-${hour}`];
+              if (!currentActivity) return;
+
+              let parsed = {
+                text: currentActivity,
+                color: "indigo",
+                completed: [] as boolean[],
+              };
+              if (currentActivity.startsWith("{")) {
+                try {
+                  parsed = JSON.parse(currentActivity);
+                  parsed.completed = parsed.completed || [];
+                } catch (e) {}
+              }
+
+              parsed.completed[taskIndex] = !parsed.completed[taskIndex];
+              scheduleData.saveActivity(day, hour, JSON.stringify(parsed));
+            }}
           />
         </div>
       </div>
