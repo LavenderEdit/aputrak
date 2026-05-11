@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
-import { THEME_COLORS } from "@/lib/constants";
+import { THEME_COLORS, ACTIVITY_COLORS } from "@/lib/constants";
 import { Utils } from "@/lib/utils";
 
 interface SettingsType {
@@ -69,10 +69,27 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                   const key = `${dayIdx}-${hour}`;
                   const activity = activities[key];
 
-                  const tasks = activity
-                    ? activity.split("\n").filter((t) => t.trim() !== "")
+                  let taskText = activity;
+                  let colorId = "indigo";
+
+                  if (activity && activity.startsWith("{")) {
+                    try {
+                      const parsed = JSON.parse(activity);
+                      taskText = parsed.text;
+                      colorId = parsed.color || "indigo";
+                    } catch (e) {
+                      // Texto antiguo
+                    }
+                  }
+
+                  const tasks = taskText
+                    ? taskText.split("\n").filter((t) => t.trim() !== "")
                     : [];
                   const isSingle = tasks.length === 1;
+
+                  const theme =
+                    ACTIVITY_COLORS.find((c) => c.id === colorId) ||
+                    ACTIVITY_COLORS[0];
 
                   return (
                     <td
@@ -84,14 +101,16 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 
                       {tasks.length > 0 && (
                         <div
-                          className={`relative z-10 w-full h-full min-h-[44px] bg-indigo-50 border border-indigo-200 rounded-md shadow-sm group/item transition-all hover:shadow-md flex ${
+                          className={`relative z-10 w-full h-full min-h-[44px] ${theme.bg} border ${theme.border} rounded-md shadow-sm group/item transition-all hover:shadow-md flex ${
                             isSingle
                               ? "items-center justify-center p-1.5 text-center"
                               : "flex-col gap-1 p-2 justify-start"
                           }`}
                         >
                           {isSingle ? (
-                            <span className="text-xs font-bold text-indigo-900 leading-tight line-clamp-2">
+                            <span
+                              className={`text-xs font-bold ${theme.text} leading-tight line-clamp-2`}
+                            >
                               {tasks[0]}
                             </span>
                           ) : (
@@ -101,8 +120,12 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                                   key={i}
                                   className="flex items-start gap-1.5 text-left w-full"
                                 >
-                                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1 shrink-0"></div>
-                                  <span className="text-[10px] font-bold text-indigo-900 leading-tight break-words flex-1 line-clamp-2">
+                                  <div
+                                    className={`w-1.5 h-1.5 rounded-full ${theme.dot} mt-1 shrink-0`}
+                                  ></div>
+                                  <span
+                                    className={`text-[10px] font-bold ${theme.text} leading-tight break-words flex-1 line-clamp-2`}
+                                  >
                                     {task}
                                   </span>
                                 </div>
