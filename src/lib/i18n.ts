@@ -25,7 +25,7 @@ export const translations = {
         activity: "Actividad",
         assigningTo: "Asignando a",
         at: "a las",
-        taskPlaceholder: "Ej: Clase, Gimnasio...",
+        taskPlaceholder: "Ej: Gimnasio\nEstudiar Inglés\n(Usa 'Enter' para múltiples tareas)",
         saveTask: "Guardar Tarea",
 
         // Mensajes Toast
@@ -63,7 +63,7 @@ export const translations = {
         activity: "Activity",
         assigningTo: "Assigning to",
         at: "at",
-        taskPlaceholder: "Ex: Class, Gym...",
+        taskPlaceholder: "Ex: Gym\nStudy English\n(Press 'Enter' for multiple tasks)",
         saveTask: "Save Task",
 
         // Toast Messages
