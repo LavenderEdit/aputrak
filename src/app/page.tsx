@@ -15,7 +15,7 @@ import { Toast } from "../components/ui/Toast";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { SettingsModal } from "../components/SettingsModal";
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, Copy } from "lucide-react";
 
 export default function App() {
   const { profile, saveUsername, loadingAuth } = useOfflineAuth();
@@ -31,6 +31,7 @@ export default function App() {
     setModalState,
     exportLoading,
     toast,
+    showToast,
     handleGraphicExport,
     handleExportJSON,
     handleImportJSON,
@@ -76,9 +77,24 @@ export default function App() {
               <h3 className="text-indigo-900 font-bold text-xl mb-2">
                 {t("emptyTitle")}
               </h3>
-              <p className="text-indigo-700/80 text-sm max-w-md font-medium leading-relaxed">
+              <p className="text-indigo-700/80 text-sm max-w-md font-medium leading-relaxed mb-6">
                 {t("emptyDesc")}
               </p>
+
+              <button
+                onClick={async () => {
+                  const success = await scheduleData.copyPreviousWeek();
+                  if (success) {
+                    showToast(t("cloneSuccess"), "success");
+                  } else {
+                    showToast(t("cloneError"), "error");
+                  }
+                }}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl transition-colors shadow-sm"
+              >
+                <Copy size={18} />
+                {t("cloneWeek")}
+              </button>
             </div>
           )}
 
