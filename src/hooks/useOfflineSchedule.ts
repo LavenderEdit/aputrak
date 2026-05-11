@@ -67,6 +67,26 @@ export const useOfflineSchedule = () => {
         await DB.put('weeks', { id: weekId, data: newActivities });
     };
 
+    const copyPreviousWeek = async () => {
+        try {
+            const prevDate = new Date(currentWeekDate);
+            prevDate.setDate(prevDate.getDate() - 7);
+            const prevWeekId = Utils.getWeekStartIdentifier(prevDate);
+
+            const prevWeekData = await DB.get('weeks', prevWeekId);
+
+            if (prevWeekData && prevWeekData.data && Object.keys(prevWeekData.data).length > 0) {
+                setActivities(prevWeekData.data);
+                await DB.put('weeks', { id: weekId, data: prevWeekData.data });
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error al copiar la semana anterior:", error);
+            return false;
+        }
+    };
+
     const updateSettings = async (newSettings: any) => {
         setSettings(newSettings);
         await DB.put('settings', { id: 'global', ...newSettings });
@@ -85,6 +105,7 @@ export const useOfflineSchedule = () => {
         loadingData,
         saveActivity,
         moveActivity,
+        copyPreviousWeek,
         updateSettings,
         changeWeek
     };
