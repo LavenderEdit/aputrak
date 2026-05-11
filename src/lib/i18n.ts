@@ -29,6 +29,7 @@ export const translations = {
         activity: "Actividad",
         assigningTo: "Asignando a",
         at: "a las",
+        colorCategory: "Color / Categoría",
         taskPlaceholder: "Ej: Gimnasio\nEstudiar Inglés\n(Usa 'Enter' para múltiples tareas)",
         saveTask: "Guardar Tarea",
 
@@ -71,6 +72,7 @@ export const translations = {
         activity: "Activity",
         assigningTo: "Assigning to",
         at: "at",
+        colorCategory: "Color / Category",
         taskPlaceholder: "Ex: Gym\nStudy English\n(Press 'Enter' for multiple tasks)",
         saveTask: "Save Task",
 
