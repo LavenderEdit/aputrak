@@ -10,3 +10,8 @@ export const DEFAULT_SETTINGS = {
     endHour: 20,
     activeDays: [0, 1, 2, 3, 4]
 };
+
+export const SPANISH_SPEAKING_COUNTRIES = [
+    'AR', 'BO', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'SV', 'GQ',
+    'GT', 'HN', 'MX', 'NI', 'PA', 'PY', 'PE', 'PR', 'ES', 'UY', 'VE'
+];
