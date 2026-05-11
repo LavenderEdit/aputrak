@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { X, CheckCircle } from "lucide-react";
 import { THEME_COLORS, ACTIVITY_COLORS } from "@/lib/constants";
 import { Utils } from "@/lib/utils";
@@ -18,6 +18,12 @@ interface ScheduleGridProps {
   onCellClick: (day: number, hour: number, activity?: string) => void;
   onDeleteActivity: (day: number, hour: number) => void;
   onToggleComplete: (day: number, hour: number, taskIndex: number) => void;
+  onMoveActivity: (
+    fromDay: number,
+    fromHour: number,
+    toDay: number,
+    toHour: number,
+  ) => void;
 }
 
 export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
@@ -28,25 +34,70 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   onCellClick,
   onDeleteActivity,
   onToggleComplete,
+  onMoveActivity,
 }) => {
   const hoursRange = Array.from(
     { length: settings.endHour - settings.startHour },
     (_, i) => i + settings.startHour,
   );
   const weekDates = Utils.getDatesOfWeek(weekId);
-
   const [mobileActiveDay, setMobileActiveDay] = useState<number>(
     settings.activeDays[0],
   );
 
-  useEffect(() => {
-    if (
-      settings.activeDays.length > 0 &&
-      !settings.activeDays.includes(mobileActiveDay)
-    ) {
-      setMobileActiveDay(settings.activeDays[0]);
+  const [dragOverCell, setDragOverCell] = useState<string | null>(null);
+
+  const handleDragStart = (
+    e: React.DragEvent,
+    dayIdx: number,
+    hour: number,
+  ) => {
+    e.stopPropagation();
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({ sourceDay: dayIdx, sourceHour: hour }),
+    );
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, cellKey: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverCell !== cellKey) setDragOverCell(cellKey);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverCell(null);
+  };
+
+  const handleDrop = (
+    e: React.DragEvent,
+    targetDay: number,
+    targetHour: number,
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverCell(null);
+
+    try {
+      const sourceData = e.dataTransfer.getData("application/json");
+      if (!sourceData) return;
+
+      const parsed = JSON.parse(sourceData);
+
+      if (parsed.sourceDay === targetDay && parsed.sourceHour === targetHour)
+        return;
+
+      onMoveActivity(
+        parsed.sourceDay,
+        parsed.sourceHour,
+        targetDay,
+        targetHour,
+      );
+    } catch (error) {
+      console.warn("Elemento arrastrado no válido");
     }
-  }, [settings.activeDays, mobileActiveDay]);
+  };
 
   return (
     <div className="flex flex-col space-y-3 relative">
@@ -122,9 +173,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                         taskText = parsed.text;
                         colorId = parsed.color || "indigo";
                         completed = parsed.completed || [];
-                      } catch (e) {
-                        // Texto antiguo
-                      }
+                      } catch (e) {}
                     }
 
                     const tasks = taskText
@@ -138,18 +187,29 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                     return (
                       <td
                         key={key}
-                        className={`border border-slate-200 relative h-16 hover:bg-slate-50 transition-colors cursor-pointer p-1.5 align-top ${
+                        onDragOver={(e) => handleDragOver(e, key)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, dayIdx, hour)}
+                        onClick={() => onCellClick(dayIdx, hour, activity)}
+                        className={`border border-slate-200 relative h-16 transition-colors cursor-pointer p-1.5 align-top ${
                           dayIdx !== mobileActiveDay
                             ? "hidden md:table-cell"
                             : ""
+                        } ${
+                          dragOverCell === key
+                            ? "bg-indigo-100/60 ring-2 ring-indigo-400 ring-inset"
+                            : "hover:bg-slate-50"
                         }`}
-                        onClick={() => onCellClick(dayIdx, hour, activity)}
                       >
                         <div className="absolute top-1/2 left-0 right-0 border-t border-dashed border-slate-200 pointer-events-none z-0"></div>
 
                         {tasks.length > 0 && (
                           <div
-                            className={`relative z-10 w-full h-full min-h-[44px] ${theme.bg} border ${theme.border} rounded-md shadow-sm group/item transition-all hover:shadow-md flex ${
+                            draggable={true}
+                            onDragStart={(e) =>
+                              handleDragStart(e, dayIdx, hour)
+                            }
+                            className={`md:cursor-grab md:active:cursor-grabbing relative z-10 w-full h-full min-h-[44px] ${theme.bg} border ${theme.border} rounded-md shadow-sm group/item transition-all hover:shadow-md flex ${
                               isSingle
                                 ? "items-center justify-center p-1.5 text-center"
                                 : "flex-col gap-1 p-2 justify-start"
@@ -162,21 +222,12 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                                     e.stopPropagation();
                                     onToggleComplete(dayIdx, hour, 0);
                                   }}
-                                  className={`shrink-0 transition-all z-20 ${
-                                    completed[0]
-                                      ? "text-emerald-500 opacity-100"
-                                      : "text-slate-400 opacity-0 md:group-hover/item:opacity-100 opacity-100 md:hover:scale-110"
-                                  }`}
-                                  title="Marcar completado"
+                                  className={`shrink-0 transition-all z-20 ${completed[0] ? "text-emerald-500 opacity-100" : "text-slate-400 opacity-0 md:group-hover/item:opacity-100 opacity-100 md:hover:scale-110"}`}
                                 >
                                   <CheckCircle size={14} />
                                 </button>
                                 <span
-                                  className={`text-xs font-bold ${theme.text} leading-tight line-clamp-2 transition-all ${
-                                    completed[0]
-                                      ? "line-through opacity-40"
-                                      : ""
-                                  }`}
+                                  className={`text-xs font-bold ${theme.text} leading-tight line-clamp-2 transition-all ${completed[0] ? "line-through opacity-40" : ""}`}
                                 >
                                   {tasks[0]}
                                 </span>
@@ -193,20 +244,12 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                                         e.stopPropagation();
                                         onToggleComplete(dayIdx, hour, i);
                                       }}
-                                      className={`mt-0.5 shrink-0 transition-all z-20 ${
-                                        completed[i]
-                                          ? "text-emerald-500 opacity-100"
-                                          : "text-slate-400 opacity-0 md:group-hover/item:opacity-100 opacity-100 md:hover:scale-110"
-                                      }`}
+                                      className={`mt-0.5 shrink-0 transition-all z-20 ${completed[i] ? "text-emerald-500 opacity-100" : "text-slate-400 opacity-0 md:group-hover/item:opacity-100 opacity-100 md:hover:scale-110"}`}
                                     >
                                       <CheckCircle size={12} />
                                     </button>
                                     <span
-                                      className={`text-[10px] font-bold ${theme.text} leading-tight break-words flex-1 line-clamp-2 transition-all ${
-                                        completed[i]
-                                          ? "line-through opacity-40"
-                                          : ""
-                                      }`}
+                                      className={`text-[10px] font-bold ${theme.text} leading-tight break-words flex-1 line-clamp-2 transition-all ${completed[i] ? "line-through opacity-40" : ""}`}
                                     >
                                       {task}
                                     </span>
