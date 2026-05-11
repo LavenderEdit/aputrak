@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { X } from "lucide-react";
+import { X, CheckCircle } from "lucide-react";
 import { THEME_COLORS, ACTIVITY_COLORS } from "@/lib/constants";
 import { Utils } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ interface ScheduleGridProps {
   getDayName: (index: number) => string;
   onCellClick: (day: number, hour: number, activity?: string) => void;
   onDeleteActivity: (day: number, hour: number) => void;
+  onToggleComplete: (day: number, hour: number, taskIndex: number) => void;
 }
 
 export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
@@ -26,6 +27,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
   getDayName,
   onCellClick,
   onDeleteActivity,
+  onToggleComplete,
 }) => {
   const hoursRange = Array.from(
     { length: settings.endHour - settings.startHour },
@@ -71,14 +73,16 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 
                   let taskText = activity;
                   let colorId = "indigo";
+                  let completed: boolean[] = [];
 
                   if (activity && activity.startsWith("{")) {
                     try {
                       const parsed = JSON.parse(activity);
                       taskText = parsed.text;
                       colorId = parsed.color || "indigo";
+                      completed = parsed.completed || [];
                     } catch (e) {
-                      // Texto antiguo
+                      // Compatibilidad con texto antiguo
                     }
                   }
 
@@ -86,7 +90,6 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                     ? taskText.split("\n").filter((t) => t.trim() !== "")
                     : [];
                   const isSingle = tasks.length === 1;
-
                   const theme =
                     ACTIVITY_COLORS.find((c) => c.id === colorId) ||
                     ACTIVITY_COLORS[0];
@@ -108,23 +111,55 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
                           }`}
                         >
                           {isSingle ? (
-                            <span
-                              className={`text-xs font-bold ${theme.text} leading-tight line-clamp-2`}
-                            >
-                              {tasks[0]}
-                            </span>
+                            <div className="flex items-center justify-center gap-1.5 w-full relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleComplete(dayIdx, hour, 0);
+                                }}
+                                className={`shrink-0 transition-all z-20 ${
+                                  completed[0]
+                                    ? "text-emerald-500 opacity-100"
+                                    : "text-slate-400 opacity-0 group-hover/item:opacity-100 hover:text-emerald-500 hover:scale-110"
+                                }`}
+                                title="Marcar como completado"
+                              >
+                                <CheckCircle size={14} />
+                              </button>
+                              <span
+                                className={`text-xs font-bold ${theme.text} leading-tight line-clamp-2 transition-all ${
+                                  completed[0] ? "line-through opacity-40" : ""
+                                }`}
+                              >
+                                {tasks[0]}
+                              </span>
+                            </div>
                           ) : (
                             <div className="flex flex-col gap-1.5 w-full">
                               {tasks.map((task, i) => (
                                 <div
                                   key={i}
-                                  className="flex items-start gap-1.5 text-left w-full"
+                                  className="flex items-start gap-1.5 text-left w-full group/task"
                                 >
-                                  <div
-                                    className={`w-1.5 h-1.5 rounded-full ${theme.dot} mt-1 shrink-0`}
-                                  ></div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onToggleComplete(dayIdx, hour, i);
+                                    }}
+                                    className={`mt-0.5 shrink-0 transition-all z-20 ${
+                                      completed[i]
+                                        ? "text-emerald-500 opacity-100"
+                                        : "text-slate-400 opacity-0 group-hover/item:opacity-100 hover:text-emerald-500 hover:scale-110"
+                                    }`}
+                                  >
+                                    <CheckCircle size={12} />
+                                  </button>
                                   <span
-                                    className={`text-[10px] font-bold ${theme.text} leading-tight break-words flex-1 line-clamp-2`}
+                                    className={`text-[10px] font-bold ${theme.text} leading-tight break-words flex-1 line-clamp-2 transition-all ${
+                                      completed[i]
+                                        ? "line-through opacity-40"
+                                        : ""
+                                    }`}
                                   >
                                     {task}
                                   </span>
