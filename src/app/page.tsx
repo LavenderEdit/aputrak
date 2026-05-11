@@ -117,6 +117,14 @@ export default function App() {
               parsed.completed[taskIndex] = !parsed.completed[taskIndex];
               scheduleData.saveActivity(day, hour, JSON.stringify(parsed));
             }}
+            onMoveActivity={(
+              fromDay: number,
+              fromHour: number,
+              toDay: number,
+              toHour: number,
+            ) => {
+              scheduleData.moveActivity(fromDay, fromHour, toDay, toHour);
+            }}
           />
         </div>
       </div>
