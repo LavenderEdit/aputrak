@@ -22,7 +22,7 @@ export const ActivityModal: React.FC<ActivityModalProps> = ({
   t,
 }) => {
   const [text, setText] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -60,12 +60,11 @@ export const ActivityModal: React.FC<ActivityModalProps> = ({
             <span className="text-indigo-600 font-bold">{hourStr}</span>
           </p>
 
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-indigo-500 mb-6 font-medium text-slate-800"
+            className="w-full border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-indigo-500 mb-6 font-medium text-slate-800 resize-none h-28"
             placeholder={t("taskPlaceholder")}
           />
 
