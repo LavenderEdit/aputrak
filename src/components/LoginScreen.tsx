@@ -11,7 +11,7 @@ export const LoginScreen = ({ onSave }: { onSave: (name: string) => void }) => {
           <CalendarIcon className="text-indigo-600 w-8 h-8" />
         </div>
         <h2 className="text-2xl font-bold text-slate-800 mb-2">
-          Bienvenido a QuipuPlan
+          Bienvenido a ApuTrak
         </h2>
         <p className="text-slate-500 mb-6 text-sm">
           Tus datos se guardan de forma segura en tu dispositivo
