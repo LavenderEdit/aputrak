@@ -8,6 +8,8 @@ export const translations = {
         save: "Guardar",
         close: "Cerrar",
         settings: "Configuración",
+        emptyTitle: "¡Tu semana está en blanco!",
+        emptyDesc: "Haz clic en cualquier celda del calendario para agregar tu primera actividad y empezar a organizarte.",
 
         // Header
         scheduleOf: "Horario de",
@@ -48,6 +50,8 @@ export const translations = {
         save: "Save",
         close: "Close",
         settings: "Settings",
+        emptyTitle: "Your week is empty!",
+        emptyDesc: "Click on any cell in the calendar to add your first activity and start getting organized.",
 
         // Header
         scheduleOf: "Schedule of",
