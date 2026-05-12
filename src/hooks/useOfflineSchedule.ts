@@ -182,25 +182,15 @@ export const useOfflineSchedule = () => {
     };
 
     return {
-       
         weekId,
-       
         settings,
-       
         activities,
-       
         loadingData,
-       
         saveActivity,
-        moveActivity,
-        copyPreviousWeek,
         smartReschedule,
-       
         moveActivity,
         copyPreviousWeek,
         updateSettings,
-       
         changeWeek
-   
     };
 };
