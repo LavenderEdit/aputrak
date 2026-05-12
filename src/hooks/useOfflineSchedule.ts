@@ -54,6 +54,8 @@ export const useOfflineSchedule = () => {
             const day = parseInt(dayStr);
             const hour = parseInt(hourStr);
 
+            if (!settings.activeDays.includes(day)) continue;
+
             const isPast = day < currentDayIdx || (day === currentDayIdx && hour < currentHour);
 
             if (isPast && value && value.startsWith("{")) {
