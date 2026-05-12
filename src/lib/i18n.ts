@@ -7,6 +7,13 @@ export const translations = {
         cancel: "Cancelar",
         save: "Guardar",
 
+        // Smart Tetris
+        smartTetrisTitle: "Tienes tareas atrasadas",
+        smartTetrisDesc: "¿Quieres que ApuTrak mueva mágicamente tus tareas no completadas a los espacios libres de hoy o mañana?",
+        smartTetrisBtn: "Reorganizar mágicamente",
+        smartTetrisSuccess: "¡Tareas reorganizadas con éxito!",
+        smartTetrisNoSpace: "No hay suficientes espacios libres en el futuro.",
+
         // Header
         scheduleOf: "Horario de",
         savedOffline: "Guardado localmente (Offline)",
@@ -44,6 +51,13 @@ export const translations = {
         processing: "Processing...",
         cancel: "Cancel",
         save: "Save",
+
+        // Smart Tetris
+        smartTetrisTitle: "You have overdue tasks",
+        smartTetrisDesc: "Do you want ApuTrak to magically move your uncompleted tasks to free slots today or tomorrow?",
+        smartTetrisBtn: "Magically reorganize",
+        smartTetrisSuccess: "Tasks reorganized successfully!",
+        smartTetrisNoSpace: "Not enough free slots in the future.",
 
         // Header
         scheduleOf: "Schedule of",
