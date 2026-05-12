@@ -13,7 +13,7 @@ export const translations = {
         cloneWeek: "Clonar semana anterior",
 
         // Smart Tetris
-        smartTetrisTitle: "Tienes tareas atrasadas",
+        smartTetrisTitle: "Tienes {count} tarea(s) atrasada(s)",
         smartTetrisDesc: "¿Quieres que ApuTrak mueva mágicamente tus tareas no completadas a los espacios libres de hoy o mañana?",
         smartTetrisBtn: "Reorganizar mágicamente",
         smartTetrisSuccess: "¡Tareas reorganizadas con éxito!",
@@ -66,7 +66,7 @@ export const translations = {
         cloneWeek: "Clone previous week",
 
         // Smart Tetris
-        smartTetrisTitle: "You have overdue tasks",
+        smartTetrisTitle: "You have {count} overdue task(s)",
         smartTetrisDesc: "Do you want ApuTrak to magically move your uncompleted tasks to free slots today or tomorrow?",
         smartTetrisBtn: "Magically reorganize",
         smartTetrisSuccess: "Tasks reorganized successfully!",

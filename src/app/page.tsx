@@ -15,16 +15,17 @@ import { Toast } from "../components/ui/Toast";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { SettingsModal } from "../components/SettingsModal";
-import { CalendarPlus, Copy, Sparkles } from "lucide-react";
+import { CalendarPlus, Copy, Sparkles, X } from "lucide-react";
 
 export default function App() {
   const { profile, saveUsername, loadingAuth } = useOfflineAuth();
   const scheduleData = useOfflineSchedule();
-
   const { lang, toggleLanguage, t, getDayName } = useLanguage();
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const [dismissedTetris, setDismissedTetris] = useState(false);
 
   const {
     modalState,
@@ -37,19 +38,24 @@ export default function App() {
     handleImportJSON,
   } = useAppManager(profile, scheduleData, t);
 
-  const isCurrentRealWeek =
-    scheduleData.weekId === Utils.getWeekStartIdentifier(new Date());
+  const getOverdueTasksCount = () => {
+    const isCurrentRealWeek =
+      scheduleData.weekId === Utils.getWeekStartIdentifier(new Date());
+    if (!isCurrentRealWeek || dismissedTetris) return 0;
 
-  const hasOverdueTasks = () => {
-    if (!isCurrentRealWeek) return false;
+    let count = 0;
     const now = new Date();
-    const currentDayIdx = now.getDay();
+    const jsDay = now.getDay();
+    const currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
     const currentHour = now.getHours();
 
-    return Object.entries(scheduleData.activities).some(([key, value]) => {
+    Object.entries(scheduleData.activities).forEach(([key, value]) => {
       const [dayStr, hourStr] = key.split("-");
       const day = parseInt(dayStr);
       const hour = parseInt(hourStr);
+
+      if (!scheduleData.settings.activeDays.includes(day)) return;
+
       const isPast =
         day < currentDayIdx || (day === currentDayIdx && hour < currentHour);
 
@@ -60,14 +66,17 @@ export default function App() {
             .split("\n")
             .filter((t: string) => t.trim() !== "");
           const completed = parsed.completed || [];
-          return taskLines.some((_: any, idx: number) => !completed[idx]);
-        } catch (e) {
-          return false;
-        }
+
+          taskLines.forEach((_: any, idx: number) => {
+            if (!completed[idx]) count++;
+          });
+        } catch (e) {}
       }
-      return false;
     });
+    return count;
   };
+
+  const overdueCount = getOverdueTasksCount();
 
   if (loadingAuth)
     return (
@@ -116,11 +125,8 @@ export default function App() {
               <button
                 onClick={async () => {
                   const success = await scheduleData.copyPreviousWeek();
-                  if (success) {
-                    showToast(t("cloneSuccess"), "success");
-                  } else {
-                    showToast(t("cloneError"), "error");
-                  }
+                  if (success) showToast(t("cloneSuccess"), "success");
+                  else showToast(t("cloneError"), "error");
                 }}
                 className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl transition-colors shadow-sm"
               >
@@ -130,15 +136,26 @@ export default function App() {
             </div>
           )}
 
-        {hasOverdueTasks() && !scheduleData.loadingData && (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 shadow-sm">
+        {overdueCount > 0 && !scheduleData.loadingData && (
+          <div className="relative bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 shadow-sm pr-10">
+            <button
+              onClick={() => setDismissedTetris(true)}
+              className="absolute top-3 right-3 text-amber-400 hover:text-amber-700 transition-colors"
+              title={t("close")}
+            >
+              <X size={18} />
+            </button>
+
             <div className="flex items-center gap-4 text-center sm:text-left">
               <div className="bg-white p-3 rounded-full shadow-sm shrink-0 mx-auto sm:mx-0">
                 <Sparkles className="text-amber-500" size={24} />
               </div>
               <div>
                 <h3 className="text-amber-900 font-bold text-lg">
-                  {t("smartTetrisTitle")}
+                  {t("smartTetrisTitle").replace(
+                    "{count}",
+                    overdueCount.toString(),
+                  )}
                 </h3>
                 <p className="text-amber-700/80 text-sm font-medium">
                   {t("smartTetrisDesc")}
@@ -162,36 +179,6 @@ export default function App() {
             </button>
           </div>
         )}
-
-        {Object.keys(scheduleData.activities).length === 0 &&
-          !scheduleData.loadingData && (
-            <div className="bg-indigo-50/80 border border-indigo-100 rounded-2xl p-8 mb-6 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 slide-in-from-top-4 shadow-sm">
-              <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-                <CalendarPlus className="text-indigo-500" size={32} />
-              </div>
-              <h3 className="text-indigo-900 font-bold text-xl mb-2">
-                {t("emptyTitle")}
-              </h3>
-              <p className="text-indigo-700/80 text-sm max-w-md font-medium leading-relaxed mb-6">
-                {t("emptyDesc")}
-              </p>
-
-              <button
-                onClick={async () => {
-                  const success = await scheduleData.copyPreviousWeek();
-                  if (success) {
-                    showToast(t("cloneSuccess"), "success");
-                  } else {
-                    showToast(t("cloneError"), "error");
-                  }
-                }}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl transition-colors shadow-sm"
-              >
-                <Copy size={18} />
-                {t("cloneWeek")}
-              </button>
-            </div>
-          )}
 
         <div className="relative">
           <ScheduleGrid
@@ -248,8 +235,21 @@ export default function App() {
         initialText={modalState.text}
         t={t}
         onSave={(newText: string, color: string) => {
+          const existingActivity =
+            scheduleData.activities[`${modalState.day}-${modalState.hour}`];
+          let existingCompleted: boolean[] = [];
+          if (existingActivity && existingActivity.startsWith("{")) {
+            try {
+              existingCompleted = JSON.parse(existingActivity).completed || [];
+            } catch (e) {}
+          }
+
           const payload = newText.trim()
-            ? JSON.stringify({ text: newText, color })
+            ? JSON.stringify({
+                text: newText,
+                color,
+                completed: existingCompleted,
+              })
             : "";
           scheduleData.saveActivity(modalState.day, modalState.hour, payload);
           setModalState({ ...modalState, isOpen: false });

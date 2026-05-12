@@ -43,7 +43,8 @@ export const useOfflineSchedule = () => {
 
     const smartReschedule = async () => {
         const now = new Date();
-        const currentDayIdx = now.getDay();
+        const jsDay = now.getDay();
+        const currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
         const currentHour = now.getHours();
 
         const newActivities = { ...activities };
@@ -53,6 +54,8 @@ export const useOfflineSchedule = () => {
             const [dayStr, hourStr] = key.split('-');
             const day = parseInt(dayStr);
             const hour = parseInt(hourStr);
+
+            if (!settings.activeDays.includes(day)) continue;
 
             const isPast = day < currentDayIdx || (day === currentDayIdx && hour < currentHour);
 
