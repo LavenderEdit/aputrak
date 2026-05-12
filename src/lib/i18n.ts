@@ -6,6 +6,11 @@ export const translations = {
         processing: "Procesando...",
         cancel: "Cancelar",
         save: "Guardar",
+        close: "Cerrar",
+        settings: "Configuración",
+        emptyTitle: "¡Tu semana está en blanco!",
+        emptyDesc: "Haz clic en cualquier celda del calendario para agregar tu primera actividad y empezar a organizarte.",
+        cloneWeek: "Clonar semana anterior",
 
         // Smart Tetris
         smartTetrisTitle: "Tienes tareas atrasadas",
@@ -16,12 +21,12 @@ export const translations = {
 
         // Header
         scheduleOf: "Horario de",
-        savedOffline: "Guardado localmente (Offline)",
+        savedOffline: "Guardado localmente",
         backup: "Respaldar",
         restore: "Restaurar",
 
         // Controles
-        weekNav: "Navegación de Semana",
+        weekNav: "Semana",
         activeDays: "Días Activos",
         startHour: "Hora Inicio",
         endHour: "Hora Fin",
@@ -32,6 +37,7 @@ export const translations = {
         activity: "Actividad",
         assigningTo: "Asignando a",
         at: "a las",
+        colorCategory: "Color / Categoría",
         taskPlaceholder: "Ej: Gimnasio\nEstudiar Inglés\n(Usa 'Enter' para múltiples tareas)",
         saveTask: "Guardar Tarea",
 
@@ -42,6 +48,8 @@ export const translations = {
         backupError: "Error al exportar respaldo",
         restoreSuccess: "Respaldo restaurado con éxito",
         invalidFile: "El archivo no es un respaldo válido",
+        cloneSuccess: "¡Semana anterior copiada con éxito!",
+        cloneError: "No hay actividades en la semana anterior para copiar.",
 
         // Días
         days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
@@ -51,6 +59,11 @@ export const translations = {
         processing: "Processing...",
         cancel: "Cancel",
         save: "Save",
+        close: "Close",
+        settings: "Settings",
+        emptyTitle: "Your week is empty!",
+        emptyDesc: "Click on any cell in the calendar to add your first activity and start getting organized.",
+        cloneWeek: "Clone previous week",
 
         // Smart Tetris
         smartTetrisTitle: "You have overdue tasks",
@@ -61,12 +74,12 @@ export const translations = {
 
         // Header
         scheduleOf: "Schedule of",
-        savedOffline: "Saved locally (Offline)",
+        savedOffline: "Saved locally",
         backup: "Backup",
         restore: "Restore",
 
         // Controls
-        weekNav: "Week Navigation",
+        weekNav: "Week",
         activeDays: "Active Days",
         startHour: "Start Hour",
         endHour: "End Hour",
@@ -77,6 +90,7 @@ export const translations = {
         activity: "Activity",
         assigningTo: "Assigning to",
         at: "at",
+        colorCategory: "Color / Category",
         taskPlaceholder: "Ex: Gym\nStudy English\n(Press 'Enter' for multiple tasks)",
         saveTask: "Save Task",
 
@@ -87,6 +101,8 @@ export const translations = {
         backupError: "Error exporting backup",
         restoreSuccess: "Backup restored successfully",
         invalidFile: "Invalid backup file",
+        cloneSuccess: "Previous week copied successfully!",
+        cloneError: "No activities found in the previous week to copy.",
 
         // Days
         days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]

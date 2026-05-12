@@ -171,7 +171,7 @@ export const useAppManager = (profile: Profile | null, scheduleData: ScheduleDat
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
 
-            showToast(t("backupSuccess")); 
+            showToast(t("backupSuccess"));
         } catch (error) {
             console.error(error);
             showToast(t("backupError"), "error");
@@ -211,6 +211,7 @@ export const useAppManager = (profile: Profile | null, scheduleData: ScheduleDat
         setModalState,
         exportLoading,
         toast,
+        showToast,
         handleGraphicExport,
         handleExportJSON,
         handleImportJSON,
