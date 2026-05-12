@@ -45,7 +45,8 @@ export default function App() {
 
     let count = 0;
     const now = new Date();
-    const currentDayIdx = now.getDay();
+    const jsDay = now.getDay();
+    const currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
     const currentHour = now.getHours();
 
     Object.entries(scheduleData.activities).forEach(([key, value]) => {
