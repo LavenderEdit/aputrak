@@ -40,6 +40,10 @@ export const translations = {
         colorCategory: "Color / Categoría",
         taskPlaceholder: "Ej: Gimnasio\nEstudiar Inglés\n(Usa 'Enter' para múltiples tareas)",
         saveTask: "Guardar Tarea",
+        day: "Día",
+        timeRange: "Horario",
+        startTime: "Inicio",
+        endTime: "Fin",
 
         // Mensajes Toast
         exportSuccess: "Exportación exitosa",
@@ -93,6 +97,10 @@ export const translations = {
         colorCategory: "Color / Category",
         taskPlaceholder: "Ex: Gym\nStudy English\n(Press 'Enter' for multiple tasks)",
         saveTask: "Save Task",
+        day: "Day",
+        timeRange: "Time",
+        startTime: "Start",
+        endTime: "End",
 
         // Toast Messages
         exportSuccess: "Export successful",
