@@ -6,6 +6,7 @@ import {
     getTaskLines,
     isTaskComplete,
 } from "@/features/schedule/lib/schedule-view";
+import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface UpcomingTasksCardProps {
     lang: string;
@@ -13,6 +14,8 @@ interface UpcomingTasksCardProps {
 }
 
 export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
+    const copy = getDashboardCopy(lang);
+
     const upcomingTasks = tasks
         .filter((task) => !isTaskComplete(task))
         .sort((a, b) => a.day - b.day || a.startMinute - b.startMinute)
@@ -21,7 +24,7 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
     return (
         <article className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-sm backdrop-blur-xl">
             <h2 className="mb-4 text-lg font-black text-slate-950">
-                {lang === "es" ? "Pendientes próximos" : "Upcoming pending"}
+                {copy.upcoming}
             </h2>
 
             <div className="space-y-3">
@@ -51,9 +54,7 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
                 ) : (
                     <div className="grid min-h-[180px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-center">
                         <p className="text-sm font-bold text-slate-400">
-                            {lang === "es"
-                                ? "Nada pendiente por ahora."
-                                : "Nothing pending for now."}
+                            {copy.emptyUpcoming}
                         </p>
                     </div>
                 )}
