@@ -5,8 +5,6 @@ export const EXPORT_COPY = {
         mobile: "Móvil",
         backup: "Backup",
         restore: "Restore",
-        exportError: "Error al exportar gráfico",
-        backupError: "Error al exportar respaldo",
     },
     en: {
         pdf: "PDF",
@@ -14,10 +12,14 @@ export const EXPORT_COPY = {
         mobile: "Mobile",
         backup: "Backup",
         restore: "Restore",
-        exportError: "Error exporting graphic",
-        backupError: "Error exporting backup",
     },
 } as const;
+
+export type ExportLanguage = keyof typeof EXPORT_COPY;
+
+export function getExportCopy(lang: string) {
+    return EXPORT_COPY[lang as ExportLanguage] ?? EXPORT_COPY.es;
+}
 
 export const EXPORT_CONFIG = {
     desktop: {
