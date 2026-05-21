@@ -6,6 +6,7 @@ import {
     getTaskLines,
     isTaskComplete,
 } from "@/features/schedule/lib/schedule-view";
+import { Card } from "@/shared/components/ui/Card";
 import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface UpcomingTasksCardProps {
@@ -22,7 +23,7 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
         .slice(0, 6);
 
     return (
-        <article className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-sm backdrop-blur-xl">
+        <Card>
             <h2 className="mb-4 text-lg font-black text-slate-950">
                 {copy.upcoming}
             </h2>
@@ -59,6 +60,6 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
                     </div>
                 )}
             </div>
-        </article>
+        </Card>
     );
 }
