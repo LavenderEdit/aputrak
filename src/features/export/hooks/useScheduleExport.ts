@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { Utils } from "@/shared/lib/utils";
-import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
+import type {
+    ScheduleSettings,
+    ScheduleTask,
+} from "@/features/schedule/types/schedule.types";
 import type { ToastType } from "@/shared/hooks/useToast";
+import type { TranslateFn } from "@/shared/types/i18n.types";
 
 interface Profile {
     username: string;
@@ -11,20 +15,61 @@ interface Profile {
 
 interface ScheduleData {
     weekId: string;
-    settings: unknown;
+    settings: ScheduleSettings;
     tasks: ScheduleTask[];
 }
 
 interface UseScheduleExportParams {
     profile: Profile | null;
     scheduleData: ScheduleData;
-    t: (key: any) => string;
+    t: TranslateFn;
     showToast: (message: string, type?: ToastType) => void;
+}
+
+interface HtmlToImageApi {
+    toCanvas: (
+        element: HTMLElement,
+        options: {
+            pixelRatio: number;
+            backgroundColor: string;
+        },
+    ) => Promise<HTMLCanvasElement>;
+}
+
+interface JsPdfDocument {
+    addImage: (
+        imageData: string,
+        format: "JPEG",
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+    ) => void;
+    save: (filename: string) => void;
+}
+
+interface JsPdfConstructorOptions {
+    orientation: "landscape" | "portrait";
+    unit: "px";
+    format: [number, number];
+}
+
+interface BrowserWindowWithExportLibraries extends Window {
+    htmlToImage?: HtmlToImageApi;
+    jspdf?: {
+        jsPDF: new (options: JsPdfConstructorOptions) => JsPdfDocument;
+    };
+}
+
+function getExportWindow() {
+    return window as BrowserWindowWithExportLibraries;
 }
 
 function loadHtmlToImage() {
     return new Promise<void>((resolve, reject) => {
-        if ((window as any).htmlToImage) {
+        const exportWindow = getExportWindow();
+
+        if (exportWindow.htmlToImage) {
             resolve();
             return;
         }
@@ -33,7 +78,7 @@ function loadHtmlToImage() {
         script.src =
             "https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js";
         script.onload = () => resolve();
-        script.onerror = reject;
+        script.onerror = () => reject(new Error("Error loading html-to-image"));
         document.head.appendChild(script);
     });
 }
@@ -45,6 +90,7 @@ function resetExportDom() {
     const element = document.getElementById("schedule-container");
 
     if (containerWrapper) containerWrapper.style.overflow = "";
+
     if (element) {
         element.style.width = "";
         element.style.padding = "";
@@ -69,6 +115,12 @@ export function useScheduleExport({
 
             await loadHtmlToImage();
 
+            const exportWindow = getExportWindow();
+
+            if (!exportWindow.htmlToImage) {
+                throw new Error("html-to-image was not loaded");
+            }
+
             const containerWrapper = document.getElementById(
                 "schedule-container-wrapper",
             );
@@ -81,13 +133,14 @@ export function useScheduleExport({
             document.body.classList.add("pdf-export-mode");
 
             const originalOverflow = containerWrapper.style.overflow;
+
             containerWrapper.style.overflow = "visible";
             element.style.width = "max-content";
             element.style.padding = "32px";
 
             await new Promise((resolve) => window.setTimeout(resolve, 200));
 
-            const canvas = await (window as any).htmlToImage.toCanvas(element, {
+            const canvas = await exportWindow.htmlToImage.toCanvas(element, {
                 pixelRatio: 2,
                 backgroundColor: "#ffffff",
             });
@@ -100,9 +153,14 @@ export function useScheduleExport({
             const filename = `ApuTrak_${profile?.username ?? "usuario"}_${scheduleData.weekId}`;
 
             if (type === "pdf") {
-                const orientation = canvas.width > canvas.height ? "landscape" : "portrait";
+                if (!exportWindow.jspdf) {
+                    throw new Error("jspdf was not loaded");
+                }
 
-                const pdf = new (window as any).jspdf.jsPDF({
+                const orientation =
+                    canvas.width > canvas.height ? "landscape" : "portrait";
+
+                const pdf = new exportWindow.jspdf.jsPDF({
                     orientation,
                     unit: "px",
                     format: [canvas.width, canvas.height],
@@ -138,6 +196,7 @@ export function useScheduleExport({
                 const padding = 80;
                 const availableWidth = targetWidth - padding * 2;
                 const availableHeight = targetHeight - padding * 2;
+
                 const scale = Math.min(
                     availableWidth / canvas.width,
                     availableHeight / canvas.height,
@@ -157,6 +216,7 @@ export function useScheduleExport({
                 const link = document.createElement("a");
                 link.download = `${filename}_${type}.png`;
                 link.href = finalCanvas.toDataURL("image/png", 1);
+
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);

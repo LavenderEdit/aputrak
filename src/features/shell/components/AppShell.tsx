@@ -9,10 +9,10 @@ import { useScheduleImport } from "@/features/import/hooks/useScheduleImport";
 import { ActivityModal } from "@/features/schedule/components/ActivityModal";
 import { ScheduleGrid } from "@/features/schedule/components/ScheduleGrid";
 import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
-import { ScheduleTask, useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
+import { ScheduleTask } from "@/features/schedule/types/schedule.types";
+import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
 import { SettingsModal } from "@/features/settings/components/SettingsModal";
 import { LoadingOverlay } from "@/shared/components/ui/LoadingOverlay";
-import { Toast } from "@/shared/components/ui/Toast";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useToast } from "@/shared/hooks/useToast";
 import { EditProfileModal } from "@/features/auth/components/EditProfileModal";
@@ -34,7 +34,7 @@ export function AppShell() {
     const { profile, saveUsername, loadingAuth } = useOfflineAuth();
     const scheduleData = useOfflineSchedule();
     const { lang, toggleLanguage, t, getDayName } = useLanguage();
-    const { toast, showToast } = useToast();
+    const { showToast } = useToast();
 
     const [activeView, setActiveView] = useState<AppView>("dashboard");
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -222,12 +222,6 @@ export function AppShell() {
             <LoadingOverlay
                 visible={exportLoading || importLoading}
                 message={t("processing")}
-            />
-
-            <Toast
-                message={toast.message}
-                type={toast.type}
-                visible={toast.visible}
             />
         </main>
     );

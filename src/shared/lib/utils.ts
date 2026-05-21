@@ -39,7 +39,7 @@ export const Utils = {
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     },
 
-    exportToJSON: (data: any, filename: string) => {
+    exportToJSON: (data: unknown, filename: string) => {
         const jsonStr = JSON.stringify(data, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);

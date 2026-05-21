@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
-import { DAYS_OF_WEEK } from "../../../shared/lib/constants";
-import { Utils } from "../../../shared/lib/utils";
+import { DAYS_OF_WEEK } from "@/shared/lib/constants";
+import { Utils } from "@/shared/lib/utils";
+import type { TranslateFn } from "@/shared/types/i18n.types";
 
 interface SettingsType {
   activeDays: number[];
@@ -15,7 +16,7 @@ interface SettingsModalProps {
   onClose: () => void;
   settings: SettingsType;
   updateSettings: (newSettings: SettingsType) => void;
-  t: (key: any) => string;
+  t: TranslateFn;
   getDayName: (index: number) => string;
 }
 

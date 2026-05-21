@@ -4,16 +4,7 @@ import { useEffect, useState } from "react";
 import { DB } from "@/shared/lib/db";
 import { Utils } from "@/shared/lib/utils";
 import { DEFAULT_SETTINGS } from "@/shared/lib/constants";
-
-export interface ScheduleTask {
-    id: string;
-    day: number;
-    startMinute: number;
-    endMinute: number;
-    text: string;
-    color: string;
-    completed: boolean[];
-}
+import type { ScheduleSettings, ScheduleTask } from "@/features/schedule/types/schedule.types";
 
 export const useOfflineSchedule = () => {
     const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
@@ -51,7 +42,7 @@ export const useOfflineSchedule = () => {
                         try {
                             const parsed = JSON.parse(value);
                             text = parsed.text; color = parsed.color || 'indigo'; completed = parsed.completed || [];
-                        } catch (e) { }
+                        } catch { }
                     }
                     migratedTasks.push({ id: `task_${day}_${hour}_${Date.now()}`, day, startMinute: hour * 60, endMinute: (hour + 1) * 60, text, color, completed });
                 }
@@ -124,7 +115,7 @@ export const useOfflineSchedule = () => {
                 return true;
             }
             return false;
-        } catch (error) { return false; }
+        } catch { return false; }
     };
 
     const smartReschedule = async () => {
@@ -195,7 +186,7 @@ export const useOfflineSchedule = () => {
         return { success: true };
     };
 
-    const updateSettings = async (newSettings: any) => {
+    const updateSettings = async (newSettings: ScheduleSettings) => {
         setSettings(newSettings); await DB.put('settings', { id: 'global', ...newSettings });
     };
 

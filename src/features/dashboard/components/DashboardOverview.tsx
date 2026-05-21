@@ -16,10 +16,11 @@ import { TodayScheduleCard } from "./TodayScheduleCard";
 import { UpcomingTasksCard } from "./UpcomingTasksCard";
 import { OverdueTasksBanner } from "@/features/schedule/components/OverdueTasksBanner";
 import { EmptyWeekState } from "@/features/schedule/components/EmptyWeekState";
+import type { TranslateFn } from "@/shared/types/i18n.types";
 
 interface DashboardOverviewProps {
     lang: string;
-    t: (key: any) => string;
+    t: TranslateFn;
     tasks: ScheduleTask[];
     settings: ScheduleSettings;
     loadingData: boolean;

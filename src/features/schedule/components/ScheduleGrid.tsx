@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { X, CheckCircle } from "lucide-react";
 import { ACTIVITY_COLORS, THEME_COLORS } from "../../../shared/lib/constants";
 import { Utils } from "../../../shared/lib/utils";
-import { ScheduleTask } from "../hooks/useOfflineSchedule";
+import type { ScheduleTask } from "../types/schedule.types";
 
 interface SettingsType {
     startHour: number;
@@ -63,7 +63,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
         try {
             const parsed = JSON.parse(e.dataTransfer.getData("application/json"));
             if (parsed.taskId) onMoveTask(parsed.taskId, targetDay, targetHour);
-        } catch (error) { }
+        } catch { }
     };
 
     return (

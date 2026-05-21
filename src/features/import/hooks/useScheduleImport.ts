@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
+import type {
+    ScheduleSettings,
+    ScheduleTask,
+} from "@/features/schedule/types/schedule.types";
 import type { ToastType } from "@/shared/hooks/useToast";
+import type { TranslateFn } from "@/shared/types/i18n.types";
 
 interface ScheduleData {
     settings: unknown;
-    updateSettings: (settings: any) => Promise<void> | void;
+    updateSettings: (settings: ScheduleSettings) => Promise<void> | void;
     saveTask: (task: ScheduleTask) => Promise<void> | void;
 }
 
 interface UseScheduleImportParams {
     scheduleData: ScheduleData;
-    t: (key: any) => string;
+    t: TranslateFn;
     showToast: (message: string, type?: ToastType) => void;
 }
 
