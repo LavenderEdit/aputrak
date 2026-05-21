@@ -24,6 +24,7 @@ import { MobileNav } from "./MobileNav";
 import { ExportView } from "@/features/export/components/ExportView";
 import { ImportView } from "@/features/import/components/ImportView";
 import type { AppView } from "../types/shell.types";
+import { cn } from "@/shared/lib/cn";
 
 function createTaskId() {
     return `task_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -41,6 +42,7 @@ export function AppShell() {
     const { lang, toggleLanguage, t, getDayName } = useLanguage();
     const { showToast } = useToast();
 
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeView, setActiveView] = useState<AppView>("dashboard");
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -196,12 +198,21 @@ export function AppShell() {
     return (
         <main className="min-h-screen bg-[#F8FAFC] text-slate-900">
             <div className="flex min-h-screen">
+                <div
+                    className={cn(
+                        "fixed inset-0 z-30 bg-black/30 md:hidden",
+                        sidebarOpen ? "block" : "hidden",
+                    )}
+                    onClick={() => setSidebarOpen(false)}
+                />
+
                 <AppSidebar
                     username={profile.username}
                     lang={lang}
                     activeView={activeView}
+                    sidebarOpen={sidebarOpen}
+                    onCloseSidebar={() => setSidebarOpen(false)}
                     onChangeView={setActiveView}
-                    onCreateTask={() => openCreateModal()}
                     onOpenSettings={() => setActiveView("settings")}
                 />
 
@@ -210,6 +221,7 @@ export function AppShell() {
                         username={profile.username}
                         activeView={activeView}
                         lang={lang}
+                        onToggleSidebar={() => setSidebarOpen((current) => !current)}
                         onToggleLanguage={toggleLanguage}
                         onEditProfile={() => setIsEditProfileOpen(true)}
                         onCreateTask={() => openCreateModal()}
