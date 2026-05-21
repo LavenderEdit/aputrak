@@ -18,6 +18,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { EditProfileModal } from "@/features/auth/components/EditProfileModal";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
+import { MobileNav } from "./MobileNav";
 import type { AppView } from "../types/shell.types";
 
 function createTaskId() {
@@ -222,6 +223,13 @@ export function AppShell() {
             <LoadingOverlay
                 visible={exportLoading || importLoading}
                 message={t("processing")}
+            />
+
+            <MobileNav
+                lang={lang}
+                activeView={activeView}
+                onChangeView={setActiveView}
+                onCreateTask={() => openCreateModal()}
             />
         </main>
     );
