@@ -1,6 +1,7 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
+import { Button } from "@/shared/components/ui/Button";
 import type { TranslateFn } from "@/shared/types/i18n.types";
 
 interface OverdueTasksBannerProps {
@@ -32,20 +33,17 @@ export function OverdueTasksBanner({
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row">
-                    <button
-                        onClick={onDismiss}
-                        className="rounded-2xl border border-amber-200 bg-white/70 px-4 py-2 text-sm font-bold text-amber-700 transition hover:bg-white"
-                    >
+                    <Button variant="secondary" onClick={onDismiss}>
                         {lang === "es" ? "Ocultar" : "Dismiss"}
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                         onClick={onSmartReschedule}
-                        className="flex items-center justify-center gap-2 rounded-2xl bg-amber-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-amber-600"
+                        className="bg-amber-500 shadow-none hover:bg-amber-600"
                     >
                         <Sparkles size={16} />
                         {t("smartTetrisBtn")}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </section>
