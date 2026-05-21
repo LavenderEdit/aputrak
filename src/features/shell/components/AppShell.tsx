@@ -1,22 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ActivitiesView } from "@/features/activities/components/ActivitiesView";
 import { LoginScreen } from "@/features/auth/components/LoginScreen";
+import { EditProfileModal } from "@/features/auth/components/EditProfileModal";
 import { useOfflineAuth } from "@/features/auth/hooks/useOfflineAuth";
+import { CalendarView } from "@/features/calendar/components/CalendarView";
 import { DashboardOverview } from "@/features/dashboard/components/DashboardOverview";
 import { useScheduleExport } from "@/features/export/hooks/useScheduleExport";
 import { useScheduleImport } from "@/features/import/hooks/useScheduleImport";
 import { ActivityModal } from "@/features/schedule/components/ActivityModal";
-import { ScheduleGrid } from "@/features/schedule/components/ScheduleGrid";
-import { ScheduleControls } from "@/features/schedule/components/ScheduleControls";
 import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
-import { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
+import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { SettingsModal } from "@/features/settings/components/SettingsModal";
+import { TagsView } from "@/features/tags/components/TagsView";
 import { LoadingOverlay } from "@/shared/components/ui/LoadingOverlay";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useToast } from "@/shared/hooks/useToast";
-import { EditProfileModal } from "@/features/auth/components/EditProfileModal";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
 import { MobileNav } from "./MobileNav";
@@ -47,28 +48,18 @@ export function AppShell() {
         [scheduleData.settings.activeDays],
     );
 
-    const {
-        modalState,
-        openCreateModal,
-        openEditModal,
-        closeModal,
-    } = useActivityModal(firstActiveDay, scheduleData.settings.startHour);
+    const { modalState, openCreateModal, openEditModal, closeModal } =
+        useActivityModal(firstActiveDay, scheduleData.settings.startHour);
 
-    const {
-        exportLoading,
-        handleGraphicExport,
-        handleExportJSON,
-    } = useScheduleExport({
-        profile,
-        scheduleData,
-        t,
-        showToast,
-    });
+    const { exportLoading, handleGraphicExport, handleExportJSON } =
+        useScheduleExport({
+            profile,
+            scheduleData,
+            t,
+            showToast,
+        });
 
-    const {
-        importLoading,
-        handleImportJSON,
-    } = useScheduleImport({
+    const { importLoading, handleImportJSON } = useScheduleImport({
         scheduleData,
         t,
         showToast,
@@ -86,8 +77,139 @@ export function AppShell() {
         return <LoginScreen onSave={saveUsername} />;
     }
 
+    const renderActiveView = () => {
+        if (activeView === "dashboard") {
+            return (
+                <DashboardOverview
+                    lang={lang}
+                    t={t}
+                    tasks={scheduleData.tasks}
+                    settings={scheduleData.settings}
+                    loadingData={scheduleData.loadingData}
+                    onCreateTask={() => openCreateModal()}
+                    onOpenCalendar={() => setActiveView("calendar")}
+                    onCopyPreviousWeek={async () => {
+                        const success = await scheduleData.copyPreviousWeek();
+
+                        showToast(
+                            success ? t("cloneSuccess") : t("cloneError"),
+                            success ? "success" : "error",
+                        );
+                    }}
+                    onSmartReschedule={async () => {
+                        const result = await scheduleData.smartReschedule();
+
+                        if (result.success) {
+                            showToast(t("smartTetrisSuccess"));
+                            return;
+                        }
+
+                        if (result.reason === "no-space") {
+                            showToast(t("smartTetrisNoSpace"), "error");
+                        }
+                    }}
+                />
+            );
+        }
+
+        if (activeView === "calendar") {
+            return (
+                <CalendarView
+                    lang={lang}
+                    weekId={scheduleData.weekId}
+                    settings={scheduleData.settings}
+                    tasks={scheduleData.tasks}
+                    changeWeek={scheduleData.changeWeek}
+                    onCreateTask={(day, hour) => openCreateModal(day, hour * 60)}
+                    onActivityClick={(taskId) => {
+                        const task = scheduleData.tasks.find((item) => item.id === taskId);
+
+                        if (task) {
+                            openEditModal(task);
+                        }
+                    }}
+                />
+            );
+        }
+
+        if (activeView === "activities") {
+            return (
+                <ActivitiesView
+                    lang={lang}
+                    weekId={scheduleData.weekId}
+                    tasks={scheduleData.tasks}
+                    onCreateTask={() => openCreateModal()}
+                    onEditTask={openEditModal}
+                    onDeleteTask={scheduleData.deleteTask}
+                    onToggleComplete={scheduleData.toggleTaskComplete}
+                />
+            );
+        }
+
+        if (activeView === "tags") {
+            return (
+                <TagsView
+                    lang={lang}
+                    weekId={scheduleData.weekId}
+                    tasks={scheduleData.tasks}
+                />
+            );
+        }
+
+        if (activeView === "import") {
+            return (
+                <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
+                    <h2 className="font-display text-xl font-bold text-slate-950">
+                        {lang === "es" ? "Importar Horario" : "Import Schedule"}
+                    </h2>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                        {lang === "es"
+                            ? "La vista de importación se conectará en la siguiente fase."
+                            : "The import view will be connected in the next phase."}
+                    </p>
+                </div>
+            );
+        }
+
+        if (activeView === "export") {
+            return (
+                <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
+                    <h2 className="font-display text-xl font-bold text-slate-950">
+                        {lang === "es" ? "Exportar Horario" : "Export Schedule"}
+                    </h2>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                        {lang === "es"
+                            ? "La vista de exportación se conectará en la siguiente fase."
+                            : "The export view will be connected in the next phase."}
+                    </p>
+                </div>
+            );
+        }
+
+        if (activeView === "settings") {
+            return (
+                <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
+                    <h2 className="font-display text-xl font-bold text-slate-950">
+                        {lang === "es" ? "Ajustes" : "Settings"}
+                    </h2>
+
+                    <button
+                        onClick={() => setIsSettingsOpen(true)}
+                        className="mt-4 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                    >
+                        {lang === "es" ? "Abrir ajustes" : "Open settings"}
+                    </button>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
     return (
-        <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.14),transparent_34%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] text-slate-900">
+        <main className="min-h-screen bg-[#F8FAFC] text-slate-900">
             <div className="flex min-h-screen">
                 <AppSidebar
                     username={profile.username}
@@ -95,7 +217,7 @@ export function AppShell() {
                     activeView={activeView}
                     onChangeView={setActiveView}
                     onCreateTask={() => openCreateModal()}
-                    onOpenSettings={() => setIsSettingsOpen(true)}
+                    onOpenSettings={() => setActiveView("settings")}
                 />
 
                 <section className="flex min-w-0 flex-1 flex-col">
@@ -112,61 +234,7 @@ export function AppShell() {
                         onImportJSON={handleImportJSON}
                     />
 
-                    <div className="flex-1 px-4 py-5 sm:px-6 lg:px-8">
-                        <div className="mx-auto max-w-7xl">
-                            {activeView === "dashboard" ? (
-                                <DashboardOverview
-                                    lang={lang}
-                                    t={t}
-                                    tasks={scheduleData.tasks}
-                                    settings={scheduleData.settings}
-                                    loadingData={scheduleData.loadingData}
-                                    onCreateTask={() => openCreateModal()}
-                                    onOpenCalendar={() => setActiveView("calendar")}
-                                    onCopyPreviousWeek={async () => {
-                                        const success = await scheduleData.copyPreviousWeek();
-                                        showToast(
-                                            success ? t("cloneSuccess") : t("cloneError"),
-                                            success ? "success" : "error",
-                                        );
-                                    }}
-                                    onSmartReschedule={async () => {
-                                        const result = await scheduleData.smartReschedule();
-
-                                        if (result.success) {
-                                            showToast(t("smartTetrisSuccess"));
-                                            return;
-                                        }
-
-                                        if (result.reason === "no-space") {
-                                            showToast(t("smartTetrisNoSpace"), "error");
-                                        }
-                                    }}
-                                />
-                            ) : (
-                                <div className="space-y-4">
-                                    <ScheduleControls
-                                        weekId={scheduleData.weekId}
-                                        changeWeek={scheduleData.changeWeek}
-                                        onOpenSettings={() => setIsSettingsOpen(true)}
-                                        lang={lang}
-                                    />
-
-                                    <ScheduleGrid
-                                        settings={scheduleData.settings}
-                                        tasks={scheduleData.tasks}
-                                        weekId={scheduleData.weekId}
-                                        getDayName={getDayName}
-                                        onCellClick={(day, hour) => openCreateModal(day, hour * 60)}
-                                        onTaskClick={openEditModal}
-                                        onDeleteTask={scheduleData.deleteTask}
-                                        onToggleComplete={scheduleData.toggleTaskComplete}
-                                        onMoveTask={scheduleData.moveTask}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    <div className="flex-1 overflow-y-auto">{renderActiveView()}</div>
                 </section>
             </div>
 
@@ -201,7 +269,9 @@ export function AppShell() {
                     };
 
                     if (!payload.text.trim()) {
-                        if (previousTask) scheduleData.deleteTask(previousTask.id);
+                        if (previousTask) {
+                            scheduleData.deleteTask(previousTask.id);
+                        }
                     } else {
                         scheduleData.saveTask(task);
                     }
