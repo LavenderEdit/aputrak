@@ -8,6 +8,7 @@ import { useScheduleExport } from "@/features/export/hooks/useScheduleExport";
 import { useScheduleImport } from "@/features/import/hooks/useScheduleImport";
 import { ActivityModal } from "@/features/schedule/components/ActivityModal";
 import { ScheduleGrid } from "@/features/schedule/components/ScheduleGrid";
+import { ScheduleControls } from "@/features/schedule/components/ScheduleControls";
 import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
 import { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
@@ -143,17 +144,26 @@ export function AppShell() {
                                     }}
                                 />
                             ) : (
-                                <ScheduleGrid
-                                    settings={scheduleData.settings}
-                                    tasks={scheduleData.tasks}
-                                    weekId={scheduleData.weekId}
-                                    getDayName={getDayName}
-                                    onCellClick={(day, hour) => openCreateModal(day, hour * 60)}
-                                    onTaskClick={openEditModal}
-                                    onDeleteTask={scheduleData.deleteTask}
-                                    onToggleComplete={scheduleData.toggleTaskComplete}
-                                    onMoveTask={scheduleData.moveTask}
-                                />
+                                <div className="space-y-4">
+                                    <ScheduleControls
+                                        weekId={scheduleData.weekId}
+                                        changeWeek={scheduleData.changeWeek}
+                                        onOpenSettings={() => setIsSettingsOpen(true)}
+                                        lang={lang}
+                                    />
+
+                                    <ScheduleGrid
+                                        settings={scheduleData.settings}
+                                        tasks={scheduleData.tasks}
+                                        weekId={scheduleData.weekId}
+                                        getDayName={getDayName}
+                                        onCellClick={(day, hour) => openCreateModal(day, hour * 60)}
+                                        onTaskClick={openEditModal}
+                                        onDeleteTask={scheduleData.deleteTask}
+                                        onToggleComplete={scheduleData.toggleTaskComplete}
+                                        onMoveTask={scheduleData.moveTask}
+                                    />
+                                </div>
                             )}
                         </div>
                     </div>
