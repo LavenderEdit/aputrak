@@ -11,6 +11,7 @@ import {
     getCompletedSubtasksCount,
     getPendingSubtasksCount,
 } from "@/features/schedule/lib/schedule-view";
+import { Card } from "@/shared/components/ui/Card";
 import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface DashboardStatsProps {
@@ -58,10 +59,7 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
                 const Icon = stat.icon;
 
                 return (
-                    <article
-                        key={stat.label}
-                        className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-sm backdrop-blur-xl"
-                    >
+                    <Card key={stat.label}>
                         <div
                             className={`mb-4 grid h-11 w-11 place-items-center rounded-2xl ${stat.className}`}
                         >
@@ -75,7 +73,7 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
                         <p className="mt-1 text-sm font-bold text-slate-500">
                             {stat.label}
                         </p>
-                    </article>
+                    </Card>
                 );
             })}
         </section>
