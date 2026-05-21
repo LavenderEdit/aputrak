@@ -1,0 +1,36 @@
+export const SHELL_COPY = {
+    es: {
+        appName: "Aputrak",
+        workspace: "Espacio personal",
+        userLabel: "Usuario",
+        dashboard: "Panel",
+        calendar: "Calendario",
+        settings: "Ajustes",
+        newActivity: "Nueva actividad",
+        offlineActive: "Modo offline activo",
+        offlineDescription: "Tus datos se guardan localmente en este navegador.",
+        weeklyCalendar: "Calendario semanal",
+        backup: "Backup",
+        restore: "Restore",
+        mobile: "Móvil",
+        create: "Crear",
+    },
+    en: {
+        appName: "Aputrak",
+        workspace: "Personal workspace",
+        userLabel: "User",
+        dashboard: "Dashboard",
+        calendar: "Calendar",
+        settings: "Settings",
+        newActivity: "New activity",
+        offlineActive: "Offline mode active",
+        offlineDescription: "Your data is stored locally in this browser.",
+        weeklyCalendar: "Weekly calendar",
+        backup: "Backup",
+        restore: "Restore",
+        mobile: "Mobile",
+        create: "Create",
+    },
+} as const;
+
+export type ShellCopyLanguage = keyof typeof SHELL_COPY;
