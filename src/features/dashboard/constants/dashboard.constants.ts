@@ -30,3 +30,7 @@ export const DASHBOARD_COPY = {
 } as const;
 
 export type DashboardLanguage = keyof typeof DASHBOARD_COPY;
+
+export function getDashboardCopy(lang: string) {
+    return DASHBOARD_COPY[lang as DashboardLanguage] ?? DASHBOARD_COPY.es;
+}
