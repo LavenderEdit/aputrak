@@ -17,7 +17,7 @@ import { UpcomingTasksCard } from "./UpcomingTasksCard";
 import { OverdueTasksBanner } from "@/features/schedule/components/OverdueTasksBanner";
 import { EmptyWeekState } from "@/features/schedule/components/EmptyWeekState";
 import type { TranslateFn } from "@/shared/types/i18n.types";
-
+import { getDashboardCopy } from "../constants/dashboard.constants";
 interface DashboardOverviewProps {
     lang: string;
     t: TranslateFn;
@@ -49,18 +49,7 @@ export function DashboardOverview({
         dismissedOverdue,
     );
 
-    const copy = {
-        title:
-            lang === "es"
-                ? "Organiza tu semana con claridad"
-                : "Organize your week with clarity",
-        subtitle:
-            lang === "es"
-                ? "Vista rápida de tus actividades, pendientes y progreso semanal."
-                : "A quick view of your activities, pending tasks, and weekly progress.",
-        newTask: lang === "es" ? "Nueva actividad" : "New activity",
-        openCalendar: lang === "es" ? "Abrir calendario" : "Open calendar",
-    };
+    const copy = getDashboardCopy(lang);
 
     return (
         <div className="space-y-6">
