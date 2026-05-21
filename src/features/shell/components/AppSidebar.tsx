@@ -8,8 +8,8 @@ import {
     Sparkles,
 } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
+import { getShellCopy } from "../constants/shell.constants";
 import type { AppView } from "../types/shell.types";
-import { SHELL_COPY } from "../constants/shell.constants";
 
 interface AppSidebarProps {
     username: string;
@@ -28,7 +28,7 @@ export function AppSidebar({
     onCreateTask,
     onOpenSettings,
 }: AppSidebarProps) {
-    const copy = SHELL_COPY[lang as keyof typeof SHELL_COPY] ?? SHELL_COPY.es;
+    const copy = getShellCopy(lang);
 
     const navItems = [
         { id: "dashboard" as const, label: copy.dashboard, icon: Grid2X2 },
@@ -45,8 +45,9 @@ export function AppSidebar({
 
                     <div className="min-w-0">
                         <h1 className="truncate text-lg font-black tracking-tight text-slate-950">
-                            Aputrak
+                            {copy.appName}
                         </h1>
+
                         <p className="truncate text-xs font-medium text-slate-500">
                             {copy.workspace}
                         </p>
@@ -57,6 +58,7 @@ export function AppSidebar({
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                         {copy.userLabel}
                     </p>
+
                     <p className="mt-1 truncate text-sm font-bold text-slate-800">
                         {username}
                     </p>
@@ -68,7 +70,7 @@ export function AppSidebar({
                 className="mb-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-700"
             >
                 <Plus size={18} />
-                {copy.create}
+                {copy.newActivity}
             </button>
 
             <nav className="space-y-2">
@@ -104,7 +106,9 @@ export function AppSidebar({
             <div className="mt-auto rounded-3xl border border-emerald-100 bg-emerald-50 p-4">
                 <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                    <p className="text-sm font-bold text-emerald-700">{copy.offlineActive}</p>
+                    <p className="text-sm font-bold text-emerald-700">
+                        {copy.offlineActive}
+                    </p>
                 </div>
 
                 <p className="mt-1 text-xs leading-relaxed text-emerald-700/70">
