@@ -6,6 +6,7 @@ import {
     getCurrentDayIndex,
     getTaskLines,
 } from "@/features/schedule/lib/schedule-view";
+import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface TodayScheduleCardProps {
     lang: string;
@@ -13,6 +14,7 @@ interface TodayScheduleCardProps {
 }
 
 export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
+    const copy = getDashboardCopy(lang);
     const currentDay = getCurrentDayIndex();
 
     const todayTasks = tasks
@@ -23,7 +25,7 @@ export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
     return (
         <article className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-sm backdrop-blur-xl">
             <h2 className="mb-4 text-lg font-black text-slate-950">
-                {lang === "es" ? "Hoy" : "Today"}
+                {copy.today}
             </h2>
 
             <div className="space-y-3">
@@ -58,9 +60,7 @@ export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
                 ) : (
                     <div className="grid min-h-[180px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-center">
                         <p className="text-sm font-bold text-slate-400">
-                            {lang === "es"
-                                ? "No tienes actividades para hoy."
-                                : "You have no activities today."}
+                            {copy.emptyToday}
                         </p>
                     </div>
                 )}
