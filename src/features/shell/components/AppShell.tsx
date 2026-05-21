@@ -21,6 +21,8 @@ import { useToast } from "@/shared/hooks/useToast";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
 import { MobileNav } from "./MobileNav";
+import { ExportView } from "@/features/export/components/ExportView";
+import { ImportView } from "@/features/import/components/ImportView";
 import type { AppView } from "../types/shell.types";
 
 function createTaskId() {
@@ -157,34 +159,17 @@ export function AppShell() {
         }
 
         if (activeView === "import") {
-            return (
-                <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
-                    <h2 className="font-display text-xl font-bold text-slate-950">
-                        {lang === "es" ? "Importar Horario" : "Import Schedule"}
-                    </h2>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                        {lang === "es"
-                            ? "La vista de importación se conectará en la siguiente fase."
-                            : "The import view will be connected in the next phase."}
-                    </p>
-                </div>
-            );
+            return <ImportView lang={lang} onImportJSON={handleImportJSON} />;
         }
 
         if (activeView === "export") {
             return (
-                <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
-                    <h2 className="font-display text-xl font-bold text-slate-950">
-                        {lang === "es" ? "Exportar Horario" : "Export Schedule"}
-                    </h2>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                        {lang === "es"
-                            ? "La vista de exportación se conectará en la siguiente fase."
-                            : "The export view will be connected in the next phase."}
-                    </p>
-                </div>
+                <ExportView
+                    lang={lang}
+                    onExportPDF={() => handleGraphicExport("pdf")}
+                    onExportImage={handleGraphicExport}
+                    onExportJSON={handleExportJSON}
+                />
             );
         }
 
