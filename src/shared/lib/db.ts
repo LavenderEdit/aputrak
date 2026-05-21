@@ -3,10 +3,9 @@ const DB_VERSION = 1;
 
 type StoreName = "profile" | "settings" | "weeks";
 
-interface StoredRecord {
+type StoredRecord = {
     id: string;
-    [key: string]: unknown;
-}
+};
 
 const initDB = (): Promise<IDBDatabase> => {
     return new Promise((resolve, reject) => {
@@ -35,7 +34,10 @@ const initDB = (): Promise<IDBDatabase> => {
 };
 
 export const DB = {
-    get: async <T = unknown>(storeName: StoreName, id: string): Promise<T | undefined> => {
+    get: async <T = unknown>(
+        storeName: StoreName,
+        id: string,
+    ): Promise<T | undefined> => {
         const db = await initDB();
 
         return new Promise((resolve, reject) => {
@@ -48,7 +50,10 @@ export const DB = {
         });
     },
 
-    put: async <T extends StoredRecord>(storeName: StoreName, data: T): Promise<void> => {
+    put: async <T extends StoredRecord>(
+        storeName: StoreName,
+        data: T,
+    ): Promise<void> => {
         const db = await initDB();
 
         return new Promise((resolve, reject) => {

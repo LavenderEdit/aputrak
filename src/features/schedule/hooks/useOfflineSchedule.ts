@@ -4,121 +4,215 @@ import { useEffect, useState } from "react";
 import { DB } from "@/shared/lib/db";
 import { Utils } from "@/shared/lib/utils";
 import { DEFAULT_SETTINGS } from "@/shared/lib/constants";
-import type { ScheduleSettings, ScheduleTask } from "@/features/schedule/types/schedule.types";
+import type {
+    ScheduleSettings,
+    ScheduleTask,
+} from "@/features/schedule/types/schedule.types";
+
+type LegacyWeekData = Record<string, string>;
+
+interface StoredWeek {
+    id: string;
+    data: ScheduleTask[] | LegacyWeekData;
+}
+
+interface SmartRescheduleResult {
+    success: boolean;
+    reason?: "no-tasks" | "no-space";
+}
+
+function createTaskId(prefix = "task") {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
+
+function parseLegacyTaskValue(value: string) {
+    if (!value.startsWith("{")) {
+        return {
+            text: value,
+            color: "indigo",
+            completed: [] as boolean[],
+        };
+    }
+
+    try {
+        const parsed = JSON.parse(value) as {
+            text?: string;
+            color?: string;
+            completed?: boolean[];
+        };
+
+        return {
+            text: parsed.text ?? value,
+            color: parsed.color ?? "indigo",
+            completed: parsed.completed ?? [],
+        };
+    } catch {
+        return {
+            text: value,
+            color: "indigo",
+            completed: [] as boolean[],
+        };
+    }
+}
+
+function migrateLegacyWeekData(data: LegacyWeekData): ScheduleTask[] {
+    return Object.entries(data).map(([key, value]) => {
+        const [dayStr, hourStr] = key.split("-");
+        const day = Number(dayStr);
+        const hour = Number(hourStr);
+        const parsedValue = parseLegacyTaskValue(value);
+
+        return {
+            id: createTaskId(`task_${day}_${hour}`),
+            day,
+            startMinute: hour * 60,
+            endMinute: (hour + 1) * 60,
+            text: parsedValue.text,
+            color: parsedValue.color,
+            completed: parsedValue.completed,
+        };
+    });
+}
 
 export const useOfflineSchedule = () => {
     const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
     const weekId = Utils.getWeekStartIdentifier(currentWeekDate);
 
-    const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+    const [settings, setSettings] = useState<ScheduleSettings>(DEFAULT_SETTINGS);
     const [tasks, setTasks] = useState<ScheduleTask[]>([]);
     const [loadingData, setLoadingData] = useState(true);
 
     useEffect(() => {
         const loadSettings = async () => {
-            const savedSettings = await DB.get('settings', 'global');
-            if (savedSettings) setSettings(savedSettings);
+            const savedSettings = await DB.get<ScheduleSettings>("settings", "global");
+
+            if (savedSettings) {
+                setSettings(savedSettings);
+            }
         };
+
         loadSettings();
     }, []);
 
     useEffect(() => {
         const loadWeek = async () => {
             setLoadingData(true);
-            const weekData = await DB.get('weeks', weekId);
-            let loadedData = weekData ? weekData.data : [];
 
-            if (loadedData && !Array.isArray(loadedData) && Object.keys(loadedData).length > 0) {
-                const migratedTasks: ScheduleTask[] = [];
-                for (const [key, value] of Object.entries(loadedData)) {
-                    const [dayStr, hourStr] = key.split('-');
-                    const day = parseInt(dayStr);
-                    const hour = parseInt(hourStr);
-                    let text = value as string;
-                    let color = 'indigo';
-                    let completed: boolean[] = [];
+            try {
+                const weekData = await DB.get<StoredWeek>("weeks", weekId);
+                const rawData = weekData?.data ?? [];
 
-                    if (typeof value === 'string' && value.startsWith('{')) {
-                        try {
-                            const parsed = JSON.parse(value);
-                            text = parsed.text; color = parsed.color || 'indigo'; completed = parsed.completed || [];
-                        } catch { }
-                    }
-                    migratedTasks.push({ id: `task_${day}_${hour}_${Date.now()}`, day, startMinute: hour * 60, endMinute: (hour + 1) * 60, text, color, completed });
+                let loadedTasks: ScheduleTask[] = [];
+
+                if (Array.isArray(rawData)) {
+                    loadedTasks = rawData;
+                } else if (Object.keys(rawData).length > 0) {
+                    loadedTasks = migrateLegacyWeekData(rawData);
+                    await DB.put("weeks", { id: weekId, data: loadedTasks });
                 }
-                loadedData = migratedTasks;
-                await DB.put('weeks', { id: weekId, data: loadedData });
-            } else if (!Array.isArray(loadedData)) {
-                loadedData = [];
-            }
 
-            setTasks(loadedData);
-            setLoadingData(false);
+                setTasks(loadedTasks);
+            } finally {
+                setLoadingData(false);
+            }
         };
+
         loadWeek();
     }, [weekId]);
 
     const saveTask = async (task: ScheduleTask) => {
         const newTasks = [...tasks];
-        const existingIdx = newTasks.findIndex(t => t.id === task.id);
+        const existingIdx = newTasks.findIndex((item) => item.id === task.id);
 
-        if (existingIdx >= 0) newTasks[existingIdx] = task;
-        else newTasks.push(task);
+        if (existingIdx >= 0) {
+            newTasks[existingIdx] = task;
+        } else {
+            newTasks.push(task);
+        }
 
         setTasks(newTasks);
-        await DB.put('weeks', { id: weekId, data: newTasks });
+        await DB.put("weeks", { id: weekId, data: newTasks });
     };
 
     const deleteTask = async (taskId: string) => {
-        const newTasks = tasks.filter(t => t.id !== taskId);
+        const newTasks = tasks.filter((task) => task.id !== taskId);
+
         setTasks(newTasks);
-        await DB.put('weeks', { id: weekId, data: newTasks });
+        await DB.put("weeks", { id: weekId, data: newTasks });
     };
 
     const toggleTaskComplete = async (taskId: string, index: number) => {
-        const newTasks = [...tasks];
-        const task = newTasks.find(t => t.id === taskId);
-        if (task) {
-            task.completed[index] = !task.completed[index];
-            setTasks(newTasks);
-            await DB.put('weeks', { id: weekId, data: newTasks });
-        }
-    };
+        const newTasks = tasks.map((task) => {
+            if (task.id !== taskId) return task;
 
-    const moveTask = async (taskId: string, targetDay: number, targetHour: number) => {
-        const newTasks = [...tasks];
-        const taskIdx = newTasks.findIndex(t => t.id === taskId);
-        if (taskIdx === -1) return;
+            const completed = [...task.completed];
+            completed[index] = !completed[index];
 
-        const duration = newTasks[taskIdx].endMinute - newTasks[taskIdx].startMinute;
-        newTasks[taskIdx].day = targetDay;
-        newTasks[taskIdx].startMinute = targetHour * 60;
-        newTasks[taskIdx].endMinute = (targetHour * 60) + duration;
+            return {
+                ...task,
+                completed,
+            };
+        });
 
         setTasks(newTasks);
-        await DB.put('weeks', { id: weekId, data: newTasks });
+        await DB.put("weeks", { id: weekId, data: newTasks });
+    };
+
+    const moveTask = async (
+        taskId: string,
+        targetDay: number,
+        targetHour: number,
+    ) => {
+        const newTasks = tasks.map((task) => {
+            if (task.id !== taskId) return task;
+
+            const duration = task.endMinute - task.startMinute;
+            const startMinute = targetHour * 60;
+
+            return {
+                ...task,
+                day: targetDay,
+                startMinute,
+                endMinute: startMinute + duration,
+            };
+        });
+
+        setTasks(newTasks);
+        await DB.put("weeks", { id: weekId, data: newTasks });
     };
 
     const copyPreviousWeek = async () => {
         try {
             const prevDate = new Date(currentWeekDate);
             prevDate.setDate(prevDate.getDate() - 7);
-            const prevWeekId = Utils.getWeekStartIdentifier(prevDate);
-            const prevWeekData = await DB.get('weeks', prevWeekId);
 
-            if (prevWeekData && prevWeekData.data && Array.isArray(prevWeekData.data) && prevWeekData.data.length > 0) {
-                const clonedTasks = prevWeekData.data.map((t: ScheduleTask) => ({
-                    ...t, id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, completed: t.completed.map(() => false)
-                }));
-                setTasks(clonedTasks);
-                await DB.put('weeks', { id: weekId, data: clonedTasks });
-                return true;
+            const prevWeekId = Utils.getWeekStartIdentifier(prevDate);
+            const prevWeekData = await DB.get<StoredWeek>("weeks", prevWeekId);
+
+            if (!prevWeekData?.data || !Array.isArray(prevWeekData.data)) {
+                return false;
             }
+
+            if (prevWeekData.data.length === 0) {
+                return false;
+            }
+
+            const clonedTasks = prevWeekData.data.map((task) => ({
+                ...task,
+                id: createTaskId(),
+                completed: task.completed.map(() => false),
+            }));
+
+            setTasks(clonedTasks);
+            await DB.put("weeks", { id: weekId, data: clonedTasks });
+
+            return true;
+        } catch {
             return false;
-        } catch { return false; }
+        }
     };
 
-    const smartReschedule = async () => {
+    const smartReschedule = async (): Promise<SmartRescheduleResult> => {
         const now = new Date();
         const jsDay = now.getDay();
         const currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
@@ -127,76 +221,145 @@ export const useOfflineSchedule = () => {
         const newTasks = [...tasks];
         const tasksToMove: ScheduleTask[] = [];
 
-        for (let i = newTasks.length - 1; i >= 0; i--) {
-            const t = newTasks[i];
-            if (!settings.activeDays.includes(t.day)) continue;
+        for (let index = newTasks.length - 1; index >= 0; index--) {
+            const task = newTasks[index];
 
-            const taskHour = Math.floor(t.startMinute / 60);
-            const isPast = t.day < currentDayIdx || (t.day === currentDayIdx && taskHour < currentHour);
+            if (!settings.activeDays.includes(task.day)) continue;
 
-            if (isPast) {
-                const lines = t.text.split('\n').filter(line => line.trim() !== '');
-                let someIncomplete = false;
-                const remainingLines: string[] = [];
-                const remainingCompleted: boolean[] = [];
+            const taskHour = Math.floor(task.startMinute / 60);
+            const isPast =
+                task.day < currentDayIdx ||
+                (task.day === currentDayIdx && taskHour < currentHour);
 
-                lines.forEach((line, idx) => {
-                    if (t.completed[idx]) {
-                        remainingLines.push(line);
-                        remainingCompleted.push(true);
-                    } else {
-                        someIncomplete = true;
-                        tasksToMove.push({
-                            id: `task_resched_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-                            day: -1, startMinute: -1, endMinute: -1,
-                            text: line, color: t.color, completed: [false]
-                        });
-                    }
-                });
+            if (!isPast) continue;
 
-                if (someIncomplete) {
-                    if (remainingLines.length === 0) newTasks.splice(i, 1);
-                    else { newTasks[i].text = remainingLines.join('\n'); newTasks[i].completed = remainingCompleted; }
+            const lines = task.text.split("\n").filter((line) => line.trim() !== "");
+            let hasIncomplete = false;
+            const remainingLines: string[] = [];
+            const remainingCompleted: boolean[] = [];
+
+            lines.forEach((line, lineIndex) => {
+                if (task.completed[lineIndex]) {
+                    remainingLines.push(line);
+                    remainingCompleted.push(true);
+                    return;
                 }
+
+                hasIncomplete = true;
+                tasksToMove.push({
+                    id: createTaskId("task_resched"),
+                    day: -1,
+                    startMinute: -1,
+                    endMinute: -1,
+                    text: line,
+                    color: task.color,
+                    completed: [false],
+                });
+            });
+
+            if (!hasIncomplete) continue;
+
+            if (remainingLines.length === 0) {
+                newTasks.splice(index, 1);
+            } else {
+                newTasks[index] = {
+                    ...task,
+                    text: remainingLines.join("\n"),
+                    completed: remainingCompleted,
+                };
             }
         }
 
-        if (tasksToMove.length === 0) return { success: false, reason: 'no-tasks' };
+        if (tasksToMove.length === 0) {
+            return {
+                success: false,
+                reason: "no-tasks",
+            };
+        }
 
-        const futureDays = settings.activeDays.filter(d => d >= currentDayIdx).sort();
-        const emptySlots: { day: number, startMinute: number, endMinute: number }[] = [];
+        const futureDays = settings.activeDays
+            .filter((day) => day >= currentDayIdx)
+            .sort((a, b) => a - b);
+
+        const emptySlots: Array<{
+            day: number;
+            startMinute: number;
+            endMinute: number;
+        }> = [];
 
         for (const day of futureDays) {
             for (let hour = settings.startHour; hour < settings.endHour; hour++) {
                 if (day === currentDayIdx && hour <= currentHour) continue;
-                const isOccupied = newTasks.some(t => t.day === day && t.startMinute < (hour + 1) * 60 && t.endMinute > hour * 60);
-                if (!isOccupied) emptySlots.push({ day, startMinute: hour * 60, endMinute: (hour + 1) * 60 });
+
+                const startMinute = hour * 60;
+                const endMinute = (hour + 1) * 60;
+
+                const isOccupied = newTasks.some(
+                    (task) =>
+                        task.day === day &&
+                        task.startMinute < endMinute &&
+                        task.endMinute > startMinute,
+                );
+
+                if (!isOccupied) {
+                    emptySlots.push({
+                        day,
+                        startMinute,
+                        endMinute,
+                    });
+                }
             }
         }
 
-        if (emptySlots.length < tasksToMove.length) return { success: false, reason: 'no-space' };
+        if (emptySlots.length < tasksToMove.length) {
+            return {
+                success: false,
+                reason: "no-space",
+            };
+        }
 
-        tasksToMove.forEach((t, idx) => {
-            t.day = emptySlots[idx].day; t.startMinute = emptySlots[idx].startMinute; t.endMinute = emptySlots[idx].endMinute;
-            newTasks.push(t);
+        tasksToMove.forEach((task, index) => {
+            const slot = emptySlots[index];
+
+            newTasks.push({
+                ...task,
+                day: slot.day,
+                startMinute: slot.startMinute,
+                endMinute: slot.endMinute,
+            });
         });
 
         setTasks(newTasks);
-        await DB.put('weeks', { id: weekId, data: newTasks });
-        return { success: true };
+        await DB.put("weeks", { id: weekId, data: newTasks });
+
+        return {
+            success: true,
+        };
     };
 
     const updateSettings = async (newSettings: ScheduleSettings) => {
-        setSettings(newSettings); await DB.put('settings', { id: 'global', ...newSettings });
+        setSettings(newSettings);
+        await DB.put("settings", { id: "global", ...newSettings });
     };
 
     const changeWeek = (direction: number) => {
-        const newDate = new Date(currentWeekDate); newDate.setDate(newDate.getDate() + (direction * 7)); setCurrentWeekDate(newDate);
+        const newDate = new Date(currentWeekDate);
+        newDate.setDate(newDate.getDate() + direction * 7);
+        setCurrentWeekDate(newDate);
     };
 
     return {
-        weekId, settings, tasks, loadingData,
-        saveTask, deleteTask, toggleTaskComplete, moveTask,
-        copyPreviousWeek, smartReschedule, updateSettings, changeWeek
+        weekId,
+        settings,
+        tasks,
+        loadingData,
+        saveTask,
+        deleteTask,
+        toggleTaskComplete,
+        moveTask,
+        copyPreviousWeek,
+        smartReschedule,
+        updateSettings,
+        changeWeek,
     };
 };
