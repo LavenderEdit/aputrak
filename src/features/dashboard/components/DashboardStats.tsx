@@ -11,6 +11,7 @@ import {
     getCompletedSubtasksCount,
     getPendingSubtasksCount,
 } from "@/features/schedule/lib/schedule-view";
+import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface DashboardStatsProps {
     lang: string;
@@ -18,6 +19,7 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
+    const copy = getDashboardCopy(lang);
     const completed = getCompletedSubtasksCount(tasks);
     const pending = getPendingSubtasksCount(tasks);
     const total = completed + pending;
@@ -25,25 +27,25 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
 
     const stats = [
         {
-            label: lang === "es" ? "Actividades" : "Activities",
+            label: copy.activities,
             value: tasks.length,
             icon: Layers3,
             className: "bg-indigo-50 text-indigo-700",
         },
         {
-            label: lang === "es" ? "Completadas" : "Completed",
+            label: copy.completed,
             value: completed,
             icon: CheckCircle2,
             className: "bg-emerald-50 text-emerald-700",
         },
         {
-            label: lang === "es" ? "Pendientes" : "Pending",
+            label: copy.pending,
             value: pending,
             icon: Clock3,
             className: "bg-amber-50 text-amber-700",
         },
         {
-            label: lang === "es" ? "Progreso" : "Progress",
+            label: copy.progress,
             value: `${progress}%`,
             icon: TrendingUp,
             className: "bg-cyan-50 text-cyan-700",
