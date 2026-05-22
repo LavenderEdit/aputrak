@@ -11,7 +11,6 @@ import {
     getCompletedSubtasksCount,
     getPendingSubtasksCount,
 } from "@/features/schedule/lib/schedule-view";
-import { Card } from "@/shared/components/ui/Card";
 import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface DashboardStatsProps {
@@ -24,56 +23,63 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
     const completed = getCompletedSubtasksCount(tasks);
     const pending = getPendingSubtasksCount(tasks);
     const total = completed + pending;
-    const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const productivity = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     const stats = [
         {
-            label: copy.activities,
+            label: copy.totalActivities,
             value: tasks.length,
             icon: Layers3,
-            className: "bg-indigo-50 text-indigo-700",
+            bg: "bg-indigo-50",
+            fg: "text-primary",
         },
         {
-            label: copy.completed,
+            label: copy.completedTasks,
             value: completed,
             icon: CheckCircle2,
-            className: "bg-emerald-50 text-emerald-700",
+            bg: "bg-emerald-50",
+            fg: "text-success",
         },
         {
-            label: copy.pending,
+            label: copy.pendingTasks,
             value: pending,
             icon: Clock3,
-            className: "bg-amber-50 text-amber-700",
+            bg: "bg-amber-50",
+            fg: "text-accent",
         },
         {
-            label: copy.progress,
-            value: `${progress}%`,
+            label: copy.productivity,
+            value: `${productivity}%`,
             icon: TrendingUp,
-            className: "bg-cyan-50 text-cyan-700",
+            bg: "bg-teal-50",
+            fg: "text-secondary",
         },
     ];
 
     return (
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {stats.map((stat) => {
                 const Icon = stat.icon;
 
                 return (
-                    <Card key={stat.label}>
-                        <div
-                            className={`mb-4 grid h-11 w-11 place-items-center rounded-2xl ${stat.className}`}
-                        >
-                            <Icon size={20} />
+                    <article
+                        key={stat.label}
+                        className="rounded-xl border border-sborder bg-white p-4"
+                    >
+                        <div className="mb-2 flex items-center gap-2">
+                            <div
+                                className={`flex h-8 w-8 items-center justify-center rounded-lg ${stat.bg}`}
+                            >
+                                <Icon size={16} className={stat.fg} />
+                            </div>
                         </div>
 
-                        <p className="text-3xl font-black tracking-tight text-slate-950">
+                        <div className="font-display text-2xl font-bold text-slate-950">
                             {stat.value}
-                        </p>
+                        </div>
 
-                        <p className="mt-1 text-sm font-bold text-slate-500">
-                            {stat.label}
-                        </p>
-                    </Card>
+                        <div className="mt-0.5 text-xs text-muted">{stat.label}</div>
+                    </article>
                 );
             })}
         </section>
