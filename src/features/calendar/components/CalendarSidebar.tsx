@@ -3,6 +3,7 @@
 import { Plus } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
 import type { ActivityTag } from "@/features/tags/types/tag.types";
+import { getCalendarCopy } from "../constants/calendar.constants";
 
 interface CalendarSidebarProps {
     lang: string;
@@ -19,6 +20,8 @@ export function CalendarSidebar({
     onSelectTag,
     onCreateActivity,
 }: CalendarSidebarProps) {
+
+    const copy = getCalendarCopy(lang);
     return (
         <aside className="hidden w-[220px] shrink-0 flex-col border-r border-sborder bg-white md:flex">
             <div className="border-b border-sborder p-5">
@@ -27,13 +30,13 @@ export function CalendarSidebar({
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-primary-dark"
                 >
                     <Plus size={16} />
-                    {lang === "es" ? "Agregar tarea" : "Add task"}
+                    {copy.addTask}
                 </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
                 <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.08em] text-muted">
-                    {lang === "es" ? "Etiquetas" : "Tags"}
+                    {copy.tags}
                 </h4>
 
                 <div className="space-y-1">
@@ -47,7 +50,7 @@ export function CalendarSidebar({
                         )}
                     >
                         <span className="h-3 w-3 rounded-full bg-slate-400" />
-                        {lang === "es" ? "Todas" : "All"}
+                        {copy.all}
                     </button>
 
                     {tags.map((tag) => (
