@@ -6,23 +6,24 @@ import { LoginScreen } from "@/features/auth/components/LoginScreen";
 import { useOfflineAuth } from "@/features/auth/hooks/useOfflineAuth";
 import { CalendarView } from "@/features/calendar/components/CalendarView";
 import { DashboardOverview } from "@/features/dashboard/components/DashboardOverview";
+import { ExportView } from "@/features/export/components/ExportView";
 import { useScheduleExport } from "@/features/export/hooks/useScheduleExport";
+import { ImportView } from "@/features/import/components/ImportView";
 import { useScheduleImport } from "@/features/import/hooks/useScheduleImport";
 import { ActivityModal } from "@/features/schedule/components/ActivityModal";
 import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
 import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
+import { SettingsView } from "@/features/settings/components/SettingsView";
 import { TagsView } from "@/features/tags/components/TagsView";
+import { getToastCopy } from "@/shared/constants/toast.constants";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useToast } from "@/shared/hooks/useToast";
+import { cn } from "@/shared/lib/cn";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
 import { MobileNav } from "./MobileNav";
-import { ExportView } from "@/features/export/components/ExportView";
-import { ImportView } from "@/features/import/components/ImportView";
-import { SettingsView } from "@/features/settings/components/SettingsView";
 import type { AppView } from "../types/shell.types";
-import { cn } from "@/shared/lib/cn";
 
 function createTaskId() {
     return `task_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -39,6 +40,7 @@ export function AppShell() {
     const scheduleData = useOfflineSchedule();
     const { lang, toggleLanguage, t, getDayName } = useLanguage();
     const { showToast, showPromiseToast } = useToast();
+    const toastCopy = getToastCopy(lang);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeView, setActiveView] = useState<AppView>("dashboard");
@@ -94,7 +96,9 @@ export function AppShell() {
                         const success = await scheduleData.copyPreviousWeek();
 
                         showToast(
-                            success ? t("cloneSuccess") : t("cloneError"),
+                            success
+                                ? toastCopy.schedule.cloneSuccess
+                                : toastCopy.schedule.cloneError,
                             success ? "success" : "error",
                         );
                     }}
@@ -102,12 +106,12 @@ export function AppShell() {
                         const result = await scheduleData.smartReschedule();
 
                         if (result.success) {
-                            showToast(t("smartTetrisSuccess"));
+                            showToast(toastCopy.schedule.smartRescheduleSuccess);
                             return;
                         }
 
                         if (result.reason === "no-space") {
-                            showToast(t("smartTetrisNoSpace"), "error");
+                            showToast(toastCopy.schedule.smartRescheduleNoSpace, "error");
                         }
                     }}
                 />
@@ -271,7 +275,6 @@ export function AppShell() {
                     closeModal();
                 }}
             />
-
 
             <MobileNav
                 lang={lang}
