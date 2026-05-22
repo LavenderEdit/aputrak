@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/shared/components/ui/Button";
 import { Modal } from "@/shared/components/ui/Modal";
+import { getTagsCopy } from "../constants/tags.constants";
 import type { ActivityTag } from "../types/tag.types";
 
 interface TagModalProps {
@@ -27,6 +28,8 @@ function createTagId() {
 }
 
 function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
+    const copy = getTagsCopy(lang);
+
     const [name, setName] = useState(tag?.name ?? "");
     const [color, setColor] = useState(tag?.color ?? colors[0]);
 
@@ -36,11 +39,13 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
             onSubmit={(event) => {
                 event.preventDefault();
 
-                if (!name.trim()) return;
+                const cleanName = name.trim();
+
+                if (!cleanName) return;
 
                 onSave({
                     id: tag?.id ?? createTagId(),
-                    name: name.trim(),
+                    name: cleanName,
                     color,
                     icon: tag?.icon ?? "Tag",
                 });
@@ -48,20 +53,20 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
         >
             <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                    {lang === "es" ? "Nombre de Etiqueta" : "Tag Name"}
+                    {copy.tagName}
                 </label>
 
                 <input
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-500"
+                    className="w-full rounded-xl border border-sborder px-3 py-2.5 text-sm outline-none transition focus:border-primary"
                     required
                 />
             </div>
 
             <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                    {lang === "es" ? "Color" : "Color"}
+                    {copy.color}
                 </label>
 
                 <div className="flex gap-2">
@@ -71,10 +76,11 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                             type="button"
                             onClick={() => setColor(item)}
                             className={`h-9 w-9 rounded-full transition ${color === item
-                                ? "scale-110 ring-2 ring-indigo-500 ring-offset-2"
+                                ? "scale-110 ring-2 ring-primary ring-offset-2"
                                 : ""
                                 }`}
                             style={{ backgroundColor: item }}
+                            aria-label={item}
                         />
                     ))}
                 </div>
@@ -82,10 +88,10 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
 
             <div className="flex justify-end gap-3">
                 <Button variant="ghost" onClick={onClose}>
-                    {lang === "es" ? "Cancelar" : "Cancel"}
+                    {copy.cancel}
                 </Button>
 
-                <Button type="submit">{lang === "es" ? "Guardar" : "Save"}</Button>
+                <Button type="submit">{copy.save}</Button>
             </div>
         </form>
     );
@@ -98,13 +104,8 @@ export function TagModal({
     onClose,
     onSave,
 }: TagModalProps) {
-    const title = tag
-        ? lang === "es"
-            ? "Editar Etiqueta"
-            : "Edit Tag"
-        : lang === "es"
-            ? "Agregar Etiqueta"
-            : "Add Tag";
+    const copy = getTagsCopy(lang);
+    const title = tag ? copy.editTag : copy.addTag;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title={title}>
