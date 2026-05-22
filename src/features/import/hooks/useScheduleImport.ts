@@ -5,8 +5,8 @@ import type {
     ScheduleSettings,
     ScheduleTask,
 } from "@/features/schedule/types/schedule.types";
-import type { ToastType } from "@/shared/hooks/useToast";
-import type { TranslateFn } from "@/shared/types/i18n.types";
+import type { PromiseToastMessages } from "@/shared/hooks/useToast";
+import { getToastCopy } from "@/shared/constants/toast.constants";
 
 interface ScheduleData {
     settings: unknown;
@@ -15,9 +15,12 @@ interface ScheduleData {
 }
 
 interface UseScheduleImportParams {
+    lang: string;
     scheduleData: ScheduleData;
-    t: TranslateFn;
-    showToast: (message: string, type?: ToastType) => void;
+    showPromiseToast: <T>(
+        promise: Promise<T>,
+        messages: PromiseToastMessages<T>,
+    ) => Promise<T>;
 }
 
 function createTaskId() {
@@ -44,16 +47,15 @@ function legacyActivitiesToTasks(activities: Record<string, string>) {
 }
 
 export function useScheduleImport({
+    lang,
     scheduleData,
-    t,
-    showToast,
+    showPromiseToast,
 }: UseScheduleImportParams) {
+    const toastCopy = getToastCopy(lang);
     const [importLoading, setImportLoading] = useState(false);
 
     const handleImportJSON = async (file: File) => {
-        try {
-            setImportLoading(true);
-
+        const importTask = async () => {
             const text = await file.text();
             const data = JSON.parse(text);
 
@@ -86,11 +88,13 @@ export function useScheduleImport({
                                 .map(() => false),
                 });
             }
+        };
 
-            showToast(t("restoreSuccess"));
+        try {
+            setImportLoading(true);
+            await showPromiseToast(importTask(), toastCopy.importBackup);
         } catch (error) {
             console.error(error);
-            showToast(t("invalidFile"), "error");
         } finally {
             setImportLoading(false);
         }
