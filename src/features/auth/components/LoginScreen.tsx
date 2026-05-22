@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, CalendarCheck, Globe2 } from "lucide-react";
+import { getAuthCopy } from "../constants/auth.constants";
 
 interface LoginScreenProps {
   onSave: (name: string) => void;
@@ -10,29 +11,7 @@ interface LoginScreenProps {
 export function LoginScreen({ onSave }: LoginScreenProps) {
   const [name, setName] = useState("");
   const [lang, setLang] = useState<"en" | "es">("es");
-
-  const copy = {
-    en: {
-      appName: "Aputrak",
-      welcomeSub: "Your offline-first schedule & activity planner",
-      name: "Name",
-      enterName: "Enter your name",
-      language: "Language",
-      getStarted: "Get Started",
-      worksOffline: "Works offline — no internet required",
-      validationError: "Please enter your name.",
-    },
-    es: {
-      appName: "Aputrak",
-      welcomeSub: "Tu planificador de horarios y actividades offline",
-      name: "Nombre",
-      enterName: "Ingresa tu nombre",
-      language: "Idioma",
-      getStarted: "Comenzar",
-      worksOffline: "Funciona sin internet — no requiere conexión",
-      validationError: "Ingresa tu nombre.",
-    },
-  }[lang];
+  const copy = getAuthCopy(lang);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -99,7 +78,7 @@ export function LoginScreen({ onSave }: LoginScreenProps) {
                 className={languageButtonClass(lang === "en")}
               >
                 <Globe2 size={16} />
-                English
+                {copy.english}
               </button>
 
               <button
@@ -108,7 +87,7 @@ export function LoginScreen({ onSave }: LoginScreenProps) {
                 className={languageButtonClass(lang === "es")}
               >
                 <Globe2 size={16} />
-                Español
+                {copy.spanish}
               </button>
             </div>
           </div>
