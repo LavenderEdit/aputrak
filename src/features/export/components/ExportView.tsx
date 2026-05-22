@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import type { GraphicExportType } from "@/features/shell/types/shell.types";
+import { getExportCopy } from "../constants/export.constants";
 
 interface ExportViewProps {
     lang: string;
@@ -32,26 +33,7 @@ export function ExportView({
         "compact",
     );
 
-    const copy = {
-        title: lang === "es" ? "Exportar Horario" : "Export Schedule",
-        subtitle:
-            lang === "es"
-                ? "Genera archivos para compartir, imprimir o respaldar tus datos."
-                : "Generate files to share, print, or back up your data.",
-        dateRange: lang === "es" ? "Rango de Fechas" : "Date Range",
-        week: lang === "es" ? "Horario Semanal" : "Weekly Schedule",
-        month: lang === "es" ? "Horario Mensual" : "Monthly Schedule",
-        includeCompleted:
-            lang === "es" ? "Incluir tareas completadas" : "Include completed tasks",
-        includeNotes: lang === "es" ? "Incluir notas" : "Include notes",
-        layoutStyle: lang === "es" ? "Estilo de Diseño" : "Layout Style",
-        compact: lang === "es" ? "Compacto" : "Compact",
-        detailed: lang === "es" ? "Detallado" : "Detailed",
-        generatePDF: lang === "es" ? "Generar PDF" : "Generate PDF",
-        desktopImage: lang === "es" ? "Imagen escritorio" : "Desktop image",
-        mobileImage: lang === "es" ? "Imagen móvil" : "Mobile image",
-        backup: lang === "es" ? "Respaldar Datos" : "Backup Data",
-    };
+    const copy = getExportCopy(lang);
 
     return (
         <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
