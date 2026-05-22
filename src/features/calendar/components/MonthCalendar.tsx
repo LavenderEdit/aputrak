@@ -24,6 +24,7 @@ export function MonthCalendar({
     onSelectDate,
 }: MonthCalendarProps) {
     const days = getMonthGrid(selectedDate);
+
     const dayLabels = Array.from({ length: 7 }, (_, index) => {
         const date = new Date(2024, 0, index + 1);
         return getShortDayName(date, lang);
@@ -35,22 +36,24 @@ export function MonthCalendar({
             : activities.filter((activity) => activity.tagId === selectedTag);
 
     return (
-        <div className="flex-1 overflow-y-auto p-3">
-            <div className="grid grid-cols-7 border-b border-slate-200 bg-white">
+        <div className="min-h-0 flex-1 overflow-y-auto p-3">
+            <div className="grid grid-cols-7 border-b border-sborder bg-white">
                 {dayLabels.map((label) => (
                     <div
                         key={label}
-                        className="py-2 text-center text-xs font-medium text-slate-500"
+                        className="py-2 text-center text-xs font-medium text-muted"
                     >
                         {label}
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-px overflow-hidden rounded-xl bg-slate-200">
+            <div className="grid grid-cols-7 gap-px overflow-hidden rounded-xl bg-sborder">
                 {days.map((date) => {
                     const dateId = formatDateId(date);
+                    const today = isToday(date);
                     const isOtherMonth = date.getMonth() !== selectedDate.getMonth();
+
                     const dayActivities = filteredActivities.filter(
                         (activity) => activity.date === dateId,
                     );
@@ -61,17 +64,15 @@ export function MonthCalendar({
                             onClick={() => onSelectDate(date)}
                             className="min-h-[100px] bg-white p-2 text-left transition hover:bg-slate-50"
                             style={{
-                                opacity: isOtherMonth ? 0.4 : 1,
-                                backgroundColor: isToday(date)
-                                    ? "rgba(99,102,241,0.04)"
-                                    : undefined,
+                                opacity: isOtherMonth ? 0.45 : 1,
+                                backgroundColor: today ? "rgba(99,102,241,0.04)" : undefined,
                             }}
                         >
                             <div
                                 className="text-sm"
                                 style={{
-                                    fontWeight: isToday(date) ? 700 : 500,
-                                    color: isToday(date) ? "#6366F1" : undefined,
+                                    fontWeight: today ? 700 : 500,
+                                    color: today ? "#6366F1" : "#0F172A",
                                 }}
                             >
                                 {date.getDate()}
@@ -81,7 +82,7 @@ export function MonthCalendar({
                                 {dayActivities.slice(0, 3).map((activity) => (
                                     <div
                                         key={activity.id}
-                                        className="truncate rounded px-1 py-0.5 text-[10px]"
+                                        className="truncate rounded px-1 py-0.5 text-[10px] font-medium"
                                         style={{
                                             backgroundColor: `${activity.color}18`,
                                             color: activity.color,
@@ -92,7 +93,7 @@ export function MonthCalendar({
                                 ))}
 
                                 {dayActivities.length > 3 && (
-                                    <div className="text-[10px] text-slate-500">
+                                    <div className="text-[10px] text-muted">
                                         +{dayActivities.length - 3}
                                     </div>
                                 )}
