@@ -86,12 +86,15 @@ export function AppShell() {
             return (
                 <DashboardOverview
                     lang={lang}
+                    username={profile.username}
                     t={t}
                     tasks={scheduleData.tasks}
                     settings={scheduleData.settings}
                     loadingData={scheduleData.loadingData}
                     onCreateTask={() => openCreateModal()}
                     onOpenCalendar={() => setActiveView("calendar")}
+                    onOpenImport={() => setActiveView("import")}
+                    onOpenExport={() => setActiveView("export")}
                     onCopyPreviousWeek={async () => {
                         const success = await scheduleData.copyPreviousWeek();
 
