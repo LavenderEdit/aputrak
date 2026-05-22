@@ -10,7 +10,6 @@ import {
     MonitorSmartphone,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
-import { Card } from "@/shared/components/ui/Card";
 import type { GraphicExportType } from "@/features/shell/types/shell.types";
 
 interface ExportViewProps {
@@ -37,8 +36,8 @@ export function ExportView({
         title: lang === "es" ? "Exportar Horario" : "Export Schedule",
         subtitle:
             lang === "es"
-                ? "Genera un PDF limpio o un respaldo de tu horario."
-                : "Generate a clean PDF or a backup of your schedule.",
+                ? "Genera archivos para compartir, imprimir o respaldar tus datos."
+                : "Generate files to share, print, or back up your data.",
         dateRange: lang === "es" ? "Rango de Fechas" : "Date Range",
         week: lang === "es" ? "Horario Semanal" : "Weekly Schedule",
         month: lang === "es" ? "Horario Mensual" : "Monthly Schedule",
@@ -61,11 +60,11 @@ export function ExportView({
                     {copy.title}
                 </h2>
 
-                <p className="mt-1 text-sm text-slate-500">{copy.subtitle}</p>
+                <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
             </div>
 
-            <Card className="rounded-2xl p-6">
-                <div className="space-y-5">
+            <section className="rounded-xl border border-sborder bg-white p-6">
+                <div className="space-y-6">
                     <div>
                         <label className="mb-2 block text-sm font-medium text-slate-800">
                             {copy.dateRange}
@@ -75,25 +74,22 @@ export function ExportView({
                             <button
                                 onClick={() => setRange("week")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${range === "week"
-                                    ? "border-indigo-500 ring-2 ring-indigo-500"
-                                    : "border-slate-200"
+                                    ? "border-primary ring-2 ring-indigo-100"
+                                    : "border-sborder"
                                     }`}
                             >
-                                <CalendarDays
-                                    size={18}
-                                    className="mr-2 inline text-indigo-600"
-                                />
+                                <CalendarDays size={18} className="mr-2 inline text-primary" />
                                 {copy.week}
                             </button>
 
                             <button
                                 onClick={() => setRange("month")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${range === "month"
-                                    ? "border-indigo-500 ring-2 ring-indigo-500"
-                                    : "border-slate-200"
+                                    ? "border-primary ring-2 ring-indigo-100"
+                                    : "border-sborder"
                                     }`}
                             >
-                                <Calendar size={18} className="mr-2 inline text-teal-600" />
+                                <Calendar size={18} className="mr-2 inline text-secondary" />
                                 {copy.month}
                             </button>
                         </div>
@@ -105,8 +101,9 @@ export function ExportView({
                                 type="checkbox"
                                 checked={includeCompleted}
                                 onChange={(event) => setIncludeCompleted(event.target.checked)}
-                                className="h-5 w-5 rounded-md border-slate-300 text-indigo-600"
+                                className="task-check"
                             />
+
                             <span className="text-sm text-slate-700">
                                 {copy.includeCompleted}
                             </span>
@@ -117,8 +114,9 @@ export function ExportView({
                                 type="checkbox"
                                 checked={includeNotes}
                                 onChange={(event) => setIncludeNotes(event.target.checked)}
-                                className="h-5 w-5 rounded-md border-slate-300 text-indigo-600"
+                                className="task-check"
                             />
+
                             <span className="text-sm text-slate-700">
                                 {copy.includeNotes}
                             </span>
@@ -134,8 +132,8 @@ export function ExportView({
                             <button
                                 onClick={() => setLayoutStyle("compact")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${layoutStyle === "compact"
-                                    ? "border-indigo-500 ring-2 ring-indigo-500"
-                                    : "border-slate-200"
+                                    ? "border-primary ring-2 ring-indigo-100"
+                                    : "border-sborder"
                                     }`}
                             >
                                 {copy.compact}
@@ -144,8 +142,8 @@ export function ExportView({
                             <button
                                 onClick={() => setLayoutStyle("detailed")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${layoutStyle === "detailed"
-                                    ? "border-indigo-500 ring-2 ring-indigo-500"
-                                    : "border-slate-200"
+                                    ? "border-primary ring-2 ring-indigo-100"
+                                    : "border-sborder"
                                     }`}
                             >
                                 {copy.detailed}
@@ -183,7 +181,7 @@ export function ExportView({
                         </Button>
                     </div>
                 </div>
-            </Card>
+            </section>
         </div>
     );
 }
