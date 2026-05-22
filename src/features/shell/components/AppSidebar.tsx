@@ -113,7 +113,7 @@ export function AppSidebar({
             <div className="border-t border-sborder p-4">
                 <div className="mb-3 flex items-center gap-2 text-xs text-muted">
                     <span className="status-dot bg-success" />
-                    {lang === "es" ? "Guardado localmente" : "Saved locally"}
+                    {copy.savedLocally}
                 </div>
             </div>
         </aside>
