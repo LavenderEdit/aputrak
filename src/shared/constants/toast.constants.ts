@@ -4,10 +4,12 @@ export const TOAST_COPY = {
             title: "Procesando...",
             description: "Estamos ejecutando la operación.",
         },
+
         schedule: {
             cloneSuccess: {
                 title: "Semana copiada",
-                description: "Las actividades de la semana anterior fueron copiadas correctamente.",
+                description:
+                    "Las actividades de la semana anterior fueron copiadas correctamente.",
             },
             cloneError: {
                 title: "No se pudo copiar",
@@ -15,13 +17,15 @@ export const TOAST_COPY = {
             },
             smartRescheduleSuccess: {
                 title: "Tareas reorganizadas",
-                description: "Las tareas pendientes fueron movidas a espacios disponibles.",
+                description:
+                    "Las tareas pendientes fueron movidas a espacios disponibles.",
             },
             smartRescheduleNoSpace: {
                 title: "Sin espacios disponibles",
                 description: "No hay suficientes espacios libres en el futuro.",
             },
         },
+
         exportGraphic: {
             loading: {
                 title: "Exportando horario...",
@@ -73,6 +77,7 @@ export const TOAST_COPY = {
             title: "Processing...",
             description: "We are running the operation.",
         },
+
         schedule: {
             cloneSuccess: {
                 title: "Week copied",
@@ -91,22 +96,11 @@ export const TOAST_COPY = {
                 description: "There are not enough free slots in the future.",
             },
         },
-        exportGraschedule: {
-            cloneSuccess: {
-                title: "Week copied",
-                description: "Previous week activities were copied successfully.",
-            },
-            cloneError: {
-                title: "Could not copy week",
-                description: "No activities were found in the previous week.",
-            },
-            smartRescheduleSuccess: {
-                title: "Tasks rescheduled",
-                description: "Pending tasks were moved to available time slots.",
-            },
-            smartRescheduleNoSpace: {
-                title: "No free slots",
-                description: "There are not enough free slots in the future.",
+
+        exportGraphic: {
+            loading: {
+                title: "Exporting schedule...",
+                description: "Preparing your calendar image or PDF.",
             },
             success: {
                 title: "Export completed",
