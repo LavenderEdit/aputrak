@@ -13,6 +13,7 @@ import { Button } from "@/shared/components/ui/Button";
 import { DAYS_OF_WEEK, DEFAULT_SETTINGS } from "@/shared/lib/constants";
 import { Utils } from "@/shared/lib/utils";
 import type { ScheduleSettings } from "@/features/schedule/types/schedule.types";
+import { getSettingsCopy } from "../constants/settings.constants";
 
 interface SettingsViewProps {
     lang: string;
@@ -35,36 +36,7 @@ export function SettingsView({
 }: SettingsViewProps) {
     const [usernameDraft, setUsernameDraft] = useState(username);
 
-    const copy = {
-        title: lang === "es" ? "Ajustes" : "Settings",
-        subtitle:
-            lang === "es"
-                ? "Personaliza tu perfil, idioma, semana y horario activo."
-                : "Customize your profile, language, week, and active hours.",
-        profile: lang === "es" ? "Perfil" : "Profile",
-        username: lang === "es" ? "Nombre de usuario" : "Username",
-        saveUsername: lang === "es" ? "Guardar nombre" : "Save name",
-        schedule: lang === "es" ? "Horario" : "Schedule",
-        activeDays: lang === "es" ? "Días activos" : "Active days",
-        startHour: lang === "es" ? "Hora de inicio" : "Start hour",
-        endHour: lang === "es" ? "Hora de fin" : "End hour",
-        preferences: lang === "es" ? "Preferencias" : "Preferences",
-        language: lang === "es" ? "Idioma" : "Language",
-        currentLanguage: lang === "es" ? "Idioma actual" : "Current language",
-        changeLanguage: lang === "es" ? "Cambiar a inglés" : "Switch to Spanish",
-        notifications: lang === "es" ? "Recordatorios" : "Reminders",
-        notificationsDesc:
-            lang === "es"
-                ? "Próximamente: notificaciones antes de cada actividad."
-                : "Coming soon: notifications before each activity.",
-        storage: lang === "es" ? "Datos locales" : "Local data",
-        storageDesc:
-            lang === "es"
-                ? "Tus datos se guardan en este navegador usando almacenamiento local."
-                : "Your data is stored in this browser using local storage.",
-        resetDefaults:
-            lang === "es" ? "Restaurar horario base" : "Restore default schedule",
-    };
+    const copy = getSettingsCopy(lang);
 
     const toggleDay = (index: number) => {
         let nextDays = [...settings.activeDays];
