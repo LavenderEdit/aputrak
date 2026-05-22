@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import { Card } from "@/shared/components/ui/Card";
-
+import { getScheduleCopy } from "../constants/schedule.constants";
 interface ScheduleControlsProps {
     weekId: string;
     lang: string;
@@ -17,12 +17,13 @@ export function ScheduleControls({
     changeWeek,
     onOpenSettings,
 }: ScheduleControlsProps) {
+    const copy = getScheduleCopy(lang);
     return (
         <Card className="no-print p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                        {lang === "es" ? "Semana" : "Week"}
+                        {copy.week}
                     </p>
 
                     <h2 className="mt-1 text-lg font-black text-slate-950">{weekId}</h2>
@@ -49,7 +50,7 @@ export function ScheduleControls({
 
                     <Button variant="primary" size="md" onClick={onOpenSettings}>
                         <Settings size={16} />
-                        {lang === "es" ? "Ajustes" : "Settings"}
+                        {copy.settings}
                     </Button>
                 </div>
             </div>
