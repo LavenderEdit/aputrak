@@ -16,7 +16,10 @@ import {
 import type { LucideIcon } from "lucide-react";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { Button } from "@/shared/components/ui/Button";
-import { DEFAULT_ACTIVITY_TAGS } from "../constants/tags.constants";
+import {
+    DEFAULT_ACTIVITY_TAGS,
+    getTagsCopy,
+} from "../constants/tags.constants";
 import type { ActivityTag } from "../types/tag.types";
 import { scheduleTasksToActivities } from "@/features/activities/lib/activity-adapters";
 import { TagModal } from "./TagModal";
@@ -37,6 +40,8 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
+    const copy = getTagsCopy(lang);
+
     const [tags, setTags] = useState<ActivityTag[]>(DEFAULT_ACTIVITY_TAGS);
     const [editingTag, setEditingTag] = useState<ActivityTag | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +60,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
         <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
             <div className="mb-5 flex items-center justify-between">
                 <h2 className="font-display text-xl font-bold text-slate-950">
-                    {lang === "es" ? "Etiquetas" : "Tags"}
+                    {copy.title}
                 </h2>
 
                 <Button
@@ -65,7 +70,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                     }}
                 >
                     <Plus size={16} />
-                    {lang === "es" ? "Agregar Etiqueta" : "Add Tag"}
+                    {copy.addTag}
                 </Button>
             </div>
 
@@ -92,8 +97,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                     </div>
 
                                     <div className="text-xs text-muted">
-                                        {counts[tag.id] ?? 0}{" "}
-                                        {lang === "es" ? "actividades" : "activities"}
+                                        {counts[tag.id] ?? 0} {copy.activities}
                                     </div>
                                 </div>
 
@@ -104,6 +108,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                             setIsModalOpen(true);
                                         }}
                                         className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-slate-100 hover:text-primary"
+                                        aria-label={copy.editTag}
                                     >
                                         <Pencil size={14} />
                                     </button>
@@ -115,6 +120,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                             );
                                         }}
                                         className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-red-50 hover:text-danger"
+                                        aria-label={copy.deleteTag}
                                     >
                                         <Trash2 size={14} />
                                     </button>
@@ -126,15 +132,9 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                     <div className="py-16 text-center text-muted">
                         <Tags size={42} className="mx-auto mb-3 opacity-30" />
 
-                        <p className="text-sm">
-                            {lang === "es" ? "Sin etiquetas aún" : "No tags yet"}
-                        </p>
+                        <p className="text-sm">{copy.emptyTitle}</p>
 
-                        <p className="mt-1 text-xs">
-                            {lang === "es"
-                                ? "Agrega tu primera etiqueta para organizar actividades"
-                                : "Add your first tag to organize activities"}
-                        </p>
+                        <p className="mt-1 text-xs">{copy.emptyDescription}</p>
                     </div>
                 )}
             </div>
