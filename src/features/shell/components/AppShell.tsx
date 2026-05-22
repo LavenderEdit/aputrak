@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { ActivitiesView } from "@/features/activities/components/ActivitiesView";
 import { LoginScreen } from "@/features/auth/components/LoginScreen";
-import { EditProfileModal } from "@/features/auth/components/EditProfileModal";
 import { useOfflineAuth } from "@/features/auth/hooks/useOfflineAuth";
 import { CalendarView } from "@/features/calendar/components/CalendarView";
 import { DashboardOverview } from "@/features/dashboard/components/DashboardOverview";
@@ -13,7 +12,6 @@ import { ActivityModal } from "@/features/schedule/components/ActivityModal";
 import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
 import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
-import { SettingsModal } from "@/features/settings/components/SettingsModal";
 import { TagsView } from "@/features/tags/components/TagsView";
 import { LoadingOverlay } from "@/shared/components/ui/LoadingOverlay";
 import { useLanguage } from "@/shared/hooks/useLanguage";
@@ -23,6 +21,7 @@ import { AppTopbar } from "./AppTopbar";
 import { MobileNav } from "./MobileNav";
 import { ExportView } from "@/features/export/components/ExportView";
 import { ImportView } from "@/features/import/components/ImportView";
+import { SettingsView } from "@/features/settings/components/SettingsView";
 import type { AppView } from "../types/shell.types";
 import { cn } from "@/shared/lib/cn";
 
@@ -44,8 +43,6 @@ export function AppShell() {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeView, setActiveView] = useState<AppView>("dashboard");
-    const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const firstActiveDay = useMemo(
         () => scheduleData.settings.activeDays[0] ?? 0,
@@ -180,18 +177,15 @@ export function AppShell() {
 
         if (activeView === "settings") {
             return (
-                <div className="mx-auto max-w-3xl p-4 sm:p-6 lg:p-8">
-                    <h2 className="font-display text-xl font-bold text-slate-950">
-                        {lang === "es" ? "Ajustes" : "Settings"}
-                    </h2>
-
-                    <button
-                        onClick={() => setIsSettingsOpen(true)}
-                        className="mt-4 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                    >
-                        {lang === "es" ? "Abrir ajustes" : "Open settings"}
-                    </button>
-                </div>
+                <SettingsView
+                    lang={lang}
+                    username={profile.username}
+                    settings={scheduleData.settings}
+                    updateSettings={scheduleData.updateSettings}
+                    getDayName={getDayName}
+                    onUpdateUsername={saveUsername}
+                    onToggleLanguage={toggleLanguage}
+                />
             );
         }
 
@@ -226,7 +220,7 @@ export function AppShell() {
                         lang={lang}
                         onToggleSidebar={() => setSidebarOpen((current) => !current)}
                         onToggleLanguage={toggleLanguage}
-                        onEditProfile={() => setIsEditProfileOpen(true)}
+                        onEditProfile={() => setActiveView("settings")}
                         onCreateTask={() => openCreateModal()}
                         onExportPDF={() => handleGraphicExport("pdf")}
                         onExportImage={handleGraphicExport}
@@ -254,7 +248,7 @@ export function AppShell() {
                         : undefined)
                 }
                 getDayName={getDayName}
-                t={t}
+                lang={lang}
                 onSave={(payload) => {
                     const previousTask = modalState.taskToEdit;
 
@@ -278,26 +272,6 @@ export function AppShell() {
 
                     closeModal();
                 }}
-            />
-
-            <EditProfileModal
-                isOpen={isEditProfileOpen}
-                onClose={() => setIsEditProfileOpen(false)}
-                currentName={profile.username}
-                t={t}
-                onSave={(newName) => {
-                    saveUsername(newName);
-                    setIsEditProfileOpen(false);
-                }}
-            />
-
-            <SettingsModal
-                isOpen={isSettingsOpen}
-                onClose={() => setIsSettingsOpen(false)}
-                settings={scheduleData.settings}
-                updateSettings={scheduleData.updateSettings}
-                t={t}
-                getDayName={getDayName}
             />
 
             <LoadingOverlay
