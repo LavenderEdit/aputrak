@@ -55,7 +55,7 @@ export function AppTopbar({
             <div className="flex items-center gap-2 text-xs text-muted">
                 <span className="status-dot bg-success" />
                 <span className="hidden sm:inline">
-                    {lang === "es" ? "Guardado localmente" : "Saved locally"}
+                    {copy.savedLocally}
                 </span>
             </div>
 
