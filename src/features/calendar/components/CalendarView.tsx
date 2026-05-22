@@ -7,6 +7,7 @@ import type {
     ScheduleTask,
 } from "@/features/schedule/types/schedule.types";
 import { Button } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/lib/cn";
 import { DEFAULT_ACTIVITY_TAGS } from "@/features/tags/constants/tags.constants";
 import { scheduleTasksToActivities } from "@/features/activities/lib/activity-adapters";
 import { getMonthName } from "../lib/calendar-utils";
@@ -43,7 +44,7 @@ export function CalendarView({
     );
 
     return (
-        <div className="flex h-full flex-1 overflow-hidden">
+        <div className="flex h-full overflow-hidden bg-white fade-in">
             <CalendarSidebar
                 lang={lang}
                 tags={DEFAULT_ACTIVITY_TAGS}
@@ -52,8 +53,8 @@ export function CalendarView({
                 onCreateActivity={() => onCreateTask(0, settings.startHour)}
             />
 
-            <section className="flex flex-1 flex-col overflow-hidden">
-                <div className="flex flex-shrink-0 flex-wrap items-center gap-2 border-b border-slate-200 bg-white px-4 py-3 sm:gap-3">
+            <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-sborder bg-white px-4 py-3 sm:gap-3">
                     <Button
                         variant="secondary"
                         size="sm"
@@ -63,7 +64,13 @@ export function CalendarView({
                         <ChevronLeft size={14} />
                     </Button>
 
-                    <Button variant="secondary" size="sm" onClick={() => setSelectedDate(new Date())}>
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            setSelectedDate(new Date());
+                        }}
+                    >
                         {lang === "es" ? "Hoy" : "Today"}
                     </Button>
 
@@ -76,7 +83,7 @@ export function CalendarView({
                         <ChevronRight size={14} />
                     </Button>
 
-                    <h2 className="font-display text-lg font-bold capitalize text-slate-950">
+                    <h2 className="font-display ml-1 text-lg font-bold capitalize text-slate-950">
                         {getMonthName(selectedDate, lang)}
                     </h2>
 
@@ -85,16 +92,24 @@ export function CalendarView({
                     <div className="flex rounded-lg bg-slate-100 p-0.5">
                         <button
                             onClick={() => setView("week")}
-                            className={`rounded-md px-3 py-1 text-sm font-medium transition ${view === "week" ? "bg-white text-indigo-600 shadow" : "text-slate-500"
-                                }`}
+                            className={cn(
+                                "rounded-md px-3 py-1 text-sm font-medium transition",
+                                view === "week"
+                                    ? "bg-white text-primary shadow-sm"
+                                    : "text-muted hover:text-slate-900",
+                            )}
                         >
                             {lang === "es" ? "Semana" : "Week"}
                         </button>
 
                         <button
                             onClick={() => setView("month")}
-                            className={`rounded-md px-3 py-1 text-sm font-medium transition ${view === "month" ? "bg-white text-indigo-600 shadow" : "text-slate-500"
-                                }`}
+                            className={cn(
+                                "rounded-md px-3 py-1 text-sm font-medium transition",
+                                view === "month"
+                                    ? "bg-white text-primary shadow-sm"
+                                    : "text-muted hover:text-slate-900",
+                            )}
                         >
                             {lang === "es" ? "Mes" : "Month"}
                         </button>
