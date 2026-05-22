@@ -39,7 +39,7 @@ export function AppShell() {
     const { profile, saveUsername, loadingAuth } = useOfflineAuth();
     const scheduleData = useOfflineSchedule();
     const { lang, toggleLanguage, t, getDayName } = useLanguage();
-    const { showToast } = useToast();
+    const { showToast, showPromiseToast } = useToast();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeView, setActiveView] = useState<AppView>("dashboard");
@@ -56,14 +56,14 @@ export function AppShell() {
         useScheduleExport({
             profile,
             scheduleData,
-            t,
-            showToast,
+            lang,
+            showPromiseToast,
         });
 
     const { importLoading, handleImportJSON } = useScheduleImport({
         scheduleData,
-        t,
-        showToast,
+        lang,
+        showPromiseToast,
     });
 
     if (loadingAuth) {
