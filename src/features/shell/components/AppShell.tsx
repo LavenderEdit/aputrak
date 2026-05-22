@@ -13,7 +13,6 @@ import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
 import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { TagsView } from "@/features/tags/components/TagsView";
-import { LoadingOverlay } from "@/shared/components/ui/LoadingOverlay";
 import { useLanguage } from "@/shared/hooks/useLanguage";
 import { useToast } from "@/shared/hooks/useToast";
 import { AppSidebar } from "./AppSidebar";
@@ -52,15 +51,14 @@ export function AppShell() {
     const { modalState, openCreateModal, openEditModal, closeModal } =
         useActivityModal(firstActiveDay, scheduleData.settings.startHour);
 
-    const { exportLoading, handleGraphicExport, handleExportJSON } =
-        useScheduleExport({
-            profile,
-            scheduleData,
-            lang,
-            showPromiseToast,
-        });
+    const { handleGraphicExport, handleExportJSON } = useScheduleExport({
+        profile,
+        scheduleData,
+        lang,
+        showPromiseToast,
+    });
 
-    const { importLoading, handleImportJSON } = useScheduleImport({
+    const { handleImportJSON } = useScheduleImport({
         scheduleData,
         lang,
         showPromiseToast,
@@ -274,10 +272,6 @@ export function AppShell() {
                 }}
             />
 
-            <LoadingOverlay
-                visible={exportLoading || importLoading}
-                message={t("processing")}
-            />
 
             <MobileNav
                 lang={lang}
