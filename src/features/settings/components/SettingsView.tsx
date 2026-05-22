@@ -261,7 +261,7 @@ export function SettingsView({
                             </div>
 
                             <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
-                                Soon
+                                {copy.soon}
                             </span>
                         </div>
 
