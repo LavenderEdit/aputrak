@@ -103,7 +103,7 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                         <p className="mt-3 text-xs text-muted">{copy.supported}</p>
 
                         <Button className="mt-5" onClick={openFilePicker}>
-                            {lang === "es" ? "Seleccionar archivo" : "Choose file"}
+                            {copy.chooseFile}
                         </Button>
 
                         <input
