@@ -1,10 +1,15 @@
 "use client";
 
-import type { DragEvent } from "react";
+import type { DragEvent, KeyboardEvent } from "react";
 import { useRef, useState } from "react";
-import { CheckCircle2, CloudUpload, FileJson, RotateCcw } from "lucide-react";
+import {
+    CheckCircle2,
+    CloudUpload,
+    FileJson,
+    RotateCcw,
+    ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
-import { Card } from "@/shared/components/ui/Card";
 
 interface ImportViewProps {
     lang: string;
@@ -21,16 +26,24 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
         title: lang === "es" ? "Importar Horario" : "Import Schedule",
         subtitle:
             lang === "es"
-                ? "Trae respaldos externos a Aputrak."
-                : "Bring external backups into Aputrak.",
+                ? "Restaura respaldos JSON y revisa el archivo antes de cargarlo."
+                : "Restore JSON backups and review the file before loading it.",
         drop:
             lang === "es"
-                ? "Arrastra un respaldo aquí o haz clic para buscar"
-                : "Drop a backup here or click to browse",
+                ? "Arrastra tu respaldo aquí"
+                : "Drop your backup here",
+        browse:
+            lang === "es"
+                ? "o haz clic para seleccionar un archivo"
+                : "or click to choose a file",
         supported:
             lang === "es"
-                ? "Soportado por ahora: archivos JSON de respaldo"
-                : "Currently supported: JSON backup files",
+                ? "Formato soportado: .json"
+                : "Supported format: .json",
+        privacy:
+            lang === "es"
+                ? "La importación ocurre localmente en tu navegador."
+                : "Import runs locally in your browser.",
         reviewTitle:
             lang === "es" ? "Revisar archivo seleccionado" : "Review selected file",
         reviewNote:
@@ -40,7 +53,16 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
         cancel: lang === "es" ? "Cancelar" : "Cancel",
         confirm: lang === "es" ? "Confirmar Importación" : "Confirm Import",
         done: lang === "es" ? "Importación completada" : "Import completed",
-        importAnother: lang === "es" ? "Importar otro archivo" : "Import another file",
+        doneDesc:
+            lang === "es"
+                ? "Tu respaldo fue procesado correctamente."
+                : "Your backup was processed successfully.",
+        importAnother:
+            lang === "es" ? "Importar otro archivo" : "Import another file",
+    };
+
+    const openFilePicker = () => {
+        fileInputRef.current?.click();
     };
 
     const handleFile = (file: File) => {
@@ -56,6 +78,13 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
 
         if (file) {
             handleFile(file);
+        }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openFilePicker();
         }
     };
 
@@ -82,39 +111,36 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                     {copy.title}
                 </h2>
 
-                <p className="mt-1 text-sm text-slate-500">{copy.subtitle}</p>
+                <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
             </div>
 
             {step === "upload" && (
-                <Card className="rounded-2xl p-6">
+                <section className="rounded-xl border border-sborder bg-white p-6">
                     <div
                         role="button"
                         tabIndex={0}
-                        onClick={() => fileInputRef.current?.click()}
+                        onClick={openFilePicker}
+                        onKeyDown={handleKeyDown}
                         onDragOver={(event) => {
                             event.preventDefault();
                             setIsDragging(true);
                         }}
                         onDragLeave={() => setIsDragging(false)}
                         onDrop={handleDrop}
-                        className={`cursor-pointer rounded-2xl border-2 border-dashed px-6 py-12 text-center transition ${isDragging
-                            ? "border-indigo-500 bg-indigo-50"
-                            : "border-slate-200 bg-white hover:bg-slate-50"
-                            }`}
+                        className={`drop-zone ${isDragging ? "dragover" : ""}`}
                     >
-                        <CloudUpload
-                            size={46}
-                            className="mx-auto mb-4 text-slate-400"
-                        />
+                        <CloudUpload size={48} className="mx-auto mb-4 text-primary" />
 
-                        <p className="mb-1 text-sm font-semibold text-slate-800">
+                        <p className="mb-1 text-sm font-semibold text-slate-900">
                             {copy.drop}
                         </p>
 
-                        <p className="text-xs text-slate-500">{copy.supported}</p>
+                        <p className="text-sm text-muted">{copy.browse}</p>
 
-                        <Button className="mt-5">
-                            {lang === "es" ? "Importar" : "Import"}
+                        <p className="mt-3 text-xs text-muted">{copy.supported}</p>
+
+                        <Button className="mt-5" onClick={openFilePicker}>
+                            {lang === "es" ? "Seleccionar archivo" : "Choose file"}
                         </Button>
 
                         <input
@@ -131,28 +157,33 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                             }}
                         />
                     </div>
-                </Card>
+
+                    <div className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
+                        <ShieldCheck size={16} />
+                        {copy.privacy}
+                    </div>
+                </section>
             )}
 
             {step === "review" && selectedFile && (
-                <Card className="rounded-2xl p-6">
+                <section className="rounded-xl border border-sborder bg-white p-6">
                     <h3 className="font-display mb-2 text-base font-bold text-slate-950">
                         {copy.reviewTitle}
                     </h3>
 
-                    <p className="mb-5 text-xs text-slate-500">{copy.reviewNote}</p>
+                    <p className="mb-5 text-sm text-muted">{copy.reviewNote}</p>
 
-                    <div className="mb-5 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                            <FileJson size={20} />
+                    <div className="mb-5 flex items-center gap-3 rounded-xl border border-sborder bg-slate-50 p-4">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-primary">
+                            <FileJson size={22} />
                         </div>
 
                         <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-slate-900">
+                            <p className="truncate text-sm font-semibold text-slate-950">
                                 {selectedFile.name}
                             </p>
 
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted">
                                 {(selectedFile.size / 1024).toFixed(1)} KB
                             </p>
                         </div>
@@ -167,12 +198,12 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                             {copy.confirm}
                         </Button>
                     </div>
-                </Card>
+                </section>
             )}
 
             {step === "done" && (
-                <Card className="rounded-2xl p-10 text-center">
-                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <section className="rounded-xl border border-sborder bg-white p-10 text-center">
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-success">
                         <CheckCircle2 size={30} />
                     </div>
 
@@ -180,11 +211,13 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                         {copy.done}
                     </h3>
 
+                    <p className="mt-1 text-sm text-muted">{copy.doneDesc}</p>
+
                     <Button className="mt-6" variant="secondary" onClick={reset}>
                         <RotateCcw size={16} />
                         {copy.importAnother}
                     </Button>
-                </Card>
+                </section>
             )}
         </div>
     );
