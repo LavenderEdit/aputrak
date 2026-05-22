@@ -29,26 +29,48 @@ export function ActivitiesView({
 }: ActivitiesViewProps) {
     const [search, setSearch] = useState("");
     const [tagFilter, setTagFilter] = useState("all");
-    const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "completed">("all");
+    const [statusFilter, setStatusFilter] = useState<
+        "all" | "pending" | "completed"
+    >("all");
 
     const activities = useMemo(
         () => scheduleTasksToActivities(tasks, weekId),
         [tasks, weekId],
     );
 
-    const filtered = activities.filter((activity) => {
-        const matchesSearch = activity.title
-            .toLowerCase()
-            .includes(search.toLowerCase());
+    const taskMap = useMemo(
+        () => new Map(tasks.map((task) => [task.id, task])),
+        [tasks],
+    );
 
-        const matchesTag = tagFilter === "all" || activity.tagId === tagFilter;
-        const matchesStatus =
-            statusFilter === "all" || activity.status === statusFilter;
+    const tagsMap = useMemo(
+        () => new Map(DEFAULT_ACTIVITY_TAGS.map((tag) => [tag.id, tag])),
+        [],
+    );
 
-        return matchesSearch && matchesTag && matchesStatus;
-    });
+    const filtered = activities
+        .filter((activity) => {
+            const matchesSearch = activity.title
+                .toLowerCase()
+                .includes(search.toLowerCase());
 
-    const taskMap = new Map(tasks.map((task) => [task.id, task]));
+            const matchesTag = tagFilter === "all" || activity.tagId === tagFilter;
+            const matchesStatus =
+                statusFilter === "all" || activity.status === statusFilter;
+
+            return matchesSearch && matchesTag && matchesStatus;
+        })
+        .sort((a, b) => {
+            return (
+                a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime)
+            );
+        });
+
+    const statusLabels = {
+        all: lang === "es" ? "Todas" : "All",
+        pending: lang === "es" ? "Pendiente" : "Pending",
+        completed: lang === "es" ? "Completada" : "Completed",
+    };
 
     return (
         <div className="mx-auto max-w-4xl p-4 fade-in sm:p-6 lg:p-8">
@@ -56,24 +78,26 @@ export function ActivitiesView({
                 <div className="relative flex-1">
                     <Search
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                     />
 
                     <input
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
-                        placeholder={lang === "es" ? "Buscar actividades..." : "Search activities..."}
-                        className="w-full rounded-xl border border-slate-200 py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-indigo-500"
+                        placeholder={
+                            lang === "es" ? "Buscar actividades..." : "Search activities..."
+                        }
+                        className="w-full rounded-xl border border-sborder bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-primary"
                     />
                 </div>
 
                 <select
                     value={tagFilter}
                     onChange={(event) => setTagFilter(event.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none"
+                    className="rounded-xl border border-sborder bg-white px-4 py-2.5 text-sm outline-none"
                 >
                     <option value="all">
-                        {lang === "es" ? "Todas las etiquetas" : "All tags"}
+                        {lang === "es" ? "Todas las Etiquetas" : "All Tags"}
                     </option>
 
                     {DEFAULT_ACTIVITY_TAGS.map((tag) => (
@@ -85,7 +109,7 @@ export function ActivitiesView({
 
                 <Button onClick={onCreateTask}>
                     <Plus size={16} />
-                    {lang === "es" ? "Agregar tarea" : "Add task"}
+                    {lang === "es" ? "Agregar Tarea" : "Add Task"}
                 </Button>
             </div>
 
@@ -95,21 +119,11 @@ export function ActivitiesView({
                         key={status}
                         onClick={() => setStatusFilter(status)}
                         className={`flex-1 rounded-lg py-2 text-sm font-medium transition ${statusFilter === status
-                            ? "bg-white text-indigo-600 shadow"
-                            : "text-slate-500"
+                            ? "bg-white text-primary shadow-sm"
+                            : "text-muted hover:text-slate-900"
                             }`}
                     >
-                        {status === "all"
-                            ? lang === "es"
-                                ? "Todas"
-                                : "All"
-                            : status === "pending"
-                                ? lang === "es"
-                                    ? "Pendiente"
-                                    : "Pending"
-                                : lang === "es"
-                                    ? "Completada"
-                                    : "Completed"}
+                        {statusLabels[status]}
                     </button>
                 ))}
             </div>
@@ -117,49 +131,86 @@ export function ActivitiesView({
             {filtered.length > 0 ? (
                 filtered.map((activity) => {
                     const sourceTask = taskMap.get(activity.id);
+                    const tag = tagsMap.get(activity.tagId);
+                    const color = activity.color || tag?.color || "#6366F1";
 
                     return (
                         <article
                             key={activity.id}
                             onClick={() => {
-                                if (sourceTask) onEditTask(sourceTask);
+                                if (sourceTask) {
+                                    onEditTask(sourceTask);
+                                }
                             }}
-                            className="mb-3 flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:shadow-sm"
+                            className="mb-3 flex cursor-pointer items-start gap-3 rounded-xl border border-sborder bg-white p-4 transition hover:shadow-sm"
                         >
                             <input
                                 type="checkbox"
+                                className="task-check mt-0.5"
                                 checked={activity.status === "completed"}
                                 onClick={(event) => event.stopPropagation()}
                                 onChange={() => onToggleComplete(activity.id, 0)}
-                                className="mt-0.5 h-5 w-5 rounded-md border-slate-300 text-indigo-600"
                             />
 
                             <div
                                 className="w-1 self-stretch rounded-full"
-                                style={{ backgroundColor: activity.color }}
+                                style={{ backgroundColor: color }}
                             />
 
                             <div className="min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <span
                                         className={`text-sm font-medium ${activity.status === "completed"
-                                            ? "text-slate-500 line-through"
+                                            ? "text-muted line-through"
                                             : "text-slate-900"
                                             }`}
                                     >
                                         {activity.title}
                                     </span>
+
+                                    <span
+                                        className="tag-pill"
+                                        style={{
+                                            backgroundColor: `${color}18`,
+                                            color,
+                                        }}
+                                    >
+                                        {tag?.name ?? (lang === "es" ? "Sin etiqueta" : "Untagged")}
+                                    </span>
                                 </div>
 
-                                <div className="mt-0.5 text-xs text-slate-500">
+                                <div className="mt-0.5 text-xs text-muted">
                                     {getShortDate(activity.date, lang)} · {activity.startTime} -{" "}
                                     {activity.endTime}
                                 </div>
 
                                 {activity.description && (
-                                    <div className="mt-1 line-clamp-1 text-xs text-slate-500">
+                                    <div className="mt-1 line-clamp-1 text-xs text-muted">
                                         {activity.description}
                                     </div>
+                                )}
+
+                                {activity.priority !== "none" && (
+                                    <span
+                                        className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${activity.priority === "high"
+                                            ? "bg-red-50 text-red-600"
+                                            : activity.priority === "medium"
+                                                ? "bg-amber-50 text-amber-700"
+                                                : "bg-slate-100 text-muted"
+                                            }`}
+                                    >
+                                        {activity.priority === "high"
+                                            ? lang === "es"
+                                                ? "Alta"
+                                                : "High"
+                                            : activity.priority === "medium"
+                                                ? lang === "es"
+                                                    ? "Media"
+                                                    : "Medium"
+                                                : lang === "es"
+                                                    ? "Baja"
+                                                    : "Low"}
+                                    </span>
                                 )}
                             </div>
 
@@ -168,7 +219,7 @@ export function ActivitiesView({
                                     event.stopPropagation();
                                     onDeleteTask(activity.id);
                                 }}
-                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-red-50 hover:text-danger"
                             >
                                 <Trash2 size={14} />
                             </button>
@@ -176,11 +227,13 @@ export function ActivitiesView({
                     );
                 })
             ) : (
-                <div className="py-16 text-center text-slate-500">
+                <div className="py-16 text-center text-muted">
                     <Inbox size={42} className="mx-auto mb-3 opacity-30" />
+
                     <p className="text-sm">
                         {lang === "es" ? "Sin actividades aún" : "No activities yet"}
                     </p>
+
                     <p className="mt-1 text-xs">
                         {lang === "es"
                             ? "Agrega tu primera actividad para comenzar"
