@@ -2,6 +2,7 @@ export const SCHEDULE_COPY = {
     es: {
         week: "Semana",
         day: "Día",
+        settings: "Ajustes",
         createActivity: "Crear actividad",
         editActivity: "Editar actividad",
         activityTitle: "Actividad",
@@ -19,6 +20,7 @@ export const SCHEDULE_COPY = {
     en: {
         week: "Week",
         day: "Day",
+        settings: "Settings",
         createActivity: "Create activity",
         editActivity: "Edit activity",
         activityTitle: "Activity",
