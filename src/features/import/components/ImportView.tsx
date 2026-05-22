@@ -10,7 +10,7 @@ import {
     ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
-
+import { getImportCopy } from "../constants/import.constants";
 interface ImportViewProps {
     lang: string;
     onImportJSON: (file: File) => Promise<void> | void;
@@ -22,44 +22,7 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [step, setStep] = useState<"upload" | "review" | "done">("upload");
 
-    const copy = {
-        title: lang === "es" ? "Importar Horario" : "Import Schedule",
-        subtitle:
-            lang === "es"
-                ? "Restaura respaldos JSON y revisa el archivo antes de cargarlo."
-                : "Restore JSON backups and review the file before loading it.",
-        drop:
-            lang === "es"
-                ? "Arrastra tu respaldo aquí"
-                : "Drop your backup here",
-        browse:
-            lang === "es"
-                ? "o haz clic para seleccionar un archivo"
-                : "or click to choose a file",
-        supported:
-            lang === "es"
-                ? "Formato soportado: .json"
-                : "Supported format: .json",
-        privacy:
-            lang === "es"
-                ? "La importación ocurre localmente en tu navegador."
-                : "Import runs locally in your browser.",
-        reviewTitle:
-            lang === "es" ? "Revisar archivo seleccionado" : "Review selected file",
-        reviewNote:
-            lang === "es"
-                ? "Confirma que este es el respaldo correcto antes de importarlo."
-                : "Confirm this is the correct backup before importing.",
-        cancel: lang === "es" ? "Cancelar" : "Cancel",
-        confirm: lang === "es" ? "Confirmar Importación" : "Confirm Import",
-        done: lang === "es" ? "Importación completada" : "Import completed",
-        doneDesc:
-            lang === "es"
-                ? "Tu respaldo fue procesado correctamente."
-                : "Your backup was processed successfully.",
-        importAnother:
-            lang === "es" ? "Importar otro archivo" : "Import another file",
-    };
+    const copy = getImportCopy(lang);
 
     const openFilePicker = () => {
         fileInputRef.current?.click();
