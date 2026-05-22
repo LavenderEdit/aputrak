@@ -18,14 +18,16 @@ export interface PromiseToastMessages<T = unknown> {
 
 export function useToast() {
     const showToast = (
-        message: string,
+        message: string | ToastMessage,
         type: ToastType = "success",
         description?: ReactNode | string,
     ) => {
-        sileo[type]({
-            title: message,
-            description,
-        });
+        const options =
+            typeof message === "string"
+                ? { title: message, description }
+                : message;
+
+        sileo[type](options);
     };
 
     const showPromiseToast = <T,>(
