@@ -3,45 +3,54 @@
 import { useState } from "react";
 import {
     CalendarDays,
+    FileInput,
+    FileText,
     Plus,
-    Sparkles,
 } from "lucide-react";
 import type {
     ScheduleSettings,
     ScheduleTask,
 } from "@/features/schedule/types/schedule.types";
 import { getOverdueTasksCount } from "@/features/schedule/lib/schedule-view";
-import { DashboardStats } from "./DashboardStats";
-import { TodayScheduleCard } from "./TodayScheduleCard";
-import { UpcomingTasksCard } from "./UpcomingTasksCard";
 import { OverdueTasksBanner } from "@/features/schedule/components/OverdueTasksBanner";
 import { EmptyWeekState } from "@/features/schedule/components/EmptyWeekState";
 import type { TranslateFn } from "@/shared/types/i18n.types";
 import { getDashboardCopy } from "../constants/dashboard.constants";
+import { DashboardStats } from "./DashboardStats";
+import { TodayScheduleCard } from "./TodayScheduleCard";
+import { UpcomingTasksCard } from "./UpcomingTasksCard";
+
 interface DashboardOverviewProps {
     lang: string;
+    username?: string;
     t: TranslateFn;
     tasks: ScheduleTask[];
     settings: ScheduleSettings;
     loadingData: boolean;
     onCreateTask: () => void;
     onOpenCalendar: () => void;
+    onOpenImport: () => void;
+    onOpenExport: () => void;
     onCopyPreviousWeek: () => Promise<void>;
     onSmartReschedule: () => Promise<void>;
 }
 
 export function DashboardOverview({
     lang,
+    username,
     t,
     tasks,
     settings,
     loadingData,
     onCreateTask,
     onOpenCalendar,
+    onOpenImport,
+    onOpenExport,
     onCopyPreviousWeek,
     onSmartReschedule,
 }: DashboardOverviewProps) {
     const [dismissedOverdue, setDismissedOverdue] = useState(false);
+    const copy = getDashboardCopy(lang);
 
     const overdueCount = getOverdueTasksCount(
         tasks,
@@ -49,67 +58,100 @@ export function DashboardOverview({
         dismissedOverdue,
     );
 
-    const copy = getDashboardCopy(lang);
+    const currentDate = new Date().toLocaleDateString(
+        lang === "es" ? "es-ES" : "en-US",
+        {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+        },
+    );
+
+    const quickActions = [
+        {
+            label: copy.addTask,
+            icon: Plus,
+            onClick: onCreateTask,
+            className:
+                "bg-primary text-white shadow-lg shadow-indigo-500/20 hover:bg-primary-dark",
+            iconClassName: "text-white",
+        },
+        {
+            label: copy.importSchedule,
+            icon: FileInput,
+            onClick: onOpenImport,
+            className: "border border-sborder bg-white text-slate-700 hover:bg-slate-50",
+            iconClassName: "text-secondary",
+        },
+        {
+            label: copy.exportPDF,
+            icon: FileText,
+            onClick: onOpenExport,
+            className: "border border-sborder bg-white text-slate-700 hover:bg-slate-50",
+            iconClassName: "text-accent",
+        },
+        {
+            label: copy.openCalendar,
+            icon: CalendarDays,
+            onClick: onOpenCalendar,
+            className: "border border-sborder bg-white text-slate-700 hover:bg-slate-50",
+            iconClassName: "text-primary",
+        },
+    ];
 
     return (
-        <div className="space-y-6">
-            <section className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 p-6 shadow-sm backdrop-blur-xl sm:p-8">
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="max-w-2xl">
-                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-indigo-700">
-                            <Sparkles size={14} />
-                            Aputrak
-                        </div>
+        <div className="mx-auto max-w-6xl p-4 fade-in sm:p-6 lg:p-8">
+            <div className="mb-6">
+                <h2 className="font-display text-2xl font-extrabold text-slate-950">
+                    {copy.hello}
+                    {username ? `, ${username}` : ""}
+                </h2>
 
-                        <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
-                            {copy.title}
-                        </h1>
+                <p className="mt-1 text-sm capitalize text-muted">{currentDate}</p>
+            </div>
 
-                        <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-slate-500">
-                            {copy.subtitle}
-                        </p>
-                    </div>
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {quickActions.map((action) => {
+                    const Icon = action.icon;
 
-                    <div className="flex flex-col gap-2 sm:flex-row">
+                    return (
                         <button
-                            onClick={onCreateTask}
-                            className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-700"
+                            key={action.label}
+                            onClick={action.onClick}
+                            className={`flex items-center gap-3 rounded-xl p-4 text-left transition ${action.className}`}
                         >
-                            <Plus size={18} />
-                            {copy.newTask}
-                        </button>
+                            <Icon size={20} className={action.iconClassName} />
 
-                        <button
-                            onClick={onOpenCalendar}
-                            className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                        >
-                            <CalendarDays size={18} />
-                            {copy.openCalendar}
+                            <span className="text-sm font-semibold">{action.label}</span>
                         </button>
-                    </div>
-                </div>
-            </section>
+                    );
+                })}
+            </div>
 
             {overdueCount > 0 && !loadingData && (
-                <OverdueTasksBanner
-                    count={overdueCount}
-                    t={t}
-                    lang={lang}
-                    onDismiss={() => setDismissedOverdue(true)}
-                    onSmartReschedule={onSmartReschedule}
-                />
+                <div className="mb-6">
+                    <OverdueTasksBanner
+                        count={overdueCount}
+                        t={t}
+                        lang={lang}
+                        onDismiss={() => setDismissedOverdue(true)}
+                        onSmartReschedule={onSmartReschedule}
+                    />
+                </div>
             )}
 
             <DashboardStats lang={lang} tasks={tasks} />
 
             {tasks.length === 0 && !loadingData ? (
-                <EmptyWeekState
-                    t={t}
-                    onCreateTask={onCreateTask}
-                    onCopyPreviousWeek={onCopyPreviousWeek}
-                />
+                <div className="mt-6">
+                    <EmptyWeekState
+                        t={t}
+                        onCreateTask={onCreateTask}
+                        onCopyPreviousWeek={onCopyPreviousWeek}
+                    />
+                </div>
             ) : (
-                <section className="grid gap-5 xl:grid-cols-[1fr_0.9fr]">
+                <section className="mt-6 grid gap-6 lg:grid-cols-2">
                     <TodayScheduleCard lang={lang} tasks={tasks} />
                     <UpcomingTasksCard lang={lang} tasks={tasks} />
                 </section>
