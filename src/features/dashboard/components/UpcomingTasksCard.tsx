@@ -1,17 +1,31 @@
 "use client";
 
+import { Inbox } from "lucide-react";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import {
     formatMinuteClock,
     getTaskLines,
     isTaskComplete,
 } from "@/features/schedule/lib/schedule-view";
-import { Card } from "@/shared/components/ui/Card";
 import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface UpcomingTasksCardProps {
     lang: string;
     tasks: ScheduleTask[];
+}
+
+function resolveTaskColor(color: string) {
+    const map: Record<string, string> = {
+        indigo: "#6366F1",
+        teal: "#14B8A6",
+        amber: "#F59E0B",
+        rose: "#EC4899",
+        violet: "#8B5CF6",
+        emerald: "#10B981",
+        red: "#EF4444",
+    };
+
+    return color.startsWith("#") ? color : map[color] ?? "#6366F1";
 }
 
 export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
@@ -20,46 +34,60 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
     const upcomingTasks = tasks
         .filter((task) => !isTaskComplete(task))
         .sort((a, b) => a.day - b.day || a.startMinute - b.startMinute)
-        .slice(0, 6);
+        .slice(0, 5);
 
     return (
-        <Card>
-            <h2 className="mb-4 text-lg font-black text-slate-950">
+        <article className="rounded-xl border border-sborder bg-white p-5">
+            <h3 className="font-display mb-4 text-base font-bold text-slate-950">
                 {copy.upcoming}
-            </h2>
+            </h3>
 
-            <div className="space-y-3">
-                {upcomingTasks.length > 0 ? (
-                    upcomingTasks.map((task) => {
+            {upcomingTasks.length > 0 ? (
+                <div>
+                    {upcomingTasks.map((task) => {
                         const lines = getTaskLines(task);
+                        const color = resolveTaskColor(task.color);
 
                         return (
                             <div
                                 key={task.id}
-                                className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3"
+                                className="-mx-2 flex items-start gap-3 rounded-lg border-b border-sborder px-2 py-2.5 transition last:border-0 hover:bg-slate-50"
                             >
-                                <div className="h-10 w-1 rounded-full bg-indigo-600" />
+                                <span
+                                    className="mt-0.5 h-10 w-1 shrink-0 rounded-full"
+                                    style={{ backgroundColor: color }}
+                                />
 
                                 <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-black text-slate-800">
+                                    <div className="truncate text-sm font-medium text-slate-900">
                                         {lines[0] ?? task.text}
-                                    </p>
+                                    </div>
 
-                                    <p className="text-xs font-bold text-slate-400">
-                                        Día {task.day + 1} · {formatMinuteClock(task.startMinute)}
-                                    </p>
+                                    <div className="text-xs text-muted">
+                                        {lang === "es" ? "Día" : "Day"} {task.day + 1} ·{" "}
+                                        {formatMinuteClock(task.startMinute)}
+                                    </div>
                                 </div>
+
+                                <span
+                                    className="tag-pill shrink-0"
+                                    style={{
+                                        backgroundColor: `${color}18`,
+                                        color,
+                                    }}
+                                >
+                                    {lang === "es" ? "Pendiente" : "Pending"}
+                                </span>
                             </div>
                         );
-                    })
-                ) : (
-                    <div className="grid min-h-[180px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-center">
-                        <p className="text-sm font-bold text-slate-400">
-                            {copy.emptyUpcoming}
-                        </p>
-                    </div>
-                )}
-            </div>
-        </Card>
+                    })}
+                </div>
+            ) : (
+                <div className="py-8 text-center text-muted">
+                    <Inbox size={36} className="mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">{copy.noActivitiesYet}</p>
+                </div>
+            )}
+        </article>
     );
 }
