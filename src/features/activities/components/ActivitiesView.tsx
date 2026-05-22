@@ -7,6 +7,7 @@ import { Button } from "@/shared/components/ui/Button";
 import { DEFAULT_ACTIVITY_TAGS } from "@/features/tags/constants/tags.constants";
 import { scheduleTasksToActivities } from "../lib/activity-adapters";
 import { getShortDate } from "@/features/calendar/lib/calendar-utils";
+import { getActivitiesCopy } from "../constants/activities.constants";
 
 interface ActivitiesViewProps {
     lang: string;
@@ -27,6 +28,8 @@ export function ActivitiesView({
     onDeleteTask,
     onToggleComplete,
 }: ActivitiesViewProps) {
+    const copy = getActivitiesCopy(lang);
+
     const [search, setSearch] = useState("");
     const [tagFilter, setTagFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState<
@@ -50,11 +53,15 @@ export function ActivitiesView({
 
     const filtered = activities
         .filter((activity) => {
-            const matchesSearch = activity.title
-                .toLowerCase()
-                .includes(search.toLowerCase());
+            const normalizedSearch = search.trim().toLowerCase();
+
+            const matchesSearch =
+                normalizedSearch.length === 0 ||
+                activity.title.toLowerCase().includes(normalizedSearch) ||
+                activity.description.toLowerCase().includes(normalizedSearch);
 
             const matchesTag = tagFilter === "all" || activity.tagId === tagFilter;
+
             const matchesStatus =
                 statusFilter === "all" || activity.status === statusFilter;
 
@@ -67,9 +74,15 @@ export function ActivitiesView({
         });
 
     const statusLabels = {
-        all: lang === "es" ? "Todas" : "All",
-        pending: lang === "es" ? "Pendiente" : "Pending",
-        completed: lang === "es" ? "Completada" : "Completed",
+        all: copy.all,
+        pending: copy.pending,
+        completed: copy.completed,
+    };
+
+    const priorityLabels = {
+        high: copy.high,
+        medium: copy.medium,
+        low: copy.low,
     };
 
     return (
@@ -84,9 +97,7 @@ export function ActivitiesView({
                     <input
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
-                        placeholder={
-                            lang === "es" ? "Buscar actividades..." : "Search activities..."
-                        }
+                        placeholder={copy.searchPlaceholder}
                         className="w-full rounded-xl border border-sborder bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-primary"
                     />
                 </div>
@@ -96,9 +107,7 @@ export function ActivitiesView({
                     onChange={(event) => setTagFilter(event.target.value)}
                     className="rounded-xl border border-sborder bg-white px-4 py-2.5 text-sm outline-none"
                 >
-                    <option value="all">
-                        {lang === "es" ? "Todas las Etiquetas" : "All Tags"}
-                    </option>
+                    <option value="all">{copy.allTags}</option>
 
                     {DEFAULT_ACTIVITY_TAGS.map((tag) => (
                         <option key={tag.id} value={tag.id}>
@@ -109,7 +118,7 @@ export function ActivitiesView({
 
                 <Button onClick={onCreateTask}>
                     <Plus size={16} />
-                    {lang === "es" ? "Agregar Tarea" : "Add Task"}
+                    {copy.addTask}
                 </Button>
             </div>
 
@@ -175,7 +184,7 @@ export function ActivitiesView({
                                             color,
                                         }}
                                     >
-                                        {tag?.name ?? (lang === "es" ? "Sin etiqueta" : "Untagged")}
+                                        {tag?.name ?? copy.untagged}
                                     </span>
                                 </div>
 
@@ -199,17 +208,7 @@ export function ActivitiesView({
                                                 : "bg-slate-100 text-muted"
                                             }`}
                                     >
-                                        {activity.priority === "high"
-                                            ? lang === "es"
-                                                ? "Alta"
-                                                : "High"
-                                            : activity.priority === "medium"
-                                                ? lang === "es"
-                                                    ? "Media"
-                                                    : "Medium"
-                                                : lang === "es"
-                                                    ? "Baja"
-                                                    : "Low"}
+                                        {priorityLabels[activity.priority]}
                                     </span>
                                 )}
                             </div>
@@ -230,15 +229,9 @@ export function ActivitiesView({
                 <div className="py-16 text-center text-muted">
                     <Inbox size={42} className="mx-auto mb-3 opacity-30" />
 
-                    <p className="text-sm">
-                        {lang === "es" ? "Sin actividades aún" : "No activities yet"}
-                    </p>
+                    <p className="text-sm">{copy.emptyTitle}</p>
 
-                    <p className="mt-1 text-xs">
-                        {lang === "es"
-                            ? "Agrega tu primera actividad para comenzar"
-                            : "Add your first activity to get started"}
-                    </p>
+                    <p className="mt-1 text-xs">{copy.emptyDescription}</p>
                 </div>
             )}
         </div>
