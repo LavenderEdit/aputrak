@@ -6,8 +6,8 @@ import type {
     ScheduleSettings,
     ScheduleTask,
 } from "@/features/schedule/types/schedule.types";
-import type { ToastType } from "@/shared/hooks/useToast";
-import type { TranslateFn } from "@/shared/types/i18n.types";
+import type { PromiseToastMessages } from "@/shared/hooks/useToast";
+import { getToastCopy } from "@/shared/constants/toast.constants";
 
 interface Profile {
     username: string;
@@ -20,10 +20,13 @@ interface ScheduleData {
 }
 
 interface UseScheduleExportParams {
+    lang: string;
     profile: Profile | null;
     scheduleData: ScheduleData;
-    t: TranslateFn;
-    showToast: (message: string, type?: ToastType) => void;
+    showPromiseToast: <T>(
+        promise: Promise<T>,
+        messages: PromiseToastMessages<T>,
+    ) => Promise<T>;
 }
 
 interface HtmlToImageApi {
@@ -98,17 +101,16 @@ function resetExportDom() {
 }
 
 export function useScheduleExport({
+    lang,
     profile,
     scheduleData,
-    t,
-    showToast,
+    showPromiseToast,
 }: UseScheduleExportParams) {
+    const toastCopy = getToastCopy(lang);
     const [exportLoading, setExportLoading] = useState(false);
 
     const handleGraphicExport = async (type: "pdf" | "desktop" | "mobile") => {
-        try {
-            setExportLoading(true);
-
+        const exportTask = async () => {
             if (type === "pdf") {
                 await Utils.loadExportScripts();
             }
@@ -157,8 +159,7 @@ export function useScheduleExport({
                     throw new Error("jspdf was not loaded");
                 }
 
-                const orientation =
-                    canvas.width > canvas.height ? "landscape" : "portrait";
+                const orientation = canvas.width > canvas.height ? "landscape" : "portrait";
 
                 const pdf = new exportWindow.jspdf.jsPDF({
                     orientation,
@@ -176,66 +177,67 @@ export function useScheduleExport({
                 );
 
                 pdf.save(`${filename}.pdf`);
-            } else {
-                const targetWidth = type === "desktop" ? 1920 : 1080;
-                const targetHeight = type === "desktop" ? 1080 : 1920;
-
-                const finalCanvas = document.createElement("canvas");
-                finalCanvas.width = targetWidth;
-                finalCanvas.height = targetHeight;
-
-                const ctx = finalCanvas.getContext("2d");
-
-                if (!ctx) {
-                    throw new Error("Canvas context not available");
-                }
-
-                ctx.fillStyle = "#1e293b";
-                ctx.fillRect(0, 0, targetWidth, targetHeight);
-
-                const padding = 80;
-                const availableWidth = targetWidth - padding * 2;
-                const availableHeight = targetHeight - padding * 2;
-
-                const scale = Math.min(
-                    availableWidth / canvas.width,
-                    availableHeight / canvas.height,
-                    1,
-                );
-
-                const drawWidth = canvas.width * scale;
-                const drawHeight = canvas.height * scale;
-                const x = (targetWidth - drawWidth) / 2;
-                const y = (targetHeight - drawHeight) / 2;
-
-                ctx.shadowColor = "rgba(0,0,0,0.5)";
-                ctx.shadowBlur = 30;
-                ctx.shadowOffsetY = 15;
-                ctx.drawImage(canvas, x, y, drawWidth, drawHeight);
-
-                const link = document.createElement("a");
-                link.download = `${filename}_${type}.png`;
-                link.href = finalCanvas.toDataURL("image/png", 1);
-
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                return;
             }
 
-            showToast(t("exportSuccess"));
+            const targetWidth = type === "desktop" ? 1920 : 1080;
+            const targetHeight = type === "desktop" ? 1080 : 1920;
+
+            const finalCanvas = document.createElement("canvas");
+            finalCanvas.width = targetWidth;
+            finalCanvas.height = targetHeight;
+
+            const ctx = finalCanvas.getContext("2d");
+
+            if (!ctx) {
+                throw new Error("Canvas context not available");
+            }
+
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+            const padding = 80;
+            const availableWidth = targetWidth - padding * 2;
+            const availableHeight = targetHeight - padding * 2;
+
+            const scale = Math.min(
+                availableWidth / canvas.width,
+                availableHeight / canvas.height,
+                1,
+            );
+
+            const drawWidth = canvas.width * scale;
+            const drawHeight = canvas.height * scale;
+            const x = (targetWidth - drawWidth) / 2;
+            const y = (targetHeight - drawHeight) / 2;
+
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 30;
+            ctx.shadowOffsetY = 15;
+            ctx.drawImage(canvas, x, y, drawWidth, drawHeight);
+
+            const link = document.createElement("a");
+            link.download = `${filename}_${type}.png`;
+            link.href = finalCanvas.toDataURL("image/png", 1);
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        try {
+            setExportLoading(true);
+            await showPromiseToast(exportTask(), toastCopy.exportGraphic);
         } catch (error) {
             console.error(error);
             resetExportDom();
-            showToast(t("exportError"), "error");
         } finally {
             setExportLoading(false);
         }
     };
 
     const handleExportJSON = async () => {
-        try {
-            setExportLoading(true);
-
+        const backupTask = async () => {
             const backupData = {
                 version: 2,
                 username: profile?.username,
@@ -260,11 +262,13 @@ export function useScheduleExport({
             document.body.removeChild(link);
 
             URL.revokeObjectURL(url);
+        };
 
-            showToast(t("backupSuccess"));
+        try {
+            setExportLoading(true);
+            await showPromiseToast(backupTask(), toastCopy.exportBackup);
         } catch (error) {
             console.error(error);
-            showToast(t("backupError"), "error");
         } finally {
             setExportLoading(false);
         }
