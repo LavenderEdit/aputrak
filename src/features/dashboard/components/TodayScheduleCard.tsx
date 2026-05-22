@@ -1,17 +1,31 @@
 "use client";
 
+import { CalendarDays } from "lucide-react";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import {
     formatMinuteClock,
     getCurrentDayIndex,
     getTaskLines,
 } from "@/features/schedule/lib/schedule-view";
-import { Card } from "@/shared/components/ui/Card";
 import { getDashboardCopy } from "../constants/dashboard.constants";
 
 interface TodayScheduleCardProps {
     lang: string;
     tasks: ScheduleTask[];
+}
+
+function resolveTaskColor(color: string) {
+    const map: Record<string, string> = {
+        indigo: "#6366F1",
+        teal: "#14B8A6",
+        amber: "#F59E0B",
+        rose: "#EC4899",
+        violet: "#8B5CF6",
+        emerald: "#10B981",
+        red: "#EF4444",
+    };
+
+    return color.startsWith("#") ? color : map[color] ?? "#6366F1";
 }
 
 export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
@@ -24,48 +38,51 @@ export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
         .slice(0, 6);
 
     return (
-        <Card>
-            <h2 className="mb-4 text-lg font-black text-slate-950">
-                {copy.today}
-            </h2>
+        <article className="rounded-xl border border-sborder bg-white p-5">
+            <h3 className="font-display mb-4 text-base font-bold text-slate-950">
+                {copy.todaySchedule}
+            </h3>
 
-            <div className="space-y-3">
-                {todayTasks.length > 0 ? (
-                    todayTasks.map((task) => {
+            {todayTasks.length > 0 ? (
+                <div>
+                    {todayTasks.map((task) => {
                         const lines = getTaskLines(task);
+                        const color = resolveTaskColor(task.color);
+                        const completed = lines.length > 0 && lines.every((_, index) => task.completed[index]);
 
                         return (
-                            <div
+                            <button
                                 key={task.id}
-                                className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+                                className="-mx-2 flex w-[calc(100%+1rem)] cursor-pointer items-start gap-3 rounded-lg border-b border-sborder px-2 py-2.5 text-left transition last:border-0 hover:bg-slate-50"
                             >
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <p className="text-sm font-black text-slate-900">
-                                            {lines[0] ?? task.text}
-                                        </p>
+                                <span
+                                    className="mt-0.5 h-10 w-1 shrink-0 rounded-full"
+                                    style={{ backgroundColor: color }}
+                                />
 
-                                        <p className="mt-1 text-xs font-bold text-slate-400">
-                                            {formatMinuteClock(task.startMinute)} -{" "}
-                                            {formatMinuteClock(task.endMinute)}
-                                        </p>
+                                <div className="min-w-0 flex-1">
+                                    <div
+                                        className={`text-sm font-medium ${completed ? "text-muted line-through" : "text-slate-900"
+                                            }`}
+                                    >
+                                        {lines[0] ?? task.text}
                                     </div>
 
-                                    <span className="rounded-full bg-white px-2.5 py-1 text-xs font-black text-slate-500">
-                                        {lines.length}
-                                    </span>
+                                    <div className="text-xs text-muted">
+                                        {formatMinuteClock(task.startMinute)} -{" "}
+                                        {formatMinuteClock(task.endMinute)}
+                                    </div>
                                 </div>
-                            </div>
+                            </button>
                         );
-                    })
-                ) : (
-                    <div className="grid min-h-[180px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-center">
-                        <p className="text-sm font-bold text-slate-400">
-                            {copy.emptyToday}
-                        </p>
-                    </div>
-                )}
-            </div>
-        </Card>
+                    })}
+                </div>
+            ) : (
+                <div className="py-8 text-center text-muted">
+                    <CalendarDays size={36} className="mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">{copy.noTasks}</p>
+                </div>
+            )}
+        </article>
     );
 }
