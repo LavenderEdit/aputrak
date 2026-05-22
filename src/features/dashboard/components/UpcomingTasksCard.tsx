@@ -64,7 +64,7 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
                                     </div>
 
                                     <div className="text-xs text-muted">
-                                        {lang === "es" ? "Día" : "Day"} {task.day + 1} ·{" "}
+                                        {copy.day} {task.day + 1}
                                         {formatMinuteClock(task.startMinute)}
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
                                         color,
                                     }}
                                 >
-                                    {lang === "es" ? "Pendiente" : "Pending"}
+                                    {copy.pending}
                                 </span>
                             </div>
                         );
