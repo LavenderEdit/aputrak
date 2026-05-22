@@ -14,7 +14,7 @@ import { getMonthName } from "../lib/calendar-utils";
 import { CalendarSidebar } from "./CalendarSidebar";
 import { WeekCalendar } from "./WeekCalendar";
 import { MonthCalendar } from "./MonthCalendar";
-
+import { getCalendarCopy } from "../constants/calendar.constants";
 interface CalendarViewProps {
     lang: string;
     weekId: string;
@@ -37,6 +37,7 @@ export function CalendarView({
     const [view, setView] = useState<"week" | "month">("week");
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTag, setSelectedTag] = useState("all");
+    const copy = getCalendarCopy(lang);
 
     const activities = useMemo(
         () => scheduleTasksToActivities(tasks, weekId),
@@ -71,7 +72,7 @@ export function CalendarView({
                             setSelectedDate(new Date());
                         }}
                     >
-                        {lang === "es" ? "Hoy" : "Today"}
+                        {copy.today}
                     </Button>
 
                     <Button
@@ -99,7 +100,7 @@ export function CalendarView({
                                     : "text-muted hover:text-slate-900",
                             )}
                         >
-                            {lang === "es" ? "Semana" : "Week"}
+                            {copy.week}
                         </button>
 
                         <button
@@ -111,7 +112,7 @@ export function CalendarView({
                                     : "text-muted hover:text-slate-900",
                             )}
                         >
-                            {lang === "es" ? "Mes" : "Month"}
+                            {copy.month}
                         </button>
                     </div>
                 </div>
