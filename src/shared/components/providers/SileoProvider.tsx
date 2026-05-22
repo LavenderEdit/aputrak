@@ -10,7 +10,7 @@ export function SileoProvider({ children }: SileoProviderProps) {
     return (
         <>
             <Toaster
-                position="top-right"
+                position="bottom-right"
                 theme="light"
                 offset={{ top: 20, right: 20 }}
                 options={{
