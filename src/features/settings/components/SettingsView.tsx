@@ -12,6 +12,7 @@ import {
 import { Button } from "@/shared/components/ui/Button";
 import { DAYS_OF_WEEK, DEFAULT_SETTINGS } from "@/shared/lib/constants";
 import { Utils } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/cn";
 import type { ScheduleSettings } from "@/features/schedule/types/schedule.types";
 import { getSettingsCopy } from "../constants/settings.constants";
 
@@ -23,6 +24,54 @@ interface SettingsViewProps {
     getDayName: (index: number) => string;
     onUpdateUsername: (username: string) => Promise<void> | void;
     onToggleLanguage: () => void;
+}
+
+const START_HOURS = Array.from({ length: 24 }, (_, index) => index);
+const END_HOURS = Array.from({ length: 25 }, (_, index) => index);
+
+function HourPicker({
+    label,
+    value,
+    hours,
+    onChange,
+}: {
+    label: string;
+    value: number;
+    hours: number[];
+    onChange: (hour: number) => void;
+}) {
+    return (
+        <div>
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-800">
+                <Clock3 size={15} />
+                {label}
+            </label>
+
+            <div className="rounded-xl border border-sborder bg-slate-50 p-2">
+                <div className="grid max-h-44 grid-cols-3 gap-2 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-4 sm:overflow-visible">
+                    {hours.map((hour) => {
+                        const active = value === hour;
+
+                        return (
+                            <button
+                                key={hour}
+                                type="button"
+                                onClick={() => onChange(hour)}
+                                className={cn(
+                                    "rounded-lg border px-2 py-2 text-xs font-semibold transition",
+                                    active
+                                        ? "border-primary bg-indigo-600 text-white shadow-sm"
+                                        : "border-sborder bg-white text-slate-600 hover:border-primary hover:text-primary",
+                                )}
+                            >
+                                {Utils.formatTime(hour)}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export function SettingsView({
@@ -55,9 +104,9 @@ export function SettingsView({
         });
     };
 
-    const handleHourChange = (type: "start" | "end", value: string) => {
-        let nextStart = type === "start" ? Number(value) : settings.startHour;
-        let nextEnd = type === "end" ? Number(value) : settings.endHour;
+    const handleHourChange = (type: "start" | "end", value: number) => {
+        let nextStart = type === "start" ? value : settings.startHour;
+        let nextEnd = type === "end" ? value : settings.endHour;
 
         if (nextStart >= nextEnd) {
             if (type === "start") {
@@ -88,7 +137,7 @@ export function SettingsView({
     };
 
     return (
-        <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-3xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
             <div className="mb-6">
                 <h2 className="font-display text-xl font-bold text-slate-950">
                     {copy.title}
@@ -166,10 +215,12 @@ export function SettingsView({
                                         key={index}
                                         type="button"
                                         onClick={() => toggleDay(index)}
-                                        className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${active
-                                            ? "border-primary bg-indigo-50 text-primary"
-                                            : "border-sborder bg-white text-muted hover:bg-hover"
-                                            }`}
+                                        className={cn(
+                                            "rounded-xl border px-3 py-2 text-sm font-medium transition",
+                                            active
+                                                ? "border-primary bg-indigo-50 text-primary"
+                                                : "border-sborder bg-white text-muted hover:bg-hover",
+                                        )}
                                     >
                                         {getDayName(index).slice(0, 3)}
                                     </button>
@@ -178,48 +229,20 @@ export function SettingsView({
                         </div>
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-800">
-                                <Clock3 size={15} />
-                                {copy.startHour}
-                            </label>
+                    <div className="grid gap-4 lg:grid-cols-2">
+                        <HourPicker
+                            label={copy.startHour}
+                            value={settings.startHour}
+                            hours={START_HOURS}
+                            onChange={(hour) => handleHourChange("start", hour)}
+                        />
 
-                            <select
-                                value={settings.startHour}
-                                onChange={(event) =>
-                                    handleHourChange("start", event.target.value)
-                                }
-                                className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
-                            >
-                                {Array.from({ length: 24 }, (_, index) => (
-                                    <option key={index} value={index}>
-                                        {Utils.formatTime(index)}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-800">
-                                <Clock3 size={15} />
-                                {copy.endHour}
-                            </label>
-
-                            <select
-                                value={settings.endHour}
-                                onChange={(event) =>
-                                    handleHourChange("end", event.target.value)
-                                }
-                                className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
-                            >
-                                {Array.from({ length: 25 }, (_, index) => (
-                                    <option key={index} value={index}>
-                                        {Utils.formatTime(index)}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        <HourPicker
+                            label={copy.endHour}
+                            value={settings.endHour}
+                            hours={END_HOURS}
+                            onChange={(hour) => handleHourChange("end", hour)}
+                        />
                     </div>
                 </section>
 
