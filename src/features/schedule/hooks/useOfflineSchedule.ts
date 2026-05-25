@@ -74,6 +74,54 @@ function migrateLegacyWeekData(data: LegacyWeekData): ScheduleTask[] {
     });
 }
 
+function getTaskSlotKey(task: ScheduleTask) {
+    return `${task.day}-${task.startMinute}-${task.endMinute}`;
+}
+
+function dedupeTasksBySlot(tasks: ScheduleTask[]) {
+    const taskMap = new Map<string, ScheduleTask>();
+
+    tasks.forEach((task) => {
+        taskMap.set(getTaskSlotKey(task), task);
+    });
+
+    return Array.from(taskMap.values());
+}
+
+function mergeTasksBySlot(
+    existingTasks: ScheduleTask[],
+    incomingTasks: ScheduleTask[],
+) {
+    const incomingSlotKeys = new Set(incomingTasks.map(getTaskSlotKey));
+
+    const preservedTasks = existingTasks.filter(
+        (task) => !incomingSlotKeys.has(getTaskSlotKey(task)),
+    );
+
+    return dedupeTasksBySlot([...preservedTasks, ...incomingTasks]);
+}
+
+async function readWeekTasks(targetWeekId: string) {
+    const weekData = await DB.get<StoredWeek>("weeks", targetWeekId);
+    const rawData = weekData?.data ?? [];
+
+    let weekTasks: ScheduleTask[] = [];
+
+    if (Array.isArray(rawData)) {
+        weekTasks = rawData;
+    } else if (Object.keys(rawData).length > 0) {
+        weekTasks = migrateLegacyWeekData(rawData);
+    }
+
+    const normalizedTasks = dedupeTasksBySlot(weekTasks);
+
+    if (normalizedTasks.length !== weekTasks.length) {
+        await DB.put("weeks", { id: targetWeekId, data: normalizedTasks });
+    }
+
+    return normalizedTasks;
+}
+
 export const useOfflineSchedule = () => {
     const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
     const weekId = Utils.getWeekStartIdentifier(currentWeekDate);
@@ -100,17 +148,7 @@ export const useOfflineSchedule = () => {
             setLoadingData(true);
 
             try {
-                const weekData = await DB.get<StoredWeek>("weeks", weekId);
-                const rawData = weekData?.data ?? [];
-
-                let loadedTasks: ScheduleTask[] = [];
-
-                if (Array.isArray(rawData)) {
-                    loadedTasks = rawData;
-                } else if (Object.keys(rawData).length > 0) {
-                    loadedTasks = migrateLegacyWeekData(rawData);
-                    await DB.put("weeks", { id: weekId, data: loadedTasks });
-                }
+                const loadedTasks = await readWeekTasks(weekId);
 
                 tasksRef.current = loadedTasks;
                 setTasks(loadedTasks);
@@ -143,13 +181,9 @@ export const useOfflineSchedule = () => {
     const saveTasks = async (incomingTasks: ScheduleTask[]) => {
         if (incomingTasks.length === 0) return;
 
-        const taskMap = new Map(tasksRef.current.map((task) => [task.id, task]));
+        const nextTasks = mergeTasksBySlot(tasksRef.current, incomingTasks);
 
-        incomingTasks.forEach((task) => {
-            taskMap.set(task.id, task);
-        });
-
-        await persistTasks(Array.from(taskMap.values()));
+        await persistTasks(nextTasks);
     };
 
     const deleteTask = async (taskId: string) => {
@@ -359,30 +393,18 @@ export const useOfflineSchedule = () => {
         setCurrentWeekDate(newDate);
     };
 
+    const goToWeek = (targetWeekId: string) => {
+        setCurrentWeekDate(new Date(`${targetWeekId}T00:00:00`));
+    };
+
     const saveTasksForWeek = async (
         targetWeekId: string,
         incomingTasks: ScheduleTask[],
     ) => {
         if (incomingTasks.length === 0) return;
 
-        const weekData = await DB.get<StoredWeek>("weeks", targetWeekId);
-        const rawData = weekData?.data ?? [];
-
-        let existingTasks: ScheduleTask[] = [];
-
-        if (Array.isArray(rawData)) {
-            existingTasks = rawData;
-        } else if (Object.keys(rawData).length > 0) {
-            existingTasks = migrateLegacyWeekData(rawData);
-        }
-
-        const taskMap = new Map(existingTasks.map((task) => [task.id, task]));
-
-        incomingTasks.forEach((task) => {
-            taskMap.set(task.id, task);
-        });
-
-        const nextTasks = Array.from(taskMap.values());
+        const existingTasks = await readWeekTasks(targetWeekId);
+        const nextTasks = mergeTasksBySlot(existingTasks, incomingTasks);
 
         await DB.put("weeks", { id: targetWeekId, data: nextTasks });
 
@@ -390,10 +412,6 @@ export const useOfflineSchedule = () => {
             tasksRef.current = nextTasks;
             setTasks(nextTasks);
         }
-    };
-
-    const goToWeek = (targetWeekId: string) => {
-        setCurrentWeekDate(new Date(`${targetWeekId}T00:00:00`));
     };
 
     return {
@@ -412,5 +430,6 @@ export const useOfflineSchedule = () => {
         changeWeek,
         saveTasksForWeek,
         goToWeek,
+        getTasksForWeek: readWeekTasks,
     };
 };
