@@ -9,7 +9,7 @@ import { DashboardOverview } from "@/features/dashboard/components/DashboardOver
 import { ExportView } from "@/features/export/components/ExportView";
 import { useScheduleExport } from "@/features/export/hooks/useScheduleExport";
 import { ImportView } from "@/features/import/components/ImportView";
-import { useScheduleImport } from "@/features/import/hooks/useScheduleImport";
+import { useScheduleImport } from "@/features/import/hooks/useScheduleImageImport";
 import { ActivityModal } from "@/features/schedule/components/ActivityModal";
 import { useActivityModal } from "@/features/schedule/hooks/useActivityModal";
 import { useOfflineSchedule } from "@/features/schedule/hooks/useOfflineSchedule";
