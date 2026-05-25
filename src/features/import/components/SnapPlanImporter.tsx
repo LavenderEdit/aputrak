@@ -12,10 +12,14 @@ import {
 import { getImportCopy } from "../constants/import.constants";
 import { SnapPlanDropzone } from "./SnapPlanDropzone";
 import { SnapPlanDetectedTable } from "./SnapPlanDetectedTable";
+import { formatDetectedWeek } from "../lib/schedule-week-parser";
 
 interface SnapPlanImporterProps {
     lang: string;
-    onConfirm?: (items: ParsedScheduleItem[]) => void | Promise<void>;
+    onConfirm?: (
+        items: ParsedScheduleItem[],
+        detectedWeekId?: string | null,
+    ) => void | Promise<void>;
 }
 
 export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
@@ -30,31 +34,37 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
         processImage,
         reset,
         isProcessing,
+        detectedWeekId,
     } = useLocalOcr(lang);
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [items, setItems] = useState<ParsedScheduleItem[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [parseMessage, setParseMessage] = useState<string | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
 
+    const previewUrl = useMemo(() => {
+        if (!selectedFile) return null;
+
+        return URL.createObjectURL(selectedFile);
+    }, [selectedFile]);
+
     const progressPercent = useMemo(() => {
         return progress ? Math.round((progress.progress || 0) * 100) : 0;
     }, [progress]);
 
+    const detectedWeekLabel = detectedWeekId
+        ? formatDetectedWeek(detectedWeekId, lang)
+        : null;
+
     useEffect(() => {
-        if (!selectedFile) {
-            setPreviewUrl(null);
-            return;
-        }
-
-        const url = URL.createObjectURL(selectedFile);
-        setPreviewUrl(url);
-
-        return () => URL.revokeObjectURL(url);
-    }, [selectedFile]);
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
     const clearParsedResults = () => {
         setItems([]);
@@ -146,9 +156,8 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
 
         try {
             setIsSaving(true);
-            await onConfirm(items);
+            await onConfirm(items, detectedWeekId);
             setSelectedFile(null);
-            setPreviewUrl(null);
             setItems([]);
             setParseMessage(null);
             reset();
@@ -172,7 +181,6 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
 
                         <div>
                             <p className="font-semibold">{copy.imageImportWarningTitle}</p>
-
                             <p className="mt-1">{copy.imageImportWarningDescription}</p>
                         </div>
                     </div>
@@ -222,6 +230,18 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                         <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger">
                             {fileError || error}
                         </p>
+                    )}
+
+                    {status === "success" && (
+                        <div className="rounded-xl border border-sborder bg-white px-4 py-3 text-sm">
+                            <p className="font-semibold text-slate-900">
+                                {copy.detectedWeek}
+                            </p>
+
+                            <p className="mt-1 text-muted">
+                                {detectedWeekLabel ?? copy.noDetectedWeek}
+                            </p>
+                        </div>
                     )}
                 </div>
 
