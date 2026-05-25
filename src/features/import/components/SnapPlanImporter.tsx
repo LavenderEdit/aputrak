@@ -167,16 +167,16 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
     };
 
     return (
-        <section className="space-y-5">
+        <section className="space-y-4 sm:space-y-5">
             <header>
-                <h2 className="font-display text-xl font-bold text-slate-950">
+                <h2 className="font-display text-lg font-bold text-slate-950 sm:text-xl">
                     {copy.imageImportTitle}
                 </h2>
 
-                <p className="mt-1 text-sm text-muted">{copy.imageImportSubtitle}</p>
+                <p className="mt-1 text-sm leading-6 text-muted">{copy.imageImportSubtitle}</p>
 
-                <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    <div className="flex gap-2">
+                <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800 sm:px-4">
+                    <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-5">
                         <AlertTriangle size={17} className="mt-0.5 shrink-0" />
 
                         <div>
@@ -246,7 +246,7 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                 </div>
 
                 <div className="space-y-4">
-                    <details className="rounded-xl border border-sborder bg-slate-50 p-4">
+                    <details className="rounded-xl border border-sborder bg-slate-50 p-3 sm:p-4">
                         <summary className="cursor-pointer text-sm font-semibold text-slate-800">
                             {copy.detectedTextSummary}
                         </summary>
@@ -255,8 +255,8 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                             value={text}
                             onChange={(event) => setText(event.target.value)}
                             placeholder={copy.detectedTextPlaceholder}
-                            rows={8}
-                            className="mt-3 w-full resize-none rounded-xl border border-sborder bg-white p-3 text-sm text-slate-800 outline-none transition focus:border-primary"
+                            rows={6}
+                            className="mt-3 min-h-[160px] w-full resize-none rounded-xl border border-sborder bg-white p-3 text-sm text-slate-800 outline-none transition focus:border-primary sm:min-h-[220px]"
                         />
                     </details>
 
