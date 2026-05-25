@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type {
     ScheduleSettings,
@@ -8,21 +8,34 @@ import type {
 } from "@/features/schedule/types/schedule.types";
 import { Button } from "@/shared/components/ui/Button";
 import { cn } from "@/shared/lib/cn";
+import { Utils } from "@/shared/lib/utils";
 import { DEFAULT_ACTIVITY_TAGS } from "@/features/tags/constants/tags.constants";
 import { scheduleTasksToActivities } from "@/features/activities/lib/activity-adapters";
-import { getMonthName } from "../lib/calendar-utils";
+import { getMonthGrid, getMonthName } from "../lib/calendar-utils";
 import { CalendarSidebar } from "./CalendarSidebar";
 import { WeekCalendar } from "./WeekCalendar";
 import { MonthCalendar } from "./MonthCalendar";
 import { getCalendarCopy } from "../constants/calendar.constants";
+
 interface CalendarViewProps {
     lang: string;
     weekId: string;
     settings: ScheduleSettings;
     tasks: ScheduleTask[];
     changeWeek: (direction: number) => void;
+    getTasksForWeek: (weekId: string) => Promise<ScheduleTask[]>;
     onCreateTask: (day: number, hour: number) => void;
     onActivityClick: (taskId: string) => void;
+}
+
+function getDateFromWeekId(weekId: string) {
+    return new Date(`${weekId}T00:00:00`);
+}
+
+function addMonths(date: Date, amount: number) {
+    const nextDate = new Date(date);
+    nextDate.setMonth(nextDate.getMonth() + amount);
+    return nextDate;
 }
 
 export function CalendarView({
@@ -31,18 +44,90 @@ export function CalendarView({
     settings,
     tasks,
     changeWeek,
+    getTasksForWeek,
     onCreateTask,
     onActivityClick,
 }: CalendarViewProps) {
-    const [view, setView] = useState<"week" | "month">("week");
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [view, setView] = useState<"month" | "week">("month");
+    const [selectedDate, setSelectedDate] = useState(() =>
+        getDateFromWeekId(weekId),
+    );
     const [selectedTag, setSelectedTag] = useState("all");
-    const copy = getCalendarCopy(lang);
+    const [monthTasksByWeek, setMonthTasksByWeek] = useState<
+        Record<string, ScheduleTask[]>
+    >({});
 
-    const activities = useMemo(
+    const copy = getCalendarCopy(lang);
+    const weekDate = useMemo(() => getDateFromWeekId(weekId), [weekId]);
+    const visibleDate = view === "week" ? weekDate : selectedDate;
+
+    const visibleMonthWeekIds = useMemo(() => {
+        const dates = getMonthGrid(selectedDate);
+
+        return Array.from(
+            new Set(
+                dates.map((date) => Utils.getWeekStartIdentifier(date)),
+            ),
+        );
+    }, [selectedDate]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadMonthTasks = async () => {
+            const entries = await Promise.all(
+                visibleMonthWeekIds.map(async (monthWeekId) => {
+                    const weekTasks = await getTasksForWeek(monthWeekId);
+
+                    return [monthWeekId, weekTasks] as const;
+                }),
+            );
+
+            if (!cancelled) {
+                setMonthTasksByWeek(Object.fromEntries(entries));
+            }
+        };
+
+        loadMonthTasks();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [visibleMonthWeekIds, getTasksForWeek]);
+
+    const weekActivities = useMemo(
         () => scheduleTasksToActivities(tasks, weekId),
         [tasks, weekId],
     );
+
+    const monthActivities = useMemo(() => {
+        return Object.entries(monthTasksByWeek).flatMap(
+            ([monthWeekId, weekTasks]) =>
+                scheduleTasksToActivities(weekTasks, monthWeekId),
+        );
+    }, [monthTasksByWeek]);
+
+    const handlePrevious = () => {
+        if (view === "week") {
+            changeWeek(-1);
+            return;
+        }
+
+        setSelectedDate((currentDate) => addMonths(currentDate, -1));
+    };
+
+    const handleNext = () => {
+        if (view === "week") {
+            changeWeek(1);
+            return;
+        }
+
+        setSelectedDate((currentDate) => addMonths(currentDate, 1));
+    };
+
+    const handleToday = () => {
+        setSelectedDate(new Date());
+    };
 
     return (
         <div className="flex h-full overflow-hidden bg-white fade-in">
@@ -59,51 +144,34 @@ export function CalendarView({
                     <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => changeWeek(-1)}
+                        onClick={handlePrevious}
                         className="h-8 w-8 px-0"
                     >
                         <ChevronLeft size={14} />
                     </Button>
 
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => {
-                            setSelectedDate(new Date());
-                        }}
-                    >
+                    <Button variant="secondary" size="sm" onClick={handleToday}>
                         {copy.today}
                     </Button>
 
                     <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => changeWeek(1)}
+                        onClick={handleNext}
                         className="h-8 w-8 px-0"
                     >
                         <ChevronRight size={14} />
                     </Button>
 
                     <h2 className="font-display ml-1 text-lg font-bold capitalize text-slate-950">
-                        {getMonthName(selectedDate, lang)}
+                        {getMonthName(visibleDate, lang)}
                     </h2>
 
                     <div className="flex-1" />
 
                     <div className="flex rounded-lg bg-slate-100 p-0.5">
                         <button
-                            onClick={() => setView("week")}
-                            className={cn(
-                                "rounded-md px-3 py-1 text-sm font-medium transition",
-                                view === "week"
-                                    ? "bg-white text-primary shadow-sm"
-                                    : "text-muted hover:text-slate-900",
-                            )}
-                        >
-                            {copy.week}
-                        </button>
-
-                        <button
+                            type="button"
                             onClick={() => setView("month")}
                             className={cn(
                                 "rounded-md px-3 py-1 text-sm font-medium transition",
@@ -114,29 +182,42 @@ export function CalendarView({
                         >
                             {copy.month}
                         </button>
+
+                        <button
+                            type="button"
+                            onClick={() => setView("week")}
+                            className={cn(
+                                "rounded-md px-3 py-1 text-sm font-medium transition",
+                                view === "week"
+                                    ? "bg-white text-primary shadow-sm"
+                                    : "text-muted hover:text-slate-900",
+                            )}
+                        >
+                            {copy.week}
+                        </button>
                     </div>
                 </div>
 
-                {view === "week" ? (
-                    <WeekCalendar
-                        lang={lang}
-                        weekId={weekId}
-                        settings={settings}
-                        activities={activities}
-                        selectedTag={selectedTag}
-                        onCreateActivity={onCreateTask}
-                        onActivityClick={onActivityClick}
-                    />
-                ) : (
+                {view === "month" ? (
                     <MonthCalendar
                         lang={lang}
                         selectedDate={selectedDate}
-                        activities={activities}
+                        activities={monthActivities}
                         selectedTag={selectedTag}
                         onSelectDate={(date) => {
                             setSelectedDate(date);
                             setView("week");
                         }}
+                    />
+                ) : (
+                    <WeekCalendar
+                        lang={lang}
+                        weekId={weekId}
+                        settings={settings}
+                        activities={weekActivities}
+                        selectedTag={selectedTag}
+                        onCreateActivity={onCreateTask}
+                        onActivityClick={onActivityClick}
                     />
                 )}
             </section>
