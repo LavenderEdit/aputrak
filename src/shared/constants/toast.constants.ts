@@ -70,6 +70,21 @@ export const TOAST_COPY = {
                 description: "El archivo no es un respaldo válido de Aputrak.",
             },
         },
+
+        importImage: {
+            loading: {
+                title: "Importando actividades...",
+                description: "Guardando las actividades detectadas por OCR en tu horario.",
+            },
+            success: {
+                title: "Horario importado",
+                description: "Las actividades detectadas fueron guardadas correctamente.",
+            },
+            error: {
+                title: "Error al importar horario",
+                description: "No se pudieron guardar las actividades detectadas.",
+            },
+        },
     },
 
     en: {
@@ -139,6 +154,21 @@ export const TOAST_COPY = {
             error: {
                 title: "Invalid file",
                 description: "This is not a valid Aputrak backup file.",
+            },
+        },
+
+        importImage: {
+            loading: {
+                title: "Importing activities...",
+                description: "Saving OCR-detected activities into your schedule.",
+            },
+            success: {
+                title: "Schedule imported",
+                description: "Detected activities were saved successfully.",
+            },
+            error: {
+                title: "Schedule import failed",
+                description: "Detected activities could not be saved.",
             },
         },
     },
