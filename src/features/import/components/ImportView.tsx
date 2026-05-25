@@ -19,7 +19,10 @@ import { SnapPlanImporter } from "./SnapPlanImporter";
 interface ImportViewProps {
     lang: string;
     onImportJSON: (file: File) => Promise<void> | void;
-    onImportImageItems: (items: ParsedScheduleItem[]) => Promise<void> | void;
+    onImportImageItems: (
+        items: ParsedScheduleItem[],
+        detectedWeekId?: string | null,
+    ) => Promise<void> | void;
 }
 
 type ImportMode = "json" | "image";
