@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DB } from "@/shared/lib/db";
 import { Utils } from "@/shared/lib/utils";
 import { DEFAULT_SETTINGS } from "@/shared/lib/constants";
@@ -80,6 +80,7 @@ export const useOfflineSchedule = () => {
 
     const [settings, setSettings] = useState<ScheduleSettings>(DEFAULT_SETTINGS);
     const [tasks, setTasks] = useState<ScheduleTask[]>([]);
+    const tasksRef = useRef<ScheduleTask[]>([]);
     const [loadingData, setLoadingData] = useState(true);
 
     useEffect(() => {
@@ -111,6 +112,7 @@ export const useOfflineSchedule = () => {
                     await DB.put("weeks", { id: weekId, data: loadedTasks });
                 }
 
+                tasksRef.current = loadedTasks;
                 setTasks(loadedTasks);
             } finally {
                 setLoadingData(false);
@@ -120,29 +122,44 @@ export const useOfflineSchedule = () => {
         loadWeek();
     }, [weekId]);
 
+    const persistTasks = async (nextTasks: ScheduleTask[]) => {
+        tasksRef.current = nextTasks;
+        setTasks(nextTasks);
+        await DB.put("weeks", { id: weekId, data: nextTasks });
+    };
+
     const saveTask = async (task: ScheduleTask) => {
-        const newTasks = [...tasks];
-        const existingIdx = newTasks.findIndex((item) => item.id === task.id);
+        const currentTasks = tasksRef.current;
+        const existingIdx = currentTasks.findIndex((item) => item.id === task.id);
 
-        if (existingIdx >= 0) {
-            newTasks[existingIdx] = task;
-        } else {
-            newTasks.push(task);
-        }
+        const nextTasks =
+            existingIdx >= 0
+                ? currentTasks.map((item) => (item.id === task.id ? task : item))
+                : [...currentTasks, task];
 
-        setTasks(newTasks);
-        await DB.put("weeks", { id: weekId, data: newTasks });
+        await persistTasks(nextTasks);
+    };
+
+    const saveTasks = async (incomingTasks: ScheduleTask[]) => {
+        if (incomingTasks.length === 0) return;
+
+        const taskMap = new Map(tasksRef.current.map((task) => [task.id, task]));
+
+        incomingTasks.forEach((task) => {
+            taskMap.set(task.id, task);
+        });
+
+        await persistTasks(Array.from(taskMap.values()));
     };
 
     const deleteTask = async (taskId: string) => {
-        const newTasks = tasks.filter((task) => task.id !== taskId);
+        const nextTasks = tasksRef.current.filter((task) => task.id !== taskId);
 
-        setTasks(newTasks);
-        await DB.put("weeks", { id: weekId, data: newTasks });
+        await persistTasks(nextTasks);
     };
 
     const toggleTaskComplete = async (taskId: string, index: number) => {
-        const newTasks = tasks.map((task) => {
+        const nextTasks = tasksRef.current.map((task) => {
             if (task.id !== taskId) return task;
 
             const completed = [...task.completed];
@@ -154,8 +171,7 @@ export const useOfflineSchedule = () => {
             };
         });
 
-        setTasks(newTasks);
-        await DB.put("weeks", { id: weekId, data: newTasks });
+        await persistTasks(nextTasks);
     };
 
     const moveTask = async (
@@ -163,7 +179,7 @@ export const useOfflineSchedule = () => {
         targetDay: number,
         targetHour: number,
     ) => {
-        const newTasks = tasks.map((task) => {
+        const nextTasks = tasksRef.current.map((task) => {
             if (task.id !== taskId) return task;
 
             const duration = task.endMinute - task.startMinute;
@@ -177,8 +193,7 @@ export const useOfflineSchedule = () => {
             };
         });
 
-        setTasks(newTasks);
-        await DB.put("weeks", { id: weekId, data: newTasks });
+        await persistTasks(nextTasks);
     };
 
     const copyPreviousWeek = async () => {
@@ -203,9 +218,7 @@ export const useOfflineSchedule = () => {
                 completed: task.completed.map(() => false),
             }));
 
-            setTasks(clonedTasks);
-            await DB.put("weeks", { id: weekId, data: clonedTasks });
-
+            await persistTasks(clonedTasks);
             return true;
         } catch {
             return false;
@@ -218,7 +231,7 @@ export const useOfflineSchedule = () => {
         const currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
         const currentHour = now.getHours();
 
-        const newTasks = [...tasks];
+        const newTasks = [...tasksRef.current];
         const tasksToMove: ScheduleTask[] = [];
 
         for (let index = newTasks.length - 1; index >= 0; index--) {
@@ -329,9 +342,7 @@ export const useOfflineSchedule = () => {
             });
         });
 
-        setTasks(newTasks);
-        await DB.put("weeks", { id: weekId, data: newTasks });
-
+        await persistTasks(newTasks);
         return {
             success: true,
         };
@@ -354,6 +365,7 @@ export const useOfflineSchedule = () => {
         tasks,
         loadingData,
         saveTask,
+        saveTasks,
         deleteTask,
         toggleTaskComplete,
         moveTask,
