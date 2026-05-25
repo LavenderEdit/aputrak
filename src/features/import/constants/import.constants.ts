@@ -45,6 +45,8 @@ export const IMPORT_COPY = {
         reviewDetectedText:
             "Revisa el texto detectado y presiona “Detectar actividades”.",
         detectedActivitiesTitle: "Actividades detectadas",
+        detectedWeek: "Semana detectada",
+        noDetectedWeek: "No se detectó la fecha del horario. Se importará en la semana actual.",
         results: "resultado",
         resultsPlural: "resultados",
         day: "Día",
@@ -103,6 +105,8 @@ export const IMPORT_COPY = {
             "activity item(s) detected. Review days and times before importing.",
         reviewDetectedText: "Review the detected text and press “Detect activities”.",
         detectedActivitiesTitle: "Detected activities",
+        detectedWeek: "Detected week",
+        noDetectedWeek: "The schedule date was not detected. It will be imported into the current week.",
         results: "result",
         resultsPlural: "results",
         day: "Day",
