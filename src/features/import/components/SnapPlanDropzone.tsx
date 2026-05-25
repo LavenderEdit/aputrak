@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { ChangeEvent, DragEvent } from "react";
 import { ImagePlus } from "lucide-react";
 import { getImportCopy } from "../constants/import.constants";
@@ -69,9 +70,7 @@ export function SnapPlanDropzone({
                             {copy.imageDrop}
                         </p>
 
-                        <p className="mt-1 text-sm text-muted">
-                            {copy.imageBrowse}
-                        </p>
+                        <p className="mt-1 text-sm text-muted">{copy.imageBrowse}</p>
 
                         {selectedFile && (
                             <p className="mt-3 text-xs font-medium text-primary">
@@ -83,11 +82,13 @@ export function SnapPlanDropzone({
             </div>
 
             {previewUrl && (
-                <div className="overflow-hidden rounded-xl border border-sborder bg-slate-50">
-                    <img
+                <div className="relative h-[360px] overflow-hidden rounded-xl border border-sborder bg-slate-50">
+                    <Image
                         src={previewUrl}
                         alt={copy.imageScheduleLabel}
-                        className="max-h-[360px] w-full object-contain"
+                        fill
+                        unoptimized
+                        className="object-contain"
                     />
                 </div>
             )}
