@@ -61,24 +61,36 @@ function normalizeText(value: string) {
         .trim();
 }
 
+function normalizeDayToken(value: string) {
+    return value
+        .replace(/[Oo]/g, "0")
+        .replace(/[Il|]/g, "1")
+        .replace(/[^\d]/g, "");
+}
+
+function formatLocalDateId(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
 function getWeekStartIdentifier(date: Date) {
     const current = new Date(date);
     const day = current.getDay() || 7;
 
-    current.setHours(-24 * (day - 1));
+    current.setDate(current.getDate() - day + 1);
+    current.setHours(0, 0, 0, 0);
 
-    return current.toISOString().split("T")[0];
-}
-
-function normalizeDayToken(value: string) {
-    return value.replace(/[Oo]/g, "0");
+    return formatLocalDateId(current);
 }
 
 export function extractWeekIdFromScheduleText(text: string) {
     const normalized = normalizeText(text);
 
     const match = normalized.match(
-        /semana\s+de\s+([a-z]+)\.?\s+([0-9oO]{1,2}),?\s+(\d{4})/,
+        /semana\s+de\s+([a-z]{3,})[^0-9oOil|]*([0-9oOil|]{1,2})[^0-9]*(20\d{2}|19\d{2})/,
     );
 
     if (!match) return null;
@@ -91,6 +103,7 @@ export function extractWeekIdFromScheduleText(text: string) {
 
     if (monthIndex === undefined) return null;
     if (Number.isNaN(dayValue) || Number.isNaN(yearValue)) return null;
+    if (dayValue < 1 || dayValue > 31) return null;
 
     return getWeekStartIdentifier(new Date(yearValue, monthIndex, dayValue));
 }
