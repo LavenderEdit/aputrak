@@ -132,6 +132,7 @@ export function AppShell() {
                     settings={scheduleData.settings}
                     tasks={scheduleData.tasks}
                     changeWeek={scheduleData.changeWeek}
+                    getTasksForWeek={scheduleData.getTasksForWeek}
                     onCreateTask={(day, hour) => openCreateModal(day, hour * 60)}
                     onActivityClick={(taskId) => {
                         const task = scheduleData.tasks.find((item) => item.id === taskId);
