@@ -6,23 +6,36 @@ import {
     CheckCircle2,
     CloudUpload,
     FileJson,
+    ImagePlus,
     RotateCcw,
     ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/lib/cn";
 import { getImportCopy } from "../constants/import.constants";
+import type { ParsedScheduleItem } from "../lib/scheduleParser";
+import { SnapPlanImporter } from "./SnapPlanImporter";
+
 interface ImportViewProps {
     lang: string;
     onImportJSON: (file: File) => Promise<void> | void;
+    onImportImageItems: (items: ParsedScheduleItem[]) => Promise<void> | void;
 }
 
-export function ImportView({ lang, onImportJSON }: ImportViewProps) {
+type ImportMode = "json" | "image";
+
+export function ImportView({
+    lang,
+    onImportJSON,
+    onImportImageItems,
+}: ImportViewProps) {
+    const copy = getImportCopy(lang);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [mode, setMode] = useState<ImportMode>("json");
     const [isDragging, setIsDragging] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [step, setStep] = useState<"upload" | "review" | "done">("upload");
-
-    const copy = getImportCopy(lang);
 
     const openFilePicker = () => {
         fileInputRef.current?.click();
@@ -68,7 +81,7 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
     };
 
     return (
-        <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-4xl p-4 fade-in sm:p-6 lg:p-8">
             <div className="mb-6">
                 <h2 className="font-display text-xl font-bold text-slate-950">
                     {copy.title}
@@ -77,7 +90,46 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                 <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
             </div>
 
-            {step === "upload" && (
+            <div className="mb-6 grid gap-2 rounded-2xl bg-slate-100 p-1 sm:grid-cols-2">
+                <button
+                    type="button"
+                    onClick={() => setMode("json")}
+                    className={cn(
+                        "flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition",
+                        mode === "json"
+                            ? "bg-white text-primary shadow-sm"
+                            : "text-muted hover:text-slate-900",
+                    )}
+                >
+                    <FileJson size={16} />
+                    JSON
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setMode("image")}
+                    className={cn(
+                        "flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition",
+                        mode === "image"
+                            ? "bg-white text-primary shadow-sm"
+                            : "text-muted hover:text-slate-900",
+                    )}
+                >
+                    <ImagePlus size={16} />
+                    OCR
+                </button>
+            </div>
+
+            {mode === "image" && (
+                <section className="rounded-xl border border-sborder bg-white p-6">
+                    <SnapPlanImporter
+                        lang={lang}
+                        onConfirm={onImportImageItems}
+                    />
+                </section>
+            )}
+
+            {mode === "json" && step === "upload" && (
                 <section className="rounded-xl border border-sborder bg-white p-6">
                     <div
                         role="button"
@@ -128,7 +180,7 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                 </section>
             )}
 
-            {step === "review" && selectedFile && (
+            {mode === "json" && step === "review" && selectedFile && (
                 <section className="rounded-xl border border-sborder bg-white p-6">
                     <h3 className="font-display mb-2 text-base font-bold text-slate-950">
                         {copy.reviewTitle}
@@ -164,7 +216,7 @@ export function ImportView({ lang, onImportJSON }: ImportViewProps) {
                 </section>
             )}
 
-            {step === "done" && (
+            {mode === "json" && step === "done" && (
                 <section className="rounded-xl border border-sborder bg-white p-10 text-center">
                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-success">
                         <CheckCircle2 size={30} />
