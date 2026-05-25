@@ -1,6 +1,7 @@
 import { DAY_ALIASES } from "./constants";
 import { findTimeRange, removeTimeRange } from "./time";
 import {
+    findSingleDay,
     isJunkLine,
     looksLikeCourseCode,
     looksLikeRoomOrMode,
@@ -16,6 +17,7 @@ export function cleanTitle(value: string) {
     return title
         .replace(/\bLe\s+(?=\d{3,5}\b)/gi, "")
         .replace(/\bCiase\b/gi, "Clase")
+        .replace(/\bClase\s+Remota\b/gi, "Clase Remota")
         .replace(/\bSV\.?EV\b/gi, "SV-EV")
         .replace(/\bSVEV\b/gi, "SV-EV")
         .replace(/\bSVwEV\b/gi, "SV-EV")
@@ -34,6 +36,7 @@ export function collectTitleFromPreviousLines(
         const line = lines[index];
 
         if (findTimeRange(line)) break;
+        if (findSingleDay(line)) break;
         if (isJunkLine(line)) continue;
 
         const cleaned = cleanTitle(line);
@@ -58,6 +61,7 @@ export function collectExtraFromNextLines(
         const line = lines[index];
 
         if (findTimeRange(line)) break;
+        if (findSingleDay(line)) break;
         if (looksLikeCourseCode(line)) break;
         if (isJunkLine(line)) continue;
 
