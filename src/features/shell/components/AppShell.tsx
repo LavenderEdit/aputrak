@@ -45,6 +45,7 @@ export function AppShell() {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeView, setActiveView] = useState<AppView>("dashboard");
+    const hideMobileNav = ["import", "export", "settings"].includes(activeView);
 
     const firstActiveDay = useMemo(
         () => scheduleData.settings.activeDays[0] ?? 0,
@@ -70,6 +71,7 @@ export function AppShell() {
     const { handleImportImageItems } = useScheduleImageImport({
         scheduleData,
         lang,
+        showPromiseToast,
     });
 
     if (loadingAuth) {
@@ -289,12 +291,14 @@ export function AppShell() {
                 }}
             />
 
-            <MobileNav
-                lang={lang}
-                activeView={activeView}
-                onChangeView={setActiveView}
-                onCreateTask={() => openCreateModal()}
-            />
+            {!hideMobileNav && (
+                <MobileNav
+                    lang={lang}
+                    activeView={activeView}
+                    onChangeView={setActiveView}
+                    onCreateTask={() => openCreateModal()}
+                />
+            )}
         </main>
     );
 }
