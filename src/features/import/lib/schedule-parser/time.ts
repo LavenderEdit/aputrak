@@ -1,6 +1,8 @@
 import { MERIDIEM_PATTERN } from "./constants";
 import type { TimeRangeMatch } from "./types";
 
+const CORRUPTED_ZERO_TIME_PATTERN = String.raw`(?:0{1,2}|O{1,2})\s*${MERIDIEM_PATTERN}`;
+
 export function normalizeMeridiem(value?: string | null) {
     if (!value) return null;
 
@@ -30,6 +32,46 @@ export function minutesFromTime(time: string) {
     return hour * 60 + minutes;
 }
 
+function to24Hour(hour: number, meridiem: string | null) {
+    if (meridiem === "PM" && hour < 12) return hour + 12;
+    if (meridiem === "AM" && hour === 12) return 0;
+
+    return hour;
+}
+
+function isCorruptedZeroTime(token: string) {
+    return new RegExp(`^${CORRUPTED_ZERO_TIME_PATTERN}$`, "i").test(
+        token.trim(),
+    );
+}
+
+function inferCorruptedZeroStartTime(rawStart: string, endTime: string) {
+    if (!isCorruptedZeroTime(rawStart)) return null;
+
+    const meridiem = extractMeridiem(rawStart);
+
+    if (!meridiem) return null;
+
+    const endMinutes = minutesFromTime(endTime);
+    const targetDuration = 165;
+
+    const candidates = Array.from({ length: 12 }, (_, index) => index + 1)
+        .map((hour) => {
+            const startHour = to24Hour(hour, meridiem);
+            const startMinutes = startHour * 60;
+            const duration = endMinutes - startMinutes;
+
+            return {
+                time: `${String(startHour).padStart(2, "0")}:00`,
+                duration,
+                score: Math.abs(duration - targetDuration),
+            };
+        })
+        .filter((candidate) => candidate.duration >= 60 && candidate.duration <= 240)
+        .sort((a, b) => a.score - b.score);
+
+    return candidates[0]?.time ?? null;
+}
 
 export function parseTimeToken(token: string, fallbackMeridiem?: string | null) {
     const cleaned = token.trim();
@@ -64,13 +106,7 @@ export function parseTimeToken(token: string, fallbackMeridiem?: string | null) 
         return null;
     }
 
-    if (meridiem === "PM" && hour < 12) {
-        hour += 12;
-    }
-
-    if (meridiem === "AM" && hour === 12) {
-        hour = 0;
-    }
+    hour = to24Hour(hour, meridiem);
 
     return `${String(hour).padStart(2, "0")}:${minutes}`;
 }
@@ -78,7 +114,8 @@ export function parseTimeToken(token: string, fallbackMeridiem?: string | null) 
 export function getTimeTokenPattern() {
     return (
         String.raw`(?:[01]?\d|2[0-3])(?::|\.|h)[0-5]\d\s*${MERIDIEM_PATTERN}?` +
-        String.raw`|(?:1[0-2]|0?[1-9])\s*${MERIDIEM_PATTERN}`
+        String.raw`|(?:1[0-2]|0?[1-9])\s*${MERIDIEM_PATTERN}` +
+        String.raw`|${CORRUPTED_ZERO_TIME_PATTERN}`
     );
 }
 
@@ -98,8 +135,10 @@ export function findTimeRange(line: string): TimeRangeMatch | null {
     const rawEnd = match[2].trim();
 
     const fallbackMeridiem = extractMeridiem(rawEnd);
-    const startTime = parseTimeToken(rawStart, fallbackMeridiem);
     const endTime = parseTimeToken(rawEnd);
+    const startTime =
+        parseTimeToken(rawStart, fallbackMeridiem) ??
+        (endTime ? inferCorruptedZeroStartTime(rawStart, endTime) : null);
 
     if (!startTime || !endTime) return null;
 
@@ -110,7 +149,7 @@ export function findTimeRange(line: string): TimeRangeMatch | null {
         endTime,
         rawStart,
         rawEnd,
-        suspicious: duration <= 0 || duration > 360,
+        suspicious: duration <= 0 || duration > 360 || isCorruptedZeroTime(rawStart),
     };
 }
 
