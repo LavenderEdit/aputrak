@@ -359,6 +359,43 @@ export const useOfflineSchedule = () => {
         setCurrentWeekDate(newDate);
     };
 
+    const saveTasksForWeek = async (
+        targetWeekId: string,
+        incomingTasks: ScheduleTask[],
+    ) => {
+        if (incomingTasks.length === 0) return;
+
+        const weekData = await DB.get<StoredWeek>("weeks", targetWeekId);
+        const rawData = weekData?.data ?? [];
+
+        let existingTasks: ScheduleTask[] = [];
+
+        if (Array.isArray(rawData)) {
+            existingTasks = rawData;
+        } else if (Object.keys(rawData).length > 0) {
+            existingTasks = migrateLegacyWeekData(rawData);
+        }
+
+        const taskMap = new Map(existingTasks.map((task) => [task.id, task]));
+
+        incomingTasks.forEach((task) => {
+            taskMap.set(task.id, task);
+        });
+
+        const nextTasks = Array.from(taskMap.values());
+
+        await DB.put("weeks", { id: targetWeekId, data: nextTasks });
+
+        if (targetWeekId === weekId) {
+            tasksRef.current = nextTasks;
+            setTasks(nextTasks);
+        }
+    };
+
+    const goToWeek = (targetWeekId: string) => {
+        setCurrentWeekDate(new Date(`${targetWeekId}T00:00:00`));
+    };
+
     return {
         weekId,
         settings,
@@ -373,5 +410,7 @@ export const useOfflineSchedule = () => {
         smartReschedule,
         updateSettings,
         changeWeek,
+        saveTasksForWeek,
+        goToWeek,
     };
 };
