@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getImportCopy } from "../constants/import.constants";
 import { recognizeImage, type OcrProgress } from "../lib/ocr";
+import { extractWeekIdFromScheduleText } from "../lib/schedule-week-parser";
 
 type OcrStatus = "idle" | "processing" | "success" | "error";
 
@@ -13,12 +14,14 @@ export function useLocalOcr(lang: string) {
     const [text, setText] = useState("");
     const [progress, setProgress] = useState<OcrProgress | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [detectedWeekId, setDetectedWeekId] = useState<string | null>(null);
 
     const processImage = async (file: File) => {
         setStatus("processing");
         setText("");
         setError(null);
         setProgress(null);
+        setDetectedWeekId(null);
 
         try {
             const result = await recognizeImage(file, setProgress);
@@ -30,6 +33,7 @@ export function useLocalOcr(lang: string) {
             }
 
             setText(result);
+            setDetectedWeekId(extractWeekIdFromScheduleText(result));
             setStatus("success");
         } catch (err) {
             setStatus("error");
@@ -43,6 +47,7 @@ export function useLocalOcr(lang: string) {
         setText("");
         setProgress(null);
         setError(null);
+        setDetectedWeekId(null);
     };
 
     return {
@@ -51,6 +56,7 @@ export function useLocalOcr(lang: string) {
         setText,
         progress,
         error,
+        detectedWeekId,
         processImage,
         reset,
         isProcessing: status === "processing",
