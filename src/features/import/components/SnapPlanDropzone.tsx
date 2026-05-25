@@ -41,7 +41,7 @@ export function SnapPlanDropzone({
                     onDragOver={onDragOver}
                     onDragLeave={onDragLeave}
                     onDrop={onDrop}
-                    className={`rounded-xl border-2 border-dashed p-5 text-center transition ${isDragging
+                    className={`rounded-xl border-2 border-dashed p-4 text-center transition sm:p-5 ${isDragging
                         ? "border-primary bg-indigo-50"
                         : "border-sborder bg-slate-50"
                         } ${isProcessing
@@ -62,18 +62,20 @@ export function SnapPlanDropzone({
                         htmlFor="schedule-image-input"
                         className="block cursor-pointer"
                     >
-                        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-primary">
-                            <ImagePlus size={24} />
+                        <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-primary sm:h-12 sm:w-12">
+                            <ImagePlus size={22} />
                         </div>
 
                         <p className="text-sm font-semibold text-slate-900">
                             {copy.imageDrop}
                         </p>
 
-                        <p className="mt-1 text-sm text-muted">{copy.imageBrowse}</p>
+                        <p className="mt-1 text-xs text-muted sm:text-sm">
+                            {copy.imageBrowse}
+                        </p>
 
                         {selectedFile && (
-                            <p className="mt-3 text-xs font-medium text-primary">
+                            <p className="mx-auto mt-3 max-w-full truncate text-xs font-medium text-primary">
                                 {copy.selectedFile}: {selectedFile.name}
                             </p>
                         )}
@@ -82,7 +84,7 @@ export function SnapPlanDropzone({
             </div>
 
             {previewUrl && (
-                <div className="relative h-[360px] overflow-hidden rounded-xl border border-sborder bg-slate-50">
+                <div className="relative h-[220px] overflow-hidden rounded-xl border border-sborder bg-slate-50 sm:h-[300px] lg:h-[360px]">
                     <Image
                         src={previewUrl}
                         alt={copy.imageScheduleLabel}
