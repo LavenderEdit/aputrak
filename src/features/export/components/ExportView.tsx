@@ -11,12 +11,13 @@ import {
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import type { GraphicExportType } from "@/features/shell/types/shell.types";
+import type { ExportOptions } from "../hooks/useScheduleExport";
 import { getExportCopy } from "../constants/export.constants";
 
 interface ExportViewProps {
     lang: string;
-    onExportPDF: () => void;
-    onExportImage: (type: GraphicExportType) => void;
+    onExportPDF: (options: ExportOptions) => void;
+    onExportImage: (type: GraphicExportType, options: ExportOptions) => void;
     onExportJSON: () => void;
 }
 
@@ -35,8 +36,15 @@ export function ExportView({
 
     const copy = getExportCopy(lang);
 
+    const exportOptions: ExportOptions = {
+        range,
+        includeCompleted,
+        includeNotes,
+        layoutStyle,
+    };
+
     return (
-        <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
+        <div className="mx-auto max-w-3xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
             <div className="mb-6">
                 <h2 className="font-display text-xl font-bold text-slate-950">
                     {copy.title}
@@ -45,15 +53,16 @@ export function ExportView({
                 <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
             </div>
 
-            <section className="rounded-xl border border-sborder bg-white p-6">
+            <section className="rounded-xl border border-sborder bg-white p-4 sm:p-6">
                 <div className="space-y-6">
                     <div>
                         <label className="mb-2 block text-sm font-medium text-slate-800">
                             {copy.dateRange}
                         </label>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid gap-3 sm:grid-cols-2">
                             <button
+                                type="button"
                                 onClick={() => setRange("week")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${range === "week"
                                     ? "border-primary ring-2 ring-indigo-100"
@@ -65,6 +74,7 @@ export function ExportView({
                             </button>
 
                             <button
+                                type="button"
                                 onClick={() => setRange("month")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${range === "month"
                                     ? "border-primary ring-2 ring-indigo-100"
@@ -110,8 +120,9 @@ export function ExportView({
                             {copy.layoutStyle}
                         </label>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid gap-3 sm:grid-cols-2">
                             <button
+                                type="button"
                                 onClick={() => setLayoutStyle("compact")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${layoutStyle === "compact"
                                     ? "border-primary ring-2 ring-indigo-100"
@@ -122,6 +133,7 @@ export function ExportView({
                             </button>
 
                             <button
+                                type="button"
                                 onClick={() => setLayoutStyle("detailed")}
                                 className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${layoutStyle === "detailed"
                                     ? "border-primary ring-2 ring-indigo-100"
@@ -134,14 +146,14 @@ export function ExportView({
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
-                        <Button onClick={onExportPDF} className="w-full">
+                        <Button onClick={() => onExportPDF(exportOptions)} className="w-full">
                             <Download size={16} />
                             {copy.generatePDF}
                         </Button>
 
                         <Button
                             variant="secondary"
-                            onClick={() => onExportImage("desktop")}
+                            onClick={() => onExportImage("desktop", exportOptions)}
                             className="w-full"
                         >
                             <MonitorSmartphone size={16} />
@@ -150,7 +162,7 @@ export function ExportView({
 
                         <Button
                             variant="secondary"
-                            onClick={() => onExportImage("mobile")}
+                            onClick={() => onExportImage("mobile", exportOptions)}
                             className="w-full"
                         >
                             <ImageIcon size={16} />
