@@ -9,13 +9,13 @@ import type {
 import { Button } from "@/shared/components/ui/Button";
 import { cn } from "@/shared/lib/cn";
 import { Utils } from "@/shared/lib/utils";
-import { DEFAULT_ACTIVITY_TAGS } from "@/features/tags/constants/tags.constants";
 import { scheduleTasksToActivities } from "@/features/activities/lib/activity-adapters";
 import { getMonthGrid, getMonthName } from "../lib/calendar-utils";
 import { CalendarSidebar } from "./CalendarSidebar";
 import { WeekCalendar } from "./WeekCalendar";
 import { MonthCalendar } from "./MonthCalendar";
 import { getCalendarCopy } from "../constants/calendar.constants";
+import { useActivityTags } from "@/features/tags/hooks/useActivityTags";
 
 interface CalendarViewProps {
     lang: string;
@@ -58,6 +58,7 @@ export function CalendarView({
     >({});
 
     const copy = getCalendarCopy(lang);
+    const { tags } = useActivityTags();
     const weekDate = useMemo(() => getDateFromWeekId(weekId), [weekId]);
     const visibleDate = view === "week" ? weekDate : selectedDate;
 
@@ -133,7 +134,7 @@ export function CalendarView({
         <div className="flex h-full overflow-hidden bg-white fade-in">
             <CalendarSidebar
                 lang={lang}
-                tags={DEFAULT_ACTIVITY_TAGS}
+                tags={tags}
                 selectedTag={selectedTag}
                 onSelectTag={setSelectedTag}
                 onCreateActivity={() => onCreateTask(0, settings.startHour)}
