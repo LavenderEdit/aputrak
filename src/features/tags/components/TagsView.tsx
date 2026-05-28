@@ -16,13 +16,11 @@ import {
 import type { LucideIcon } from "lucide-react";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { Button } from "@/shared/components/ui/Button";
-import {
-    DEFAULT_ACTIVITY_TAGS,
-    getTagsCopy,
-} from "../constants/tags.constants";
+import { getTagsCopy } from "../constants/tags.constants";
 import type { ActivityTag } from "../types/tag.types";
 import { scheduleTasksToActivities } from "@/features/activities/lib/activity-adapters";
 import { TagModal } from "./TagModal";
+import { useActivityTags } from "../hooks/useActivityTags";
 
 interface TagsViewProps {
     lang: string;
@@ -42,7 +40,7 @@ const iconMap: Record<string, LucideIcon> = {
 export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
     const copy = getTagsCopy(lang);
 
-    const [tags, setTags] = useState<ActivityTag[]>(DEFAULT_ACTIVITY_TAGS);
+    const { tags, saveTag, deleteTag } = useActivityTags();
     const [editingTag, setEditingTag] = useState<ActivityTag | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -58,7 +56,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
 
     return (
         <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between gap-3">
                 <h2 className="font-display text-xl font-bold text-slate-950">
                     {copy.title}
                 </h2>
@@ -103,6 +101,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
 
                                 <div className="flex gap-1">
                                     <button
+                                        type="button"
                                         onClick={() => {
                                             setEditingTag(tag);
                                             setIsModalOpen(true);
@@ -114,10 +113,9 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                     </button>
 
                                     <button
+                                        type="button"
                                         onClick={() => {
-                                            setTags((current) =>
-                                                current.filter((item) => item.id !== tag.id),
-                                            );
+                                            void deleteTag(tag.id);
                                         }}
                                         className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-red-50 hover:text-danger"
                                         aria-label={copy.deleteTag}
@@ -145,16 +143,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                 lang={lang}
                 onClose={() => setIsModalOpen(false)}
                 onSave={(tag) => {
-                    setTags((current) => {
-                        const exists = current.some((item) => item.id === tag.id);
-
-                        if (exists) {
-                            return current.map((item) => (item.id === tag.id ? tag : item));
-                        }
-
-                        return [...current, tag];
-                    });
-
+                    void saveTag(tag);
                     setIsModalOpen(false);
                 }}
             />
