@@ -23,8 +23,8 @@ import { useToast } from "@/shared/hooks/useToast";
 import { cn } from "@/shared/lib/cn";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
-import { MobileNav } from "./MobileNav";
-import type { AppView } from "../types/shell.types";
+import type { AppView, GraphicExportType } from "../types/shell.types";
+import type { ExportOptions } from "@/features/export/hooks/useScheduleExport";
 
 function createTaskId() {
     return `task_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -36,16 +36,22 @@ function getCompletedState(text: string, previous: boolean[] = []) {
     return Array.from({ length: count }, (_, index) => previous[index] ?? false);
 }
 
+const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
+    range: "week",
+    includeCompleted: true,
+    includeNotes: true,
+    layoutStyle: "compact",
+};
+
 export function AppShell() {
     const { profile, saveUsername, loadingAuth } = useOfflineAuth();
     const scheduleData = useOfflineSchedule();
-    const { lang, toggleLanguage, t, getDayName } = useLanguage();
+    const { lang, changeLanguage, toggleLanguage, t, getDayName } = useLanguage();
     const { showToast, showPromiseToast } = useToast();
     const toastCopy = getToastCopy(lang);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeView, setActiveView] = useState<AppView>("dashboard");
-    const hideMobileNav = ["import", "export", "settings"].includes(activeView);
 
     const firstActiveDay = useMemo(
         () => scheduleData.settings.activeDays[0] ?? 0,
@@ -61,6 +67,14 @@ export function AppShell() {
         lang,
         showPromiseToast,
     });
+
+    const handleTopbarExportPDF = () => {
+        handleGraphicExport("pdf", DEFAULT_EXPORT_OPTIONS);
+    };
+
+    const handleTopbarExportImage = (type: GraphicExportType) => {
+        handleGraphicExport(type, DEFAULT_EXPORT_OPTIONS);
+    };
 
     const { handleImportJSON } = useScheduleImport({
         scheduleData,
@@ -83,7 +97,13 @@ export function AppShell() {
     }
 
     if (!profile?.username) {
-        return <LoginScreen onSave={saveUsername} />;
+        return (
+            <LoginScreen
+                lang={lang}
+                onSelectLanguage={changeLanguage}
+                onSave={saveUsername}
+            />
+        );
     }
 
     const renderActiveView = () => {
@@ -185,8 +205,8 @@ export function AppShell() {
             return (
                 <ExportView
                     lang={lang}
-                    onExportPDF={() => handleGraphicExport("pdf")}
-                    onExportImage={handleGraphicExport}
+                    onExportPDF={(options) => handleGraphicExport("pdf", options)}
+                    onExportImage={(type, options) => handleGraphicExport(type, options)}
                     onExportJSON={handleExportJSON}
                 />
             );
@@ -239,8 +259,8 @@ export function AppShell() {
                         onToggleLanguage={toggleLanguage}
                         onEditProfile={() => setActiveView("settings")}
                         onCreateTask={() => openCreateModal()}
-                        onExportPDF={() => handleGraphicExport("pdf")}
-                        onExportImage={handleGraphicExport}
+                        onExportPDF={handleTopbarExportPDF}
+                        onExportImage={handleTopbarExportImage}
                         onExportJSON={handleExportJSON}
                         onImportJSON={handleImportJSON}
                     />
@@ -291,14 +311,6 @@ export function AppShell() {
                 }}
             />
 
-            {!hideMobileNav && (
-                <MobileNav
-                    lang={lang}
-                    activeView={activeView}
-                    onChangeView={setActiveView}
-                    onCreateTask={() => openCreateModal()}
-                />
-            )}
         </main>
     );
 }
