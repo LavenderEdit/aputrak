@@ -1,6 +1,7 @@
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import type { Activity } from "../types/activity.types";
 import { formatDateId, getWeekDatesFromWeekId } from "@/features/calendar/lib/calendar-utils";
+import { GENERAL_TAG_ID } from "@/features/tags/constants/tags.constants";
 
 function createSubtaskId(taskId: string, index: number) {
     return `${taskId}_subtask_${index}`;
@@ -56,7 +57,7 @@ export function scheduleTaskToActivity(
         id: task.id,
         title,
         description,
-        tagId: "study",
+        tagId: GENERAL_TAG_ID,
         date: formatDateId(date),
         startTime: minutesToTime(task.startMinute),
         endTime: minutesToTime(task.endMinute),
