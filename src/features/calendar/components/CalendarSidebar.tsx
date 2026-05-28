@@ -53,24 +53,25 @@ export function CalendarSidebar({
                         {copy.all}
                     </button>
 
-                    {tags.map((tag) => (
-                        <button
-                            key={tag.id}
-                            onClick={() => onSelectTag(tag.id)}
-                            className={cn(
-                                "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
-                                selectedTag === tag.id
-                                    ? "bg-indigo-50 text-primary"
-                                    : "text-muted hover:bg-hover hover:text-slate-950",
-                            )}
-                        >
-                            <span
-                                className="h-3 w-3 rounded-full"
-                                style={{ backgroundColor: tag.color }}
-                            />
-                            <span className="truncate">{tag.name}</span>
-                        </button>
-                    ))}
+                    {Array.isArray(tags) &&
+                        tags.map((tag) => (
+                            <button
+                                key={tag.id}
+                                onClick={() => onSelectTag(tag.id)}
+                                className={cn(
+                                    "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
+                                    selectedTag === tag.id
+                                        ? "bg-indigo-50 text-primary"
+                                        : "text-muted hover:bg-hover hover:text-slate-950",
+                                )}
+                            >
+                                <span
+                                    className="h-3 w-3 rounded-full"
+                                    style={{ backgroundColor: tag.color }}
+                                />
+                                <span className="truncate">{tag.name}</span>
+                            </button>
+                        ))}
                 </div>
             </div>
         </aside>
