@@ -1,7 +1,7 @@
 const DB_NAME = "AputrakDB";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
-type StoreName = "profile" | "settings" | "weeks";
+type StoreName = "profile" | "settings" | "weeks" | "tags";
 
 type StoredRecord = {
     id: string;
@@ -28,6 +28,10 @@ const initDB = (): Promise<IDBDatabase> => {
 
             if (!db.objectStoreNames.contains("weeks")) {
                 db.createObjectStore("weeks", { keyPath: "id" });
+            }
+
+            if (!db.objectStoreNames.contains("tags")) {
+                db.createObjectStore("tags", { keyPath: "id" });
             }
         };
     });
