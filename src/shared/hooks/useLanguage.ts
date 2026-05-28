@@ -4,30 +4,37 @@ import { useCallback, useEffect, useState } from "react";
 import { translations, Language } from "@/shared/lib/i18n";
 import { SPANISH_SPEAKING_COUNTRIES } from "@/shared/lib/constants";
 
+const LANGUAGE_STORAGE_KEY = "aputrak_lang";
+
+function isValidLanguage(value: string | null): value is Language {
+    return value === "es" || value === "en";
+}
+
 export const useLanguage = () => {
     const [lang, setLang] = useState<Language>("es");
 
     useEffect(() => {
         const initLanguage = async () => {
-            const savedLang = localStorage.getItem("aputrak_lang") as Language;
-            if (savedLang && (savedLang === "es" || savedLang === "en")) {
+            const savedLang = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+
+            if (isValidLanguage(savedLang)) {
                 setLang(savedLang);
                 return;
             }
 
             try {
-                const response = await fetch('https://ipapi.co/json/');
+                const response = await fetch("https://ipapi.co/json/");
                 const data = await response.json();
                 const countryCode = data.country_code;
 
                 if (countryCode && SPANISH_SPEAKING_COUNTRIES.includes(countryCode)) {
-                    setLang('es');
-                } else {
-                    setLang('en');
+                    setLang("es");
+                    return;
                 }
-            } catch (error) {
-                console.error('Error detectando la ubicación, usando idioma del navegador:', error);
-                const browserLang = navigator.language.startsWith('es') ? 'es' : 'en';
+
+                setLang("en");
+            } catch {
+                const browserLang = navigator.language.startsWith("es") ? "es" : "en";
                 setLang(browserLang);
             }
         };
@@ -35,20 +42,32 @@ export const useLanguage = () => {
         initLanguage();
     }, []);
 
-    const toggleLanguage = () => {
-        const newLang = lang === "es" ? "en" : "es";
-        setLang(newLang);
-        localStorage.setItem("aputrak_lang", newLang);
-    };
+    const changeLanguage = useCallback((nextLang: Language) => {
+        setLang(nextLang);
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLang);
+    }, []);
 
-    const t = useCallback((key: keyof typeof translations.es): string => {
-        return translations[lang][key] as string;
-    }, [lang]);
+    const toggleLanguage = useCallback(() => {
+        changeLanguage(lang === "es" ? "en" : "es");
+    }, [changeLanguage, lang]);
+
+    const t = useCallback(
+        (key: keyof typeof translations.es): string => {
+            return translations[lang][key] as string;
+        },
+        [lang],
+    );
 
     const getDayName = (index: number) => {
         const dayIndex = index === 6 ? 0 : index + 1;
         return translations[lang].days[dayIndex];
     };
 
-    return { lang, toggleLanguage, t, getDayName };
+    return {
+        lang,
+        changeLanguage,
+        toggleLanguage,
+        t,
+        getDayName,
+    };
 };
