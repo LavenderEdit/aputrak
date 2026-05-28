@@ -41,14 +41,20 @@ function HourPicker({
     onChange: (hour: number) => void;
 }) {
     return (
-        <div>
-            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-800">
-                <Clock3 size={15} />
-                {label}
-            </label>
+        <div className="rounded-2xl border border-sborder bg-white p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-slate-900">
+                    <Clock3 size={16} />
+                    {label}
+                </label>
 
-            <div className="rounded-xl border border-sborder bg-slate-50 p-2">
-                <div className="grid max-h-44 grid-cols-3 gap-2 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-4 sm:overflow-visible">
+                <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-primary">
+                    {Utils.formatTime(value)}
+                </span>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-2">
+                <div className="grid max-h-52 grid-cols-3 gap-2 overflow-y-auto pr-1 sm:grid-cols-4 md:grid-cols-6 lg:max-h-40 xl:grid-cols-5">
                     {hours.map((hour) => {
                         const active = value === hour;
 
@@ -58,9 +64,9 @@ function HourPicker({
                                 type="button"
                                 onClick={() => onChange(hour)}
                                 className={cn(
-                                    "rounded-lg border px-2 py-2 text-xs font-semibold transition",
+                                    "rounded-xl border px-2 py-2 text-xs font-bold transition",
                                     active
-                                        ? "border-primary bg-indigo-600 text-white shadow-sm"
+                                        ? "border-primary bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
                                         : "border-sborder bg-white text-slate-600 hover:border-primary hover:text-primary",
                                 )}
                             >
@@ -229,7 +235,7 @@ export function SettingsView({
                         </div>
                     </div>
 
-                    <div className="grid gap-4 lg:grid-cols-2">
+                    <div className="grid gap-4 xl:grid-cols-2">
                         <HourPicker
                             label={copy.startHour}
                             value={settings.startHour}
