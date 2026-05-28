@@ -5,6 +5,14 @@ import { sileo } from "sileo";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
+type ToastPosition =
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
+
 export interface ToastStyles {
     title?: string;
     description?: string;
@@ -20,6 +28,7 @@ export interface ToastButton {
 export interface ToastMessage {
     title: string;
     description?: ReactNode | string;
+    position?: ToastPosition;
     duration?: number | null;
     autopilot?: boolean | object;
     fill?: string;
@@ -40,7 +49,16 @@ const TOAST_AUTOPILOT = {
     collapse: 5000,
 };
 
+function getResponsiveToastPosition(): ToastPosition {
+    if (typeof window === "undefined") return "top-right";
+
+    return window.matchMedia("(max-width: 768px)").matches
+        ? "top-center"
+        : "top-right";
+}
+
 const withToastDefaults = (message: ToastMessage): ToastMessage => ({
+    position: message.position ?? getResponsiveToastPosition(),
     duration: 7000,
     autopilot: TOAST_AUTOPILOT,
     roundness: 18,
@@ -79,8 +97,14 @@ export function useToast() {
         promise: Promise<T>,
         messages: PromiseToastMessages<T>,
     ) => {
+        const position = getResponsiveToastPosition();
+
         return sileo.promise(promise, {
-            loading: withToastDefaults(messages.loading),
+            position,
+            loading: withToastDefaults({
+                ...messages.loading,
+                position: messages.loading.position ?? position,
+            }),
             success: resolvePromiseMessage(messages.success),
             error: resolvePromiseMessage(messages.error),
         });
