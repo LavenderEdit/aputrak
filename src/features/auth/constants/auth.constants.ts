@@ -1,6 +1,7 @@
 export const AUTH_COPY = {
     es: {
         appName: "Aputrak",
+        welcome: "Bienvenido",
         welcomeSub: "Tu planificador de horarios y actividades offline",
         name: "Nombre",
         enterName: "Ingresa tu nombre",
@@ -13,6 +14,7 @@ export const AUTH_COPY = {
     },
     en: {
         appName: "Aputrak",
+        welcome: "Welcome",
         welcomeSub: "Your offline-first schedule & activity planner",
         name: "Name",
         enterName: "Enter your name",
