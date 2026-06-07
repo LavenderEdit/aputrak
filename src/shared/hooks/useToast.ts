@@ -46,7 +46,21 @@ export interface PromiseToastMessages<T = unknown> {
 
 const TOAST_AUTOPILOT = {
     expand: 0,
-    collapse: 5000,
+    collapse: 5200,
+};
+
+const TOAST_FILL: Record<ToastType, string> = {
+    success: "#FFFCF4",
+    error: "#FEE2E2",
+    warning: "#FFF3C4",
+    info: "#FFFCF4",
+};
+
+const TOAST_STYLES: ToastStyles = {
+    title: "text-black! font-black! uppercase! tracking-[0.06em]!",
+    description: "block! opacity-100! text-slate-700! font-bold!",
+    badge: "border-2! border-black! bg-white! text-black! font-black!",
+    button: "border-2! border-black! bg-black! text-white! font-black! rounded-none!",
 };
 
 function getResponsiveToastPosition(): ToastPosition {
@@ -57,26 +71,33 @@ function getResponsiveToastPosition(): ToastPosition {
         : "top-right";
 }
 
-const withToastDefaults = (message: ToastMessage): ToastMessage => ({
-    position: message.position ?? getResponsiveToastPosition(),
-    duration: 7000,
-    autopilot: TOAST_AUTOPILOT,
-    roundness: 18,
-    styles: {
-        description: "block! opacity-100! text-slate-500!",
-        ...message.styles,
-    },
-    ...message,
-});
+function getToastDefaults(
+    message: ToastMessage,
+    type: ToastType = "info",
+): ToastMessage {
+    return {
+        position: message.position ?? getResponsiveToastPosition(),
+        duration: message.duration ?? 6500,
+        autopilot: message.autopilot ?? TOAST_AUTOPILOT,
+        roundness: 0,
+        fill: message.fill ?? TOAST_FILL[type],
+        styles: {
+            ...TOAST_STYLES,
+            ...message.styles,
+        },
+        ...message,
+    };
+}
 
 const resolvePromiseMessage = <T,>(
     message: ToastMessage | ((data: T) => ToastMessage),
+    type: ToastType,
 ) => {
     if (typeof message === "function") {
-        return (data: T) => withToastDefaults(message(data));
+        return (data: T) => getToastDefaults(message(data), type);
     }
 
-    return withToastDefaults(message);
+    return getToastDefaults(message, type);
 };
 
 export function useToast() {
@@ -87,8 +108,8 @@ export function useToast() {
     ) => {
         const options =
             typeof message === "string"
-                ? withToastDefaults({ title: message, description })
-                : withToastDefaults(message);
+                ? getToastDefaults({ title: message, description }, type)
+                : getToastDefaults(message, type);
 
         sileo[type](options);
     };
@@ -101,12 +122,15 @@ export function useToast() {
 
         return sileo.promise(promise, {
             position,
-            loading: withToastDefaults({
-                ...messages.loading,
-                position: messages.loading.position ?? position,
-            }),
-            success: resolvePromiseMessage(messages.success),
-            error: resolvePromiseMessage(messages.error),
+            loading: getToastDefaults(
+                {
+                    ...messages.loading,
+                    position: messages.loading.position ?? position,
+                },
+                "info",
+            ),
+            success: resolvePromiseMessage(messages.success, "success"),
+            error: resolvePromiseMessage(messages.error, "error"),
         });
     };
 

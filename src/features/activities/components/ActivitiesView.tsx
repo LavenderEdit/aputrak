@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Inbox, Plus, Search, Trash2 } from "lucide-react";
+import { Check, Inbox, Plus, Search, Trash2 } from "lucide-react";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { Button } from "@/shared/components/ui/Button";
-import { DEFAULT_ACTIVITY_TAGS } from "@/features/tags/constants/tags.constants";
+import { Input } from "@/shared/components/ui/Input";
+import { Select } from "@/shared/components/ui/Select";
+import { useActivityTags } from "@/features/tags/hooks/useActivityTags";
 import { scheduleTasksToActivities } from "../lib/activity-adapters";
 import { getShortDate } from "@/features/calendar/lib/calendar-utils";
 import { getActivitiesCopy } from "../constants/activities.constants";
+import { cn } from "@/shared/lib/cn";
 
 interface ActivitiesViewProps {
     lang: string;
@@ -29,6 +32,7 @@ export function ActivitiesView({
     onToggleComplete,
 }: ActivitiesViewProps) {
     const copy = getActivitiesCopy(lang);
+    const { tags } = useActivityTags();
 
     const [search, setSearch] = useState("");
     const [tagFilter, setTagFilter] = useState("all");
@@ -37,8 +41,8 @@ export function ActivitiesView({
     >("all");
 
     const activities = useMemo(
-        () => scheduleTasksToActivities(tasks, weekId),
-        [tasks, weekId],
+        () => scheduleTasksToActivities(tasks, weekId, tags),
+        [tasks, weekId, tags],
     );
 
     const taskMap = useMemo(
@@ -47,8 +51,8 @@ export function ActivitiesView({
     );
 
     const tagsMap = useMemo(
-        () => new Map(DEFAULT_ACTIVITY_TAGS.map((tag) => [tag.id, tag])),
-        [],
+        () => new Map(tags.map((tag) => [tag.id, tag])),
+        [tags],
     );
 
     const filtered = activities
@@ -86,51 +90,68 @@ export function ActivitiesView({
     };
 
     return (
-        <div className="mx-auto max-w-4xl p-4 fade-in sm:p-6 lg:p-8">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row">
-                <div className="relative flex-1">
+        <div className="mx-auto max-w-5xl p-4 fade-in sm:p-6 lg:p-8">
+            <div className="mb-6 border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+                    Aputrak
+                </p>
+
+                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black">
+                    {copy.title}
+                </h2>
+
+                <p className="mt-2 text-sm font-bold text-slate-600">
+                    {copy.subtitle}
+                </p>
+            </div>
+
+            <div className="mb-5 grid gap-3 lg:grid-cols-[1fr_220px_auto]">
+                <div className="relative">
                     <Search
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                        strokeWidth={3}
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-black"
                     />
 
-                    <input
+                    <Input
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         placeholder={copy.searchPlaceholder}
-                        className="w-full rounded-xl border border-sborder bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-primary"
+                        className="pl-10"
                     />
                 </div>
 
-                <select
+                <Select
                     value={tagFilter}
                     onChange={(event) => setTagFilter(event.target.value)}
-                    className="rounded-xl border border-sborder bg-white px-4 py-2.5 text-sm outline-none"
                 >
                     <option value="all">{copy.allTags}</option>
 
-                    {DEFAULT_ACTIVITY_TAGS.map((tag) => (
+                    {tags.map((tag) => (
                         <option key={tag.id} value={tag.id}>
                             {tag.name}
                         </option>
                     ))}
-                </select>
+                </Select>
 
-                <Button onClick={onCreateTask}>
+                <Button onClick={onCreateTask} className="w-full lg:w-auto">
                     <Plus size={16} />
                     {copy.addTask}
                 </Button>
             </div>
 
-            <div className="mb-5 flex gap-1 rounded-xl bg-slate-100 p-1">
+            <div className="mb-5 grid grid-cols-3 border-[3px] border-black bg-[#FFFCF4] shadow-[5px_5px_0_#000]">
                 {(["all", "pending", "completed"] as const).map((status) => (
                     <button
                         key={status}
+                        type="button"
                         onClick={() => setStatusFilter(status)}
-                        className={`flex-1 rounded-lg py-2 text-sm font-medium transition ${statusFilter === status
-                            ? "bg-white text-primary shadow-sm"
-                            : "text-muted hover:text-slate-900"
-                            }`}
+                        className={cn(
+                            "border-r-[3px] border-black px-3 py-3 text-xs font-black uppercase tracking-[0.1em] transition last:border-r-0",
+                            statusFilter === status
+                                ? "bg-black text-white"
+                                : "bg-[#FFFCF4] text-black hover:bg-white",
+                        )}
                     >
                         {statusLabels[status]}
                     </button>
@@ -138,100 +159,114 @@ export function ActivitiesView({
             </div>
 
             {filtered.length > 0 ? (
-                filtered.map((activity) => {
-                    const sourceTask = taskMap.get(activity.id);
-                    const tag = tagsMap.get(activity.tagId);
-                    const color = activity.color || tag?.color || "#6366F1";
+                <div className="space-y-3">
+                    {filtered.map((activity) => {
+                        const sourceTask = taskMap.get(activity.id);
+                        const tag = tagsMap.get(activity.tagId);
+                        const color = activity.color || tag?.color || "#6366F1";
+                        const completed = activity.status === "completed";
 
-                    return (
-                        <article
-                            key={activity.id}
-                            onClick={() => {
-                                if (sourceTask) {
-                                    onEditTask(sourceTask);
-                                }
-                            }}
-                            className="mb-3 flex cursor-pointer items-start gap-3 rounded-xl border border-sborder bg-white p-4 transition hover:shadow-sm"
-                        >
-                            <input
-                                type="checkbox"
-                                className="task-check mt-0.5"
-                                checked={activity.status === "completed"}
-                                onClick={(event) => event.stopPropagation()}
-                                onChange={() => onToggleComplete(activity.id, 0)}
-                            />
-
-                            <div
-                                className="w-1 self-stretch rounded-full"
-                                style={{ backgroundColor: color }}
-                            />
-
-                            <div className="min-w-0 flex-1">
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <span
-                                        className={`text-sm font-medium ${activity.status === "completed"
-                                            ? "text-muted line-through"
-                                            : "text-slate-900"
-                                            }`}
-                                    >
-                                        {activity.title}
-                                    </span>
-
-                                    <span
-                                        className="tag-pill"
-                                        style={{
-                                            backgroundColor: `${color}18`,
-                                            color,
-                                        }}
-                                    >
-                                        {tag?.name ?? copy.untagged}
-                                    </span>
-                                </div>
-
-                                <div className="mt-0.5 text-xs text-muted">
-                                    {getShortDate(activity.date, lang)} · {activity.startTime} -{" "}
-                                    {activity.endTime}
-                                </div>
-
-                                {activity.description && (
-                                    <div className="mt-1 line-clamp-1 text-xs text-muted">
-                                        {activity.description}
-                                    </div>
-                                )}
-
-                                {activity.priority !== "none" && (
-                                    <span
-                                        className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${activity.priority === "high"
-                                            ? "bg-red-50 text-red-600"
-                                            : activity.priority === "medium"
-                                                ? "bg-amber-50 text-amber-700"
-                                                : "bg-slate-100 text-muted"
-                                            }`}
-                                    >
-                                        {priorityLabels[activity.priority]}
-                                    </span>
-                                )}
-                            </div>
-
-                            <button
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    onDeleteTask(activity.id);
+                        return (
+                            <article
+                                key={activity.id}
+                                onClick={() => {
+                                    if (sourceTask) {
+                                        onEditTask(sourceTask);
+                                    }
                                 }}
-                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-red-50 hover:text-danger"
+                                className="flex cursor-pointer items-start gap-3 border-[3px] border-black bg-[#FFFCF4] p-4 shadow-[5px_5px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-white hover:shadow-[7px_7px_0_#000]"
                             >
-                                <Trash2 size={14} />
-                            </button>
-                        </article>
-                    );
-                })
+                                <button
+                                    type="button"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onToggleComplete(activity.id, 0);
+                                    }}
+                                    className={cn(
+                                        "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black",
+                                        completed
+                                            ? "bg-black text-white"
+                                            : "bg-white text-black",
+                                    )}
+                                    aria-label={
+                                        completed
+                                            ? copy.completed
+                                            : copy.pending
+                                    }
+                                >
+                                    {completed && <Check size={15} strokeWidth={3} />}
+                                </button>
+
+                                <div
+                                    className="w-2 self-stretch border-2 border-black"
+                                    style={{ backgroundColor: color }}
+                                />
+
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <span
+                                            className={cn(
+                                                "text-sm font-black uppercase tracking-[0.04em]",
+                                                completed
+                                                    ? "text-slate-400 line-through"
+                                                    : "text-black",
+                                            )}
+                                        >
+                                            {activity.title}
+                                        </span>
+
+                                        <span
+                                            className="border-2 border-black bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em]"
+                                            style={{ color }}
+                                        >
+                                            {tag?.name ?? copy.untagged}
+                                        </span>
+                                    </div>
+
+                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
+                                        {getShortDate(activity.date, lang)} ·{" "}
+                                        {activity.startTime} - {activity.endTime}
+                                    </div>
+
+                                    {activity.description && (
+                                        <div className="mt-1 line-clamp-1 text-xs font-bold text-slate-500">
+                                            {activity.description}
+                                        </div>
+                                    )}
+
+                                    {activity.priority !== "none" && (
+                                        <span className="mt-2 inline-block border-2 border-black bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-black">
+                                            {priorityLabels[activity.priority]}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onDeleteTask(activity.id);
+                                    }}
+                                    className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black bg-white text-black transition hover:bg-red-600 hover:text-white"
+                                    aria-label={copy.delete}
+                                >
+                                    <Trash2 size={15} strokeWidth={3} />
+                                </button>
+                            </article>
+                        );
+                    })}
+                </div>
             ) : (
-                <div className="py-16 text-center text-muted">
-                    <Inbox size={42} className="mx-auto mb-3 opacity-30" />
+                <div className="border-[3px] border-black bg-[#FFFCF4] py-16 text-center shadow-[6px_6px_0_#000]">
+                    <Inbox size={42} strokeWidth={3} className="mx-auto mb-3 text-black" />
 
-                    <p className="text-sm">{copy.emptyTitle}</p>
+                    <p className="text-sm font-black uppercase tracking-[0.08em] text-black">
+                        {copy.emptyTitle}
+                    </p>
 
-                    <p className="mt-1 text-xs">{copy.emptyDescription}</p>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                        {copy.emptyDescription}
+                    </p>
                 </div>
             )}
         </div>

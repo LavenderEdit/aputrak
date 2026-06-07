@@ -92,8 +92,10 @@ export function AppShell() {
 
     if (loadingAuth) {
         return (
-            <main className="grid min-h-screen place-items-center bg-slate-50">
-                <div className="h-11 w-11 animate-spin rounded-full border-2 border-indigo-100 border-b-indigo-600" />
+            <main className="grid min-h-screen place-items-center bg-[#F5F0E6]">
+                <div className="border-[3px] border-black bg-[#FFFCF4] p-6 shadow-[6px_6px_0_#000]">
+                    <div className="h-10 w-10 animate-spin border-[3px] border-black border-t-transparent" />
+                </div>
             </main>
         );
     }
@@ -236,7 +238,7 @@ export function AppShell() {
             <div className="flex min-h-screen">
                 <div
                     className={cn(
-                        "fixed inset-0 z-30 bg-black/30 md:hidden",
+                        "fixed inset-0 z-30 bg-black/45 md:hidden",
                         sidebarOpen ? "block" : "hidden",
                     )}
                     onClick={() => setSidebarOpen(false)}

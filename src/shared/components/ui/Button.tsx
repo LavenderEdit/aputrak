@@ -15,9 +15,9 @@ const variants: Record<ButtonVariant, string> = {
     primary:
         "border-2 border-black bg-black text-white shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
     secondary:
-        "border-2 border-black bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
+        "border-2 border-black bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
     ghost:
-        "border-2 border-transparent bg-transparent text-slate-700 hover:border-black hover:bg-white hover:text-black",
+        "border-2 border-black bg-transparent text-black hover:bg-white hover:shadow-[3px_3px_0_#000]",
     danger:
         "border-2 border-black bg-red-600 text-white shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
 };

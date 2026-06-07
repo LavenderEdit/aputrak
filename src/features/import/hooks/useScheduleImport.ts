@@ -7,6 +7,7 @@ import type {
 } from "@/features/schedule/types/schedule.types";
 import type { PromiseToastMessages } from "@/shared/hooks/useToast";
 import { getToastCopy } from "@/shared/constants/toast.constants";
+import { GENERAL_TAG_ID } from "@/features/tags/constants/tags.constants";
 
 interface ScheduleData {
     settings: unknown;
@@ -44,7 +45,8 @@ function legacyActivitiesToTasks(activities: Record<string, string>) {
             startMinute: hour * 60,
             endMinute: (hour + 1) * 60,
             text,
-            color: "indigo",
+            tagId: GENERAL_TAG_ID,
+            color: "#6366F1",
             completed: getCompletedState(text),
         } satisfies ScheduleTask;
     });
@@ -54,6 +56,8 @@ function normalizeTask(task: ScheduleTask): ScheduleTask {
     return {
         ...task,
         id: task.id || createTaskId(),
+        tagId: task.tagId ?? GENERAL_TAG_ID,
+        color: task.color ?? "#6366F1",
         completed: getCompletedState(task.text, task.completed),
     };
 }

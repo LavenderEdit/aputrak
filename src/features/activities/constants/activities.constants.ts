@@ -1,9 +1,12 @@
 export const ACTIVITIES_COPY = {
     es: {
+        title: "Actividades",
+        subtitle: "Organiza tus tareas semanales y mantente al día",
         searchPlaceholder: "Buscar actividades...",
         allTags: "Todas las Etiquetas",
         addTask: "Agregar Tarea",
         all: "Todas",
+        delete: "Eliminar",
         pending: "Pendiente",
         completed: "Completada",
         untagged: "Sin etiqueta",
@@ -14,10 +17,13 @@ export const ACTIVITIES_COPY = {
         emptyDescription: "Agrega tu primera actividad para comenzar",
     },
     en: {
+        title: "Activities",
+        subtitle: "Track your weekly tasks and stay organized",
         searchPlaceholder: "Search activities...",
         allTags: "All Tags",
         addTask: "Add Task",
         all: "All",
+        delete: "Delete",
         pending: "Pending",
         completed: "Completed",
         untagged: "Untagged",

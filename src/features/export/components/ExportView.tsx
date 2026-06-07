@@ -4,12 +4,14 @@ import { useState } from "react";
 import {
     Calendar,
     CalendarDays,
+    Check,
     Download,
     FileJson,
     ImageIcon,
     MonitorSmartphone,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/lib/cn";
 import type { GraphicExportType } from "@/features/shell/types/shell.types";
 import type { ExportOptions } from "../hooks/useScheduleExport";
 import { getExportCopy } from "../constants/export.constants";
@@ -19,6 +21,68 @@ interface ExportViewProps {
     onExportPDF: (options: ExportOptions) => void;
     onExportImage: (type: GraphicExportType, options: ExportOptions) => void;
     onExportJSON: () => void;
+}
+
+function OptionButton({
+    active,
+    icon,
+    label,
+    onClick,
+}: {
+    active: boolean;
+    icon?: React.ReactNode;
+    label: string;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={cn(
+                "flex min-h-[64px] items-center justify-center gap-2 border-[3px] border-black px-4 py-3 text-sm font-black uppercase tracking-[0.08em] transition",
+                active
+                    ? "bg-black text-white shadow-[4px_4px_0_#000]"
+                    : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[4px_4px_0_#000]",
+            )}
+        >
+            {icon}
+            {label}
+        </button>
+    );
+}
+
+function CheckboxOption({
+    checked,
+    label,
+    onChange,
+}: {
+    checked: boolean;
+    label: string;
+    onChange: (checked: boolean) => void;
+}) {
+    return (
+        <label className="flex cursor-pointer items-center gap-3 border-2 border-black bg-white p-3 transition hover:bg-[#F5F0E6]">
+            <span
+                className={cn(
+                    "flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black",
+                    checked ? "bg-black text-white" : "bg-white text-black",
+                )}
+            >
+                {checked && <Check size={15} strokeWidth={3} />}
+            </span>
+
+            <input
+                type="checkbox"
+                checked={checked}
+                onChange={(event) => onChange(event.target.checked)}
+                className="sr-only"
+            />
+
+            <span className="text-sm font-black uppercase tracking-[0.06em] text-black">
+                {label}
+            </span>
+        </label>
+    );
 }
 
 export function ExportView({
@@ -44,135 +108,119 @@ export function ExportView({
     };
 
     return (
-        <div className="mx-auto max-w-3xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
-            <div className="mb-6">
-                <h2 className="font-display text-xl font-bold text-slate-950">
+        <div className="mx-auto max-w-4xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
+            <div className="mb-6 border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+                    Aputrak
+                </p>
+
+                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black">
                     {copy.title}
                 </h2>
 
-                <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
+                <p className="mt-2 text-sm font-bold text-slate-600">
+                    {copy.subtitle}
+                </p>
             </div>
 
-            <section className="rounded-xl border border-sborder bg-white p-4 sm:p-6">
+            <section className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000] sm:p-6">
                 <div className="space-y-6">
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-slate-800">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
                             {copy.dateRange}
                         </label>
 
                         <div className="grid gap-3 sm:grid-cols-2">
-                            <button
-                                type="button"
+                            <OptionButton
+                                active={range === "week"}
+                                icon={<CalendarDays size={18} strokeWidth={3} />}
+                                label={copy.week}
                                 onClick={() => setRange("week")}
-                                className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${range === "week"
-                                    ? "border-primary ring-2 ring-indigo-100"
-                                    : "border-sborder"
-                                    }`}
-                            >
-                                <CalendarDays size={18} className="mr-2 inline text-primary" />
-                                {copy.week}
-                            </button>
+                            />
 
-                            <button
-                                type="button"
+                            <OptionButton
+                                active={range === "month"}
+                                icon={<Calendar size={18} strokeWidth={3} />}
+                                label={copy.month}
                                 onClick={() => setRange("month")}
-                                className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${range === "month"
-                                    ? "border-primary ring-2 ring-indigo-100"
-                                    : "border-sborder"
-                                    }`}
-                            >
-                                <Calendar size={18} className="mr-2 inline text-secondary" />
-                                {copy.month}
-                            </button>
+                            />
                         </div>
                     </div>
 
-                    <div className="space-y-3">
-                        <label className="flex cursor-pointer items-center gap-3">
-                            <input
-                                type="checkbox"
+                    <div>
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
+                            {lang === "es" ? "Contenido" : "Content"}
+                        </label>
+
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <CheckboxOption
                                 checked={includeCompleted}
-                                onChange={(event) => setIncludeCompleted(event.target.checked)}
-                                className="task-check"
+                                label={copy.includeCompleted}
+                                onChange={setIncludeCompleted}
                             />
 
-                            <span className="text-sm text-slate-700">
-                                {copy.includeCompleted}
-                            </span>
-                        </label>
-
-                        <label className="flex cursor-pointer items-center gap-3">
-                            <input
-                                type="checkbox"
+                            <CheckboxOption
                                 checked={includeNotes}
-                                onChange={(event) => setIncludeNotes(event.target.checked)}
-                                className="task-check"
+                                label={copy.includeNotes}
+                                onChange={setIncludeNotes}
                             />
-
-                            <span className="text-sm text-slate-700">
-                                {copy.includeNotes}
-                            </span>
-                        </label>
+                        </div>
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-slate-800">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
                             {copy.layoutStyle}
                         </label>
 
                         <div className="grid gap-3 sm:grid-cols-2">
-                            <button
-                                type="button"
+                            <OptionButton
+                                active={layoutStyle === "compact"}
+                                label={copy.compact}
                                 onClick={() => setLayoutStyle("compact")}
-                                className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${layoutStyle === "compact"
-                                    ? "border-primary ring-2 ring-indigo-100"
-                                    : "border-sborder"
-                                    }`}
-                            >
-                                {copy.compact}
-                            </button>
+                            />
 
-                            <button
-                                type="button"
+                            <OptionButton
+                                active={layoutStyle === "detailed"}
+                                label={copy.detailed}
                                 onClick={() => setLayoutStyle("detailed")}
-                                className={`rounded-xl border px-4 py-3 text-sm font-medium transition hover:bg-slate-50 ${layoutStyle === "detailed"
-                                    ? "border-primary ring-2 ring-indigo-100"
-                                    : "border-sborder"
-                                    }`}
-                            >
-                                {copy.detailed}
-                            </button>
+                            />
                         </div>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-2">
-                        <Button onClick={() => onExportPDF(exportOptions)} className="w-full">
-                            <Download size={16} />
-                            {copy.generatePDF}
-                        </Button>
+                    <div className="border-t-2 border-black pt-6">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
+                            {lang === "es" ? "Formato de exportación" : "Export format"}
+                        </label>
 
-                        <Button
-                            variant="secondary"
-                            onClick={() => onExportImage("desktop", exportOptions)}
-                            className="w-full"
-                        >
-                            <MonitorSmartphone size={16} />
-                            {copy.desktopImage}
-                        </Button>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <Button onClick={() => onExportPDF(exportOptions)} className="w-full">
+                                <Download size={16} />
+                                {copy.generatePDF}
+                            </Button>
 
-                        <Button
-                            variant="secondary"
-                            onClick={() => onExportImage("mobile", exportOptions)}
-                            className="w-full"
-                        >
-                            <ImageIcon size={16} />
-                            {copy.mobileImage}
-                        </Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => onExportImage("desktop", exportOptions)}
+                                className="w-full"
+                            >
+                                <MonitorSmartphone size={16} />
+                                {copy.desktopImage}
+                            </Button>
 
-                        <Button variant="secondary" onClick={onExportJSON} className="w-full">
-                            <FileJson size={16} />
-                            {copy.backup}
-                        </Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => onExportImage("mobile", exportOptions)}
+                                className="w-full"
+                            >
+                                <ImageIcon size={16} />
+                                {copy.mobileImage}
+                            </Button>
+
+                            <Button variant="secondary" onClick={onExportJSON} className="w-full">
+                                <FileJson size={16} />
+                                {copy.backup}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -28,7 +28,7 @@ export function Modal({
 
     return createPortal(
         <div
-            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/45 p-4 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 p-4"
             onClick={onClose}
         >
             <div
@@ -37,13 +37,13 @@ export function Modal({
                 aria-label={title}
                 onClick={handleDialogClick}
                 className={cn(
-                    "w-full max-w-md overflow-hidden border-[3px] border-black bg-white shadow-[8px_8px_0_#000]",
+                    "w-full max-w-md overflow-hidden border-[3px] border-black bg-[#FFFCF4] shadow-[8px_8px_0_#000]",
                     "max-h-[calc(100vh-2rem)] overflow-y-auto",
                     className,
                 )}
             >
                 {title && (
-                    <div className="sticky top-0 z-10 flex items-center justify-between border-b-[3px] border-black bg-white px-5 py-4">
+                    <div className="sticky top-0 z-10 flex items-center justify-between border-b-[3px] border-black bg-[#FFFCF4] px-5 py-4">
                         <h3 className="font-display text-lg font-black uppercase tracking-[0.08em] text-black">
                             {title}
                         </h3>
