@@ -37,13 +37,19 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
         .slice(0, 5);
 
     return (
-        <article className="rounded-xl border border-sborder bg-white p-5">
-            <h3 className="font-display mb-4 text-base font-bold text-slate-950">
-                {copy.upcoming}
-            </h3>
+        <article className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b-2 border-black pb-3">
+                <h3 className="font-display text-base font-black uppercase tracking-[0.08em] text-black">
+                    {copy.upcoming}
+                </h3>
+
+                <span className="border-2 border-black bg-white px-2 py-1 text-[10px] font-black text-black">
+                    {upcomingTasks.length}
+                </span>
+            </div>
 
             {upcomingTasks.length > 0 ? (
-                <div>
+                <div className="space-y-3">
                     {upcomingTasks.map((task) => {
                         const lines = getTaskLines(task);
                         const color = resolveTaskColor(task.color);
@@ -51,30 +57,27 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
                         return (
                             <div
                                 key={task.id}
-                                className="-mx-2 flex items-start gap-3 rounded-lg border-b border-sborder px-2 py-2.5 transition last:border-0 hover:bg-slate-50"
+                                className="flex items-start gap-3 border-2 border-black bg-white p-3 transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000]"
                             >
                                 <span
-                                    className="mt-0.5 h-10 w-1 shrink-0 rounded-full"
+                                    className="mt-0.5 h-10 w-2 shrink-0 border-2 border-black"
                                     style={{ backgroundColor: color }}
                                 />
 
                                 <div className="min-w-0 flex-1">
-                                    <div className="truncate text-sm font-medium text-slate-900">
+                                    <div className="truncate text-sm font-black uppercase tracking-[0.04em] text-black">
                                         {lines[0] ?? task.text}
                                     </div>
 
-                                    <div className="text-xs text-muted">
-                                        {copy.day} {task.day + 1}
+                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
+                                        {copy.day} {task.day + 1} ·{" "}
                                         {formatMinuteClock(task.startMinute)}
                                     </div>
                                 </div>
 
                                 <span
-                                    className="tag-pill shrink-0"
-                                    style={{
-                                        backgroundColor: `${color}18`,
-                                        color,
-                                    }}
+                                    className="shrink-0 border-2 border-black bg-white px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em]"
+                                    style={{ color }}
                                 >
                                     {copy.pending}
                                 </span>
@@ -83,9 +86,11 @@ export function UpcomingTasksCard({ lang, tasks }: UpcomingTasksCardProps) {
                     })}
                 </div>
             ) : (
-                <div className="py-8 text-center text-muted">
-                    <Inbox size={36} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">{copy.noActivitiesYet}</p>
+                <div className="border-2 border-dashed border-black bg-white py-8 text-center">
+                    <Inbox size={36} className="mx-auto mb-3 text-black" />
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                        {copy.noActivitiesYet}
+                    </p>
                 </div>
             )}
         </article>

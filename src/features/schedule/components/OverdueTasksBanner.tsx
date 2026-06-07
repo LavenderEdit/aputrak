@@ -21,28 +21,31 @@ export function OverdueTasksBanner({
     onSmartReschedule,
 }: OverdueTasksBannerProps) {
     const copy = getScheduleCopy(lang);
+
     return (
-        <section className="rounded-[1.75rem] border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-5 shadow-sm">
+        <section className="border-[3px] border-black bg-[#FFF3C4] p-5 shadow-[6px_6px_0_#000]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-lg font-black text-amber-950">
+                <div className="min-w-0">
+                    <div className="mb-2 inline-flex items-center gap-2 border-2 border-black bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-black">
+                        <Sparkles size={13} strokeWidth={3} />
+                        {lang === "es" ? "Reordenar" : "Reschedule"}
+                    </div>
+
+                    <h2 className="text-xl font-black uppercase tracking-tight text-black">
                         {t("smartTetrisTitle").replace("{count}", String(count))}
                     </h2>
 
-                    <p className="mt-1 text-sm font-medium text-amber-700/80">
+                    <p className="mt-2 text-sm font-bold text-slate-700">
                         {t("smartTetrisDesc")}
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="flex flex-col gap-3 sm:flex-row">
                     <Button variant="secondary" onClick={onDismiss}>
                         {copy.hide}
                     </Button>
 
-                    <Button
-                        onClick={onSmartReschedule}
-                        className="bg-amber-500 shadow-none hover:bg-amber-600"
-                    >
+                    <Button onClick={onSmartReschedule}>
                         <Sparkles size={16} />
                         {t("smartTetrisBtn")}
                     </Button>

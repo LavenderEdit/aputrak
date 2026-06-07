@@ -10,6 +10,7 @@ import {
     UserRound,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { DAYS_OF_WEEK, DEFAULT_SETTINGS } from "@/shared/lib/constants";
 import { Utils } from "@/shared/lib/utils";
 import { cn } from "@/shared/lib/cn";
@@ -29,6 +30,14 @@ interface SettingsViewProps {
 const START_HOURS = Array.from({ length: 24 }, (_, index) => index);
 const END_HOURS = Array.from({ length: 25 }, (_, index) => index);
 
+function SectionIcon({ children }: { children: React.ReactNode }) {
+    return (
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center border-2 border-black bg-white shadow-[3px_3px_0_#000]">
+            {children}
+        </div>
+    );
+}
+
 function HourPicker({
     label,
     value,
@@ -41,20 +50,20 @@ function HourPicker({
     onChange: (hour: number) => void;
 }) {
     return (
-        <div className="rounded-2xl border border-sborder bg-white p-4">
+        <div className="border-[3px] border-black bg-white p-4">
             <div className="mb-4 flex items-center justify-between gap-3">
-                <label className="flex items-center gap-2 text-sm font-bold text-slate-900">
-                    <Clock3 size={16} />
+                <label className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-black">
+                    <Clock3 size={16} strokeWidth={3} />
                     {label}
                 </label>
 
-                <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-primary">
+                <span className="border-2 border-black bg-[#FFFCF4] px-3 py-1 text-xs font-black text-black">
                     {Utils.formatTime(value)}
                 </span>
             </div>
 
-            <div className="rounded-2xl bg-slate-50 p-2">
-                <div className="grid max-h-52 grid-cols-3 gap-2 overflow-y-auto pr-1 sm:grid-cols-4 md:grid-cols-6 lg:max-h-40 xl:grid-cols-5">
+            <div className="bg-[#F5F0E6] p-2">
+                <div className="grid max-h-52 grid-cols-3 gap-2 overflow-y-auto pr-1 sm:grid-cols-4 md:grid-cols-6 lg:max-h-44 xl:grid-cols-5">
                     {hours.map((hour) => {
                         const active = value === hour;
 
@@ -64,10 +73,10 @@ function HourPicker({
                                 type="button"
                                 onClick={() => onChange(hour)}
                                 className={cn(
-                                    "rounded-xl border px-2 py-2 text-xs font-bold transition",
+                                    "border-2 border-black px-2 py-2 text-xs font-black transition",
                                     active
-                                        ? "border-primary bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
-                                        : "border-sborder bg-white text-slate-600 hover:border-primary hover:text-primary",
+                                        ? "bg-black text-white shadow-[3px_3px_0_#000]"
+                                        : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_#000]",
                                 )}
                             >
                                 {Utils.formatTime(hour)}
@@ -90,7 +99,6 @@ export function SettingsView({
     onToggleLanguage,
 }: SettingsViewProps) {
     const [usernameDraft, setUsernameDraft] = useState(username);
-
     const copy = getSettingsCopy(lang);
 
     const toggleDay = (index: number) => {
@@ -143,41 +151,53 @@ export function SettingsView({
     };
 
     return (
-        <div className="mx-auto max-w-3xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
-            <div className="mb-6">
-                <h2 className="font-display text-xl font-bold text-slate-950">
+        <div className="mx-auto max-w-4xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
+            <div className="mb-6 border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+                    Aputrak
+                </p>
+
+                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black">
                     {copy.title}
                 </h2>
 
-                <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
+                <p className="mt-2 text-sm font-bold text-slate-600">
+                    {copy.subtitle}
+                </p>
             </div>
 
             <div className="space-y-5">
-                <section className="rounded-xl border border-sborder bg-white p-5">
-                    <div className="mb-5 flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-primary">
-                            <UserRound size={20} />
-                        </div>
+                <section className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                    <div className="mb-5 flex items-center gap-3 border-b-2 border-black pb-4">
+                        <SectionIcon>
+                            <UserRound size={20} strokeWidth={3} />
+                        </SectionIcon>
 
-                        <div>
-                            <h3 className="font-display text-base font-bold text-slate-950">
+                        <div className="min-w-0">
+                            <h3 className="font-display text-base font-black uppercase tracking-[0.08em] text-black">
                                 {copy.profile}
                             </h3>
 
-                            <p className="text-xs text-muted">{username}</p>
+                            <p className="truncate text-xs font-bold uppercase tracking-[0.1em] text-slate-500">
+                                {username}
+                            </p>
                         </div>
                     </div>
 
-                    <form onSubmit={handleUsernameSubmit} className="flex flex-col gap-3 sm:flex-row">
-                        <div className="flex-1">
-                            <label className="mb-2 block text-sm font-medium text-slate-800">
+                    <form
+                        onSubmit={handleUsernameSubmit}
+                        className="grid gap-3 sm:grid-cols-[1fr_auto]"
+                    >
+                        <div>
+                            <label className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-black">
                                 {copy.username}
                             </label>
 
-                            <input
+                            <Input
                                 value={usernameDraft}
-                                onChange={(event) => setUsernameDraft(event.target.value)}
-                                className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+                                onChange={(event) =>
+                                    setUsernameDraft(event.target.value)
+                                }
                                 required
                             />
                         </div>
@@ -190,25 +210,26 @@ export function SettingsView({
                     </form>
                 </section>
 
-                <section className="rounded-xl border border-sborder bg-white p-5">
-                    <div className="mb-5 flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-primary">
-                            <CalendarClock size={20} />
-                        </div>
+                <section className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                    <div className="mb-5 flex items-center gap-3 border-b-2 border-black pb-4">
+                        <SectionIcon>
+                            <CalendarClock size={20} strokeWidth={3} />
+                        </SectionIcon>
 
-                        <div>
-                            <h3 className="font-display text-base font-bold text-slate-950">
+                        <div className="min-w-0">
+                            <h3 className="font-display text-base font-black uppercase tracking-[0.08em] text-black">
                                 {copy.schedule}
                             </h3>
 
-                            <p className="text-xs text-muted">
-                                {settings.activeDays.length} {copy.activeDays.toLowerCase()}
+                            <p className="text-xs font-bold uppercase tracking-[0.1em] text-slate-500">
+                                {settings.activeDays.length}{" "}
+                                {copy.activeDays.toLowerCase()}
                             </p>
                         </div>
                     </div>
 
                     <div className="mb-5">
-                        <label className="mb-2 block text-sm font-medium text-slate-800">
+                        <label className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-black">
                             {copy.activeDays}
                         </label>
 
@@ -222,10 +243,10 @@ export function SettingsView({
                                         type="button"
                                         onClick={() => toggleDay(index)}
                                         className={cn(
-                                            "rounded-xl border px-3 py-2 text-sm font-medium transition",
+                                            "border-2 border-black px-3 py-2 text-xs font-black uppercase tracking-[0.08em] transition",
                                             active
-                                                ? "border-primary bg-indigo-50 text-primary"
-                                                : "border-sborder bg-white text-muted hover:bg-hover",
+                                                ? "bg-black text-white shadow-[3px_3px_0_#000]"
+                                                : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_#000]",
                                         )}
                                     >
                                         {getDayName(index).slice(0, 3)}
@@ -252,21 +273,21 @@ export function SettingsView({
                     </div>
                 </section>
 
-                <section className="rounded-xl border border-sborder bg-white p-5">
-                    <h3 className="font-display mb-4 text-base font-bold text-slate-950">
+                <section className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                    <h3 className="font-display mb-4 text-base font-black uppercase tracking-[0.08em] text-black">
                         {copy.preferences}
                     </h3>
 
                     <div className="space-y-3">
-                        <div className="flex flex-col gap-3 rounded-xl bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-3 border-2 border-black bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-3">
-                                <Globe2 size={18} className="text-primary" />
+                                <Globe2 size={20} strokeWidth={3} />
 
                                 <div>
-                                    <p className="text-sm font-medium text-slate-900">
+                                    <p className="text-sm font-black uppercase tracking-[0.06em] text-black">
                                         {copy.language}
                                     </p>
-                                    <p className="text-xs text-muted">
+                                    <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
                                         {copy.currentLanguage}: {lang.toUpperCase()}
                                     </p>
                                 </div>
@@ -277,41 +298,45 @@ export function SettingsView({
                             </Button>
                         </div>
 
-                        <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
+                        <div className="flex flex-col gap-3 border-2 border-black bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-3">
-                                <Bell size={18} className="text-accent" />
+                                <Bell size={20} strokeWidth={3} />
 
                                 <div>
-                                    <p className="text-sm font-medium text-slate-900">
+                                    <p className="text-sm font-black uppercase tracking-[0.06em] text-black">
                                         {copy.notifications}
                                     </p>
-                                    <p className="text-xs text-muted">{copy.notificationsDesc}</p>
+                                    <p className="text-xs font-bold text-slate-500">
+                                        {copy.notificationsDesc}
+                                    </p>
                                 </div>
                             </div>
 
-                            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                            <span className="w-fit border-2 border-black bg-[#FFF3C4] px-2.5 py-1 text-xs font-black uppercase tracking-[0.08em] text-black">
                                 {copy.soon}
                             </span>
                         </div>
 
-                        <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
+                        <div className="flex items-center justify-between border-2 border-black bg-white p-4">
                             <div className="flex items-center gap-3">
-                                <Database size={18} className="text-secondary" />
+                                <Database size={20} strokeWidth={3} />
 
                                 <div>
-                                    <p className="text-sm font-medium text-slate-900">
+                                    <p className="text-sm font-black uppercase tracking-[0.06em] text-black">
                                         {copy.storage}
                                     </p>
-                                    <p className="text-xs text-muted">{copy.storageDesc}</p>
+                                    <p className="text-xs font-bold text-slate-500">
+                                        {copy.storageDesc}
+                                    </p>
                                 </div>
                             </div>
 
-                            <span className="status-dot bg-success" />
+                            <span className="h-3 w-3 border-2 border-black bg-emerald-500" />
                         </div>
                     </div>
                 </section>
 
-                <section className="rounded-xl border border-sborder bg-white p-5">
+                <section className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
                     <Button
                         variant="secondary"
                         className="w-full"

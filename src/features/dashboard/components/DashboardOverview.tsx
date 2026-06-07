@@ -72,42 +72,45 @@ export function DashboardOverview({
             label: copy.addTask,
             icon: Plus,
             onClick: onCreateTask,
-            className:
-                "bg-primary text-white shadow-lg shadow-indigo-500/20 hover:bg-primary-dark",
-            iconClassName: "text-white",
+            active: true,
         },
         {
             label: copy.importSchedule,
             icon: FileInput,
             onClick: onOpenImport,
-            className: "border border-sborder bg-white text-slate-700 hover:bg-slate-50",
-            iconClassName: "text-secondary",
+            active: false,
         },
         {
             label: copy.exportPDF,
             icon: FileText,
             onClick: onOpenExport,
-            className: "border border-sborder bg-white text-slate-700 hover:bg-slate-50",
-            iconClassName: "text-accent",
+            active: false,
         },
         {
             label: copy.openCalendar,
             icon: CalendarDays,
             onClick: onOpenCalendar,
-            className: "border border-sborder bg-white text-slate-700 hover:bg-slate-50",
-            iconClassName: "text-primary",
+            active: false,
         },
     ];
 
     return (
         <div className="mx-auto max-w-6xl p-4 fade-in sm:p-6 lg:p-8">
-            <div className="mb-6">
-                <h2 className="font-display text-2xl font-extrabold text-slate-950">
+            <div className="mb-6 border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+                    {currentDate}
+                </p>
+
+                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black sm:text-4xl">
                     {copy.hello}
                     {username ? `, ${username}` : ""}
                 </h2>
 
-                <p className="mt-1 text-sm capitalize text-muted">{currentDate}</p>
+                <p className="mt-3 max-w-2xl text-sm font-bold text-slate-600">
+                    {lang === "es"
+                        ? "Gestiona tu semana, importa horarios y mantén tus actividades bajo control."
+                        : "Manage your week, import schedules, and keep your activities under control."}
+                </p>
             </div>
 
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -117,12 +120,19 @@ export function DashboardOverview({
                     return (
                         <button
                             key={action.label}
+                            type="button"
                             onClick={action.onClick}
-                            className={`flex items-center gap-3 rounded-xl p-4 text-left transition ${action.className}`}
+                            className={
+                                action.active
+                                    ? "flex min-h-[92px] flex-col items-start justify-between border-[3px] border-black bg-black p-4 text-left text-white shadow-[5px_5px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#000]"
+                                    : "flex min-h-[92px] flex-col items-start justify-between border-[3px] border-black bg-[#FFFCF4] p-4 text-left text-black shadow-[5px_5px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-white hover:shadow-[7px_7px_0_#000]"
+                            }
                         >
-                            <Icon size={20} className={action.iconClassName} />
+                            <Icon size={22} strokeWidth={3} />
 
-                            <span className="text-sm font-semibold">{action.label}</span>
+                            <span className="text-xs font-black uppercase tracking-[0.1em]">
+                                {action.label}
+                            </span>
                         </button>
                     );
                 })}

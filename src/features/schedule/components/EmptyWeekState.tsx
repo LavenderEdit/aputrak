@@ -2,7 +2,6 @@
 
 import { CalendarPlus, Copy, Plus } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
-import { Card } from "@/shared/components/ui/Card";
 import type { TranslateFn } from "@/shared/types/i18n.types";
 
 interface EmptyWeekStateProps {
@@ -17,20 +16,20 @@ export function EmptyWeekState({
     onCopyPreviousWeek,
 }: EmptyWeekStateProps) {
     return (
-        <Card className="border-indigo-100 bg-indigo-50/80 p-8 text-center">
-            <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white shadow-sm">
-                <CalendarPlus className="text-indigo-600" size={32} />
+        <section className="border-[3px] border-black bg-[#FFFCF4] p-8 text-center shadow-[6px_6px_0_#000]">
+            <div className="mx-auto mb-5 grid h-16 w-16 place-items-center border-[3px] border-black bg-white shadow-[4px_4px_0_#000]">
+                <CalendarPlus size={32} strokeWidth={3} className="text-black" />
             </div>
 
-            <h3 className="text-xl font-black text-indigo-950">
+            <h3 className="text-2xl font-black uppercase tracking-tight text-black">
                 {t("emptyTitle")}
             </h3>
 
-            <p className="mx-auto mt-2 max-w-md text-sm font-medium leading-relaxed text-indigo-700/80">
+            <p className="mx-auto mt-3 max-w-md text-sm font-bold leading-relaxed text-slate-600">
                 {t("emptyDesc")}
             </p>
 
-            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
                 <Button onClick={onCreateTask} size="lg">
                     <Plus size={18} />
                     {t("activity")}
@@ -41,6 +40,6 @@ export function EmptyWeekState({
                     {t("cloneWeek")}
                 </Button>
             </div>
-        </Card>
+        </section>
     );
 }

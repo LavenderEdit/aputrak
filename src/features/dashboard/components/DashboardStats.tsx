@@ -30,29 +30,25 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
             label: copy.totalActivities,
             value: tasks.length,
             icon: Layers3,
-            bg: "bg-indigo-50",
-            fg: "text-primary",
+            accent: "#6366F1",
         },
         {
             label: copy.completedTasks,
             value: completed,
             icon: CheckCircle2,
-            bg: "bg-emerald-50",
-            fg: "text-success",
+            accent: "#10B981",
         },
         {
             label: copy.pendingTasks,
             value: pending,
             icon: Clock3,
-            bg: "bg-amber-50",
-            fg: "text-accent",
+            accent: "#F59E0B",
         },
         {
             label: copy.productivity,
             value: `${productivity}%`,
             icon: TrendingUp,
-            bg: "bg-teal-50",
-            fg: "text-secondary",
+            accent: "#14B8A6",
         },
     ];
 
@@ -64,21 +60,26 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
                 return (
                     <article
                         key={stat.label}
-                        className="rounded-xl border border-sborder bg-white p-4"
+                        className="border-[3px] border-black bg-[#FFFCF4] p-4 shadow-[5px_5px_0_#000]"
                     >
-                        <div className="mb-2 flex items-center gap-2">
-                            <div
-                                className={`flex h-8 w-8 items-center justify-center rounded-lg ${stat.bg}`}
-                            >
-                                <Icon size={16} className={stat.fg} />
-                            </div>
+                        <div
+                            className="mb-3 flex h-10 w-10 items-center justify-center border-2 border-black"
+                            style={{ backgroundColor: `${stat.accent}22` }}
+                        >
+                            <Icon
+                                size={18}
+                                strokeWidth={3}
+                                style={{ color: stat.accent }}
+                            />
                         </div>
 
-                        <div className="font-display text-2xl font-bold text-slate-950">
+                        <div className="font-display text-3xl font-black uppercase tracking-tight text-black">
                             {stat.value}
                         </div>
 
-                        <div className="mt-0.5 text-xs text-muted">{stat.label}</div>
+                        <div className="mt-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
+                            {stat.label}
+                        </div>
                     </article>
                 );
             })}

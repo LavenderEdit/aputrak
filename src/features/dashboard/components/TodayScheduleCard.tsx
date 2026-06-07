@@ -38,37 +38,48 @@ export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
         .slice(0, 6);
 
     return (
-        <article className="rounded-xl border border-sborder bg-white p-5">
-            <h3 className="font-display mb-4 text-base font-bold text-slate-950">
-                {copy.todaySchedule}
-            </h3>
+        <article className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b-2 border-black pb-3">
+                <h3 className="font-display text-base font-black uppercase tracking-[0.08em] text-black">
+                    {copy.todaySchedule}
+                </h3>
+
+                <span className="border-2 border-black bg-white px-2 py-1 text-[10px] font-black text-black">
+                    {todayTasks.length}
+                </span>
+            </div>
 
             {todayTasks.length > 0 ? (
-                <div>
+                <div className="space-y-3">
                     {todayTasks.map((task) => {
                         const lines = getTaskLines(task);
                         const color = resolveTaskColor(task.color);
-                        const completed = lines.length > 0 && lines.every((_, index) => task.completed[index]);
+                        const completed =
+                            lines.length > 0 &&
+                            lines.every((_, index) => task.completed[index]);
 
                         return (
                             <button
                                 key={task.id}
-                                className="-mx-2 flex w-[calc(100%+1rem)] cursor-pointer items-start gap-3 rounded-lg border-b border-sborder px-2 py-2.5 text-left transition last:border-0 hover:bg-slate-50"
+                                type="button"
+                                className="flex w-full items-start gap-3 border-2 border-black bg-white p-3 text-left transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000]"
                             >
                                 <span
-                                    className="mt-0.5 h-10 w-1 shrink-0 rounded-full"
+                                    className="mt-0.5 h-10 w-2 shrink-0 border-2 border-black"
                                     style={{ backgroundColor: color }}
                                 />
 
                                 <div className="min-w-0 flex-1">
                                     <div
-                                        className={`text-sm font-medium ${completed ? "text-muted line-through" : "text-slate-900"
+                                        className={`truncate text-sm font-black uppercase tracking-[0.04em] ${completed
+                                            ? "text-slate-400 line-through"
+                                            : "text-black"
                                             }`}
                                     >
                                         {lines[0] ?? task.text}
                                     </div>
 
-                                    <div className="text-xs text-muted">
+                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
                                         {formatMinuteClock(task.startMinute)} -{" "}
                                         {formatMinuteClock(task.endMinute)}
                                     </div>
@@ -78,9 +89,11 @@ export function TodayScheduleCard({ lang, tasks }: TodayScheduleCardProps) {
                     })}
                 </div>
             ) : (
-                <div className="py-8 text-center text-muted">
-                    <CalendarDays size={36} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">{copy.noTasks}</p>
+                <div className="border-2 border-dashed border-black bg-white py-8 text-center">
+                    <CalendarDays size={36} className="mx-auto mb-3 text-black" />
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                        {copy.noTasks}
+                    </p>
                 </div>
             )}
         </article>

@@ -1,5 +1,9 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { Select } from "@/shared/components/ui/Select";
 import type { ParsedScheduleItem } from "../lib/scheduleParser";
 import { getImportCopy } from "../constants/import.constants";
 import { formatTime12h } from "../lib/time";
@@ -27,7 +31,7 @@ const SCHEDULE_DAYS = [
 
 function FieldLabel({ children }: { children: string }) {
     return (
-        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted">
+        <label className="mb-1 block text-xs font-black uppercase tracking-[0.12em] text-slate-500">
             {children}
         </label>
     );
@@ -48,29 +52,30 @@ export function SnapPlanDetectedTable({
 
     return (
         <div className="mt-6">
-            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                <h3 className="font-display text-base font-bold text-slate-950">
+            <div className="mb-4 flex flex-col gap-2 border-b-2 border-black pb-3 sm:flex-row sm:items-center sm:justify-between">
+                <h3 className="font-display text-xl font-black uppercase tracking-tight text-black">
                     {copy.detectedActivitiesTitle}
                 </h3>
 
-                <span className="text-sm text-muted">
+                <span className="w-fit border-2 border-black bg-white px-3 py-1 text-xs font-black uppercase tracking-[0.1em] text-black">
                     {items.length}{" "}
                     {items.length === 1 ? copy.results : copy.resultsPlural}
                 </span>
             </div>
 
-            <div className="space-y-3 md:hidden">
+            <div className="space-y-4 md:hidden">
                 {items.map((item, index) => (
                     <article
                         key={item.id}
-                        className="rounded-2xl border border-sborder bg-white p-4 shadow-sm"
+                        className="border-[3px] border-black bg-white p-4 shadow-[5px_5px_0_#000]"
                     >
-                        <div className="mb-4 flex items-start justify-between gap-3">
-                            <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+                        <div className="mb-4 flex items-start justify-between gap-3 border-b-2 border-black pb-3">
+                            <div className="min-w-0">
+                                <p className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">
                                     #{index + 1}
                                 </p>
-                                <p className="mt-1 text-sm font-bold text-slate-950">
+
+                                <p className="mt-1 truncate text-sm font-black uppercase tracking-[0.06em] text-black">
                                     {item.title || copy.untitledActivity}
                                 </p>
                             </div>
@@ -78,36 +83,38 @@ export function SnapPlanDetectedTable({
                             <button
                                 type="button"
                                 onClick={() => onRemoveItem(item.id)}
-                                className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-danger transition hover:bg-red-50"
+                                className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black bg-white text-black transition hover:bg-red-600 hover:text-white"
+                                aria-label={copy.remove}
                             >
-                                {copy.remove}
+                                <Trash2 size={15} strokeWidth={3} />
                             </button>
                         </div>
 
                         <div className="grid gap-3">
                             <div>
                                 <FieldLabel>{copy.day}</FieldLabel>
-                                <select
+
+                                <Select
                                     value={item.day}
                                     onChange={(event) =>
                                         onUpdateItem(item.id, {
                                             day: event.target.value,
                                         })
                                     }
-                                    className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
                                 >
                                     {SCHEDULE_DAYS.map((day) => (
                                         <option key={day} value={day}>
                                             {day}
                                         </option>
                                     ))}
-                                </select>
+                                </Select>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <FieldLabel>{copy.start}</FieldLabel>
-                                    <input
+
+                                    <Input
                                         type="time"
                                         value={item.startTime}
                                         onChange={(event) =>
@@ -115,16 +122,18 @@ export function SnapPlanDetectedTable({
                                                 startTime: event.target.value,
                                             })
                                         }
-                                        className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+                                        className="px-2"
                                     />
-                                    <p className="mt-1 text-xs text-muted">
+
+                                    <p className="mt-1 text-xs font-bold text-slate-500">
                                         {formatTime12h(item.startTime)}
                                     </p>
                                 </div>
 
                                 <div>
                                     <FieldLabel>{copy.end}</FieldLabel>
-                                    <input
+
+                                    <Input
                                         type="time"
                                         value={item.endTime}
                                         onChange={(event) =>
@@ -132,9 +141,10 @@ export function SnapPlanDetectedTable({
                                                 endTime: event.target.value,
                                             })
                                         }
-                                        className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+                                        className="px-2"
                                     />
-                                    <p className="mt-1 text-xs text-muted">
+
+                                    <p className="mt-1 text-xs font-bold text-slate-500">
                                         {formatTime12h(item.endTime)}
                                     </p>
                                 </div>
@@ -142,14 +152,14 @@ export function SnapPlanDetectedTable({
 
                             <div>
                                 <FieldLabel>{copy.activity}</FieldLabel>
-                                <input
+
+                                <Input
                                     value={item.title}
                                     onChange={(event) =>
                                         onUpdateItem(item.id, {
                                             title: event.target.value,
                                         })
                                     }
-                                    className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
                                 />
                             </div>
                         </div>
@@ -157,41 +167,51 @@ export function SnapPlanDetectedTable({
                 ))}
             </div>
 
-            <div className="hidden overflow-x-auto rounded-xl border border-sborder md:block">
-                <table className="w-full min-w-[760px] border-collapse bg-white text-sm">
-                    <thead className="bg-slate-50 text-left text-slate-600">
-                        <tr>
-                            <th className="px-3 py-3 font-medium">{copy.day}</th>
-                            <th className="px-3 py-3 font-medium">{copy.start}</th>
-                            <th className="px-3 py-3 font-medium">{copy.end}</th>
-                            <th className="px-3 py-3 font-medium">{copy.activity}</th>
-                            <th className="px-3 py-3 font-medium">{copy.action}</th>
+            <div className="hidden overflow-x-auto border-[3px] border-black bg-white shadow-[5px_5px_0_#000] md:block">
+                <table className="w-full min-w-[760px] border-collapse text-sm">
+                    <thead className="bg-[#F5F0E6] text-left">
+                        <tr className="border-b-[3px] border-black">
+                            <th className="border-r-2 border-black px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-black">
+                                {copy.day}
+                            </th>
+                            <th className="border-r-2 border-black px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-black">
+                                {copy.start}
+                            </th>
+                            <th className="border-r-2 border-black px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-black">
+                                {copy.end}
+                            </th>
+                            <th className="border-r-2 border-black px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-black">
+                                {copy.activity}
+                            </th>
+                            <th className="px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-black">
+                                {copy.action}
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {items.map((item) => (
-                            <tr key={item.id} className="border-t border-slate-100">
-                                <td className="px-3 py-2">
-                                    <select
+                            <tr key={item.id} className="border-b-2 border-black last:border-b-0">
+                                <td className="border-r-2 border-black px-3 py-3">
+                                    <Select
                                         value={item.day}
                                         onChange={(event) =>
                                             onUpdateItem(item.id, {
                                                 day: event.target.value,
                                             })
                                         }
-                                        className="w-full rounded-lg border border-sborder bg-white px-2 py-1.5 outline-none transition focus:border-primary"
+                                        className="py-2"
                                     >
                                         {SCHEDULE_DAYS.map((day) => (
                                             <option key={day} value={day}>
                                                 {day}
                                             </option>
                                         ))}
-                                    </select>
+                                    </Select>
                                 </td>
 
-                                <td className="px-3 py-2">
-                                    <input
+                                <td className="border-r-2 border-black px-3 py-3">
+                                    <Input
                                         type="time"
                                         value={item.startTime}
                                         onChange={(event) =>
@@ -199,16 +219,16 @@ export function SnapPlanDetectedTable({
                                                 startTime: event.target.value,
                                             })
                                         }
-                                        className="w-full rounded-lg border border-sborder bg-white px-2 py-1.5 outline-none transition focus:border-primary"
+                                        className="py-2"
                                     />
 
-                                    <p className="mt-1 text-xs text-muted">
+                                    <p className="mt-1 text-xs font-bold text-slate-500">
                                         {formatTime12h(item.startTime)}
                                     </p>
                                 </td>
 
-                                <td className="px-3 py-2">
-                                    <input
+                                <td className="border-r-2 border-black px-3 py-3">
+                                    <Input
                                         type="time"
                                         value={item.endTime}
                                         onChange={(event) =>
@@ -216,32 +236,33 @@ export function SnapPlanDetectedTable({
                                                 endTime: event.target.value,
                                             })
                                         }
-                                        className="w-full rounded-lg border border-sborder bg-white px-2 py-1.5 outline-none transition focus:border-primary"
+                                        className="py-2"
                                     />
 
-                                    <p className="mt-1 text-xs text-muted">
+                                    <p className="mt-1 text-xs font-bold text-slate-500">
                                         {formatTime12h(item.endTime)}
                                     </p>
                                 </td>
 
-                                <td className="px-3 py-2">
-                                    <input
+                                <td className="border-r-2 border-black px-3 py-3">
+                                    <Input
                                         value={item.title}
                                         onChange={(event) =>
                                             onUpdateItem(item.id, {
                                                 title: event.target.value,
                                             })
                                         }
-                                        className="w-full rounded-lg border border-sborder bg-white px-2 py-1.5 outline-none transition focus:border-primary"
+                                        className="py-2"
                                     />
                                 </td>
 
-                                <td className="px-3 py-2">
+                                <td className="px-3 py-3">
                                     <button
                                         type="button"
                                         onClick={() => onRemoveItem(item.id)}
-                                        className="rounded-lg px-3 py-1.5 text-sm font-medium text-danger transition hover:bg-red-50"
+                                        className="inline-flex items-center gap-2 border-2 border-black bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.08em] text-black transition hover:bg-red-600 hover:text-white"
                                     >
+                                        <Trash2 size={14} strokeWidth={3} />
                                         {copy.remove}
                                     </button>
                                 </td>
@@ -251,16 +272,16 @@ export function SnapPlanDetectedTable({
                 </table>
             </div>
 
-            <div className="sticky bottom-24 z-20 -mx-4 mt-4 border-t border-sborder bg-white/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
+            <div className="mt-5 border-[3px] border-black bg-[#FFFCF4] p-4 shadow-[5px_5px_0_#000]">
                 <div className="flex justify-stretch sm:justify-end">
-                    <button
+                    <Button
                         type="button"
                         onClick={onConfirm}
                         disabled={!canConfirm || isSaving}
-                        className="w-full rounded-xl bg-success px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none sm:w-auto sm:py-2.5"
+                        className="w-full sm:w-auto"
                     >
                         {isSaving ? copy.saving : copy.confirmDetectedActivities}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -38,31 +38,39 @@ export function AppTopbar({
     };
 
     return (
-        <header className="no-print flex h-14 shrink-0 items-center gap-3 border-b border-sborder bg-white px-4">
+        <header className="no-print flex h-16 shrink-0 items-center gap-3 border-b-[3px] border-black bg-[#FFFCF4] px-4">
             <button
+                type="button"
                 onClick={onToggleSidebar}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-hover md:hidden"
+                className="flex h-10 w-10 items-center justify-center border-2 border-black bg-white text-black shadow-[3px_3px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 md:hidden"
+                aria-label={lang === "es" ? "Abrir menú" : "Open menu"}
             >
-                <Menu size={18} />
+                <Menu size={18} strokeWidth={3} />
             </button>
 
-            <h1 className="font-display text-lg font-bold text-slate-950">
-                {titleMap[activeView]}
-            </h1>
+            <div className="min-w-0">
+                <h1 className="font-display truncate text-xl font-black uppercase tracking-tight text-black">
+                    {titleMap[activeView]}
+                </h1>
+
+                <p className="hidden text-[10px] font-black uppercase tracking-[0.16em] text-slate-500 sm:block">
+                    Aputrak
+                </p>
+            </div>
 
             <div className="flex-1" />
 
-            <div className="flex items-center gap-2 text-xs text-muted">
-                <span className="status-dot bg-success" />
-                <span className="hidden sm:inline">
-                    {copy.savedLocally}
-                </span>
+            <div className="hidden items-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black sm:flex">
+                <span className="h-2.5 w-2.5 border-2 border-black bg-emerald-500" />
+                {copy.savedLocally}
             </div>
 
             <button
+                type="button"
                 onClick={onEditProfile}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-sm font-semibold text-primary"
+                className="flex h-10 w-10 items-center justify-center border-2 border-black bg-black text-sm font-black uppercase text-white shadow-[3px_3px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5"
                 title={username}
+                aria-label={lang === "es" ? "Editar perfil" : "Edit profile"}
             >
                 {username.charAt(0).toUpperCase()}
             </button>
