@@ -1,5 +1,9 @@
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import type { ParsedScheduleItem } from "./scheduleParser";
+import {
+    DEFAULT_ACTIVITY_TAGS,
+    GENERAL_TAG_ID,
+} from "@/features/tags/constants/tags.constants";
 
 const DAY_TO_INDEX: Record<string, number> = {
     Lunes: 0,
@@ -57,7 +61,8 @@ export function parsedScheduleItemToTask(
         startMinute,
         endMinute,
         text,
-        color: options.color ?? "indigo",
+        tagId: GENERAL_TAG_ID,
+        color: DEFAULT_ACTIVITY_TAGS[0]?.color ?? options.color ?? "#6366F1",
         completed: [false],
     };
 }

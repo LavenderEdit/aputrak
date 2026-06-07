@@ -8,6 +8,7 @@ import type {
     ScheduleSettings,
     ScheduleTask,
 } from "@/features/schedule/types/schedule.types";
+import { GENERAL_TAG_ID } from "@/features/tags/constants/tags.constants";
 
 type LegacyWeekData = Record<string, string>;
 
@@ -68,10 +69,20 @@ function migrateLegacyWeekData(data: LegacyWeekData): ScheduleTask[] {
             startMinute: hour * 60,
             endMinute: (hour + 1) * 60,
             text: parsedValue.text,
+            tagId: GENERAL_TAG_ID,
             color: parsedValue.color,
             completed: parsedValue.completed,
         };
     });
+}
+
+function normalizeTask(task: ScheduleTask): ScheduleTask {
+    return {
+        ...task,
+        tagId: task.tagId ?? GENERAL_TAG_ID,
+        color: task.color ?? "indigo",
+        completed: task.completed ?? [],
+    };
 }
 
 function getTaskSlotKey(task: ScheduleTask) {
@@ -113,11 +124,9 @@ async function readWeekTasks(targetWeekId: string) {
         weekTasks = migrateLegacyWeekData(rawData);
     }
 
-    const normalizedTasks = dedupeTasksBySlot(weekTasks);
+    const normalizedTasks = dedupeTasksBySlot(weekTasks.map(normalizeTask));
 
-    if (normalizedTasks.length !== weekTasks.length) {
-        await DB.put("weeks", { id: targetWeekId, data: normalizedTasks });
-    }
+    await DB.put("weeks", { id: targetWeekId, data: normalizedTasks });
 
     return normalizedTasks;
 }
@@ -299,6 +308,7 @@ export const useOfflineSchedule = () => {
                     startMinute: -1,
                     endMinute: -1,
                     text: line,
+                    tagId: task.tagId,
                     color: task.color,
                     completed: [false],
                 });

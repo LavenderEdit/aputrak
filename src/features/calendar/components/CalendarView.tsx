@@ -97,16 +97,16 @@ export function CalendarView({
     }, [visibleMonthWeekIds, getTasksForWeek]);
 
     const weekActivities = useMemo(
-        () => scheduleTasksToActivities(tasks, weekId),
-        [tasks, weekId],
+        () => scheduleTasksToActivities(tasks, weekId, tags),
+        [tasks, weekId, tags],
     );
 
     const monthActivities = useMemo(() => {
         return Object.entries(monthTasksByWeek).flatMap(
             ([monthWeekId, weekTasks]) =>
-                scheduleTasksToActivities(weekTasks, monthWeekId),
+                scheduleTasksToActivities(weekTasks, monthWeekId, tags),
         );
-    }, [monthTasksByWeek]);
+    }, [monthTasksByWeek, tags]);
 
     const handlePrevious = () => {
         if (view === "week") {
@@ -141,44 +141,53 @@ export function CalendarView({
             />
 
             <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-sborder bg-white px-4 py-3 sm:gap-3">
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={handlePrevious}
-                        className="h-8 w-8 px-0"
-                    >
-                        <ChevronLeft size={14} />
-                    </Button>
+                <div className="flex shrink-0 flex-col gap-3 border-b-[3px] border-black bg-white px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={handlePrevious}
+                            className="h-9 w-9 px-0"
+                            aria-label={lang === "es" ? "Anterior" : "Previous"}
+                        >
+                            <ChevronLeft size={15} strokeWidth={3} />
+                        </Button>
 
-                    <Button variant="secondary" size="sm" onClick={handleToday}>
-                        {copy.today}
-                    </Button>
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={handleToday}
+                            className="h-9"
+                        >
+                            {copy.today}
+                        </Button>
 
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={handleNext}
-                        className="h-8 w-8 px-0"
-                    >
-                        <ChevronRight size={14} />
-                    </Button>
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={handleNext}
+                            className="h-9 w-9 px-0"
+                            aria-label={lang === "es" ? "Siguiente" : "Next"}
+                        >
+                            <ChevronRight size={15} strokeWidth={3} />
+                        </Button>
+                    </div>
 
-                    <h2 className="font-display ml-1 text-lg font-bold capitalize text-slate-950">
-                        {getMonthName(visibleDate, lang)}
-                    </h2>
+                    <div className="min-w-0 flex-1">
+                        <h2 className="font-display truncate text-xl font-black uppercase tracking-tight text-black">
+                            {getMonthName(visibleDate, lang)}
+                        </h2>
+                    </div>
 
-                    <div className="flex-1" />
-
-                    <div className="flex rounded-lg bg-slate-100 p-0.5">
+                    <div className="grid grid-cols-2 border-2 border-black sm:w-auto">
                         <button
                             type="button"
                             onClick={() => setView("month")}
                             className={cn(
-                                "rounded-md px-3 py-1 text-sm font-medium transition",
+                                "px-4 py-2 text-xs font-black uppercase tracking-[0.12em] transition",
                                 view === "month"
-                                    ? "bg-white text-primary shadow-sm"
-                                    : "text-muted hover:text-slate-900",
+                                    ? "bg-black text-white"
+                                    : "bg-white text-black hover:bg-slate-100",
                             )}
                         >
                             {copy.month}
@@ -188,10 +197,10 @@ export function CalendarView({
                             type="button"
                             onClick={() => setView("week")}
                             className={cn(
-                                "rounded-md px-3 py-1 text-sm font-medium transition",
+                                "border-l-2 border-black px-4 py-2 text-xs font-black uppercase tracking-[0.12em] transition",
                                 view === "week"
-                                    ? "bg-white text-primary shadow-sm"
-                                    : "text-muted hover:text-slate-900",
+                                    ? "bg-black text-white"
+                                    : "bg-white text-black hover:bg-slate-100",
                             )}
                         >
                             {copy.week}

@@ -1,14 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Clock, Palette } from "lucide-react";
-import { ACTIVITY_COLORS } from "@/shared/lib/constants";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Clock, Tag } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { Modal } from "@/shared/components/ui/Modal";
+import { Select } from "@/shared/components/ui/Select";
+import { Textarea } from "@/shared/components/ui/Textarea";
+import {
+  DEFAULT_ACTIVITY_TAGS,
+  GENERAL_TAG_ID,
+} from "@/features/tags/constants/tags.constants";
+import type { ActivityTag } from "@/features/tags/types/tag.types";
 import { getScheduleCopy } from "../constants/schedule.constants";
 
 interface ActivityPayload {
   text: string;
+  tagId: string;
   color: string;
   startMinute: number;
   endMinute: number;
@@ -21,9 +29,11 @@ interface ActivityModalProps {
   onSave: (payload: ActivityPayload) => void;
   dayIdx: number;
   initialText?: string;
+  initialTagId?: string;
   initialColor?: string;
   initialStartMinute?: number;
   initialEndMinute?: number;
+  tags?: ActivityTag[];
   getDayName: (idx: number) => string;
   lang: string;
 }
@@ -48,24 +58,34 @@ function splitInitialText(value: string) {
   };
 }
 
+function getFallbackTag(tags: ActivityTag[]) {
+  return (
+    tags.find((tag) => tag.id === GENERAL_TAG_ID) ??
+    tags[0] ??
+    DEFAULT_ACTIVITY_TAGS[0]
+  );
+}
+
 function ActivityForm({
   onClose,
   onSave,
   dayIdx,
   initialText = "",
-  initialColor = "indigo",
+  initialTagId,
   initialStartMinute,
   initialEndMinute,
+  tags = DEFAULT_ACTIVITY_TAGS,
   getDayName,
   lang,
 }: ActivityFormProps) {
   const copy = getScheduleCopy(lang);
   const initial = splitInitialText(initialText);
+  const fallbackTag = getFallbackTag(tags);
 
   const [title, setTitle] = useState(initial.title);
   const [notes, setNotes] = useState(initial.notes);
-  const [color, setColor] = useState(initialColor);
-  const [day] = useState(dayIdx);
+  const [tagId, setTagId] = useState(initialTagId ?? fallbackTag.id);
+  const [day, setDay] = useState(dayIdx);
 
   const [startTime, setStartTime] = useState(
     initialStartMinute !== undefined
@@ -87,6 +107,10 @@ function ActivityForm({
     return () => window.clearTimeout(timer);
   }, []);
 
+  const selectedTag = useMemo(() => {
+    return tags.find((tag) => tag.id === tagId) ?? fallbackTag;
+  }, [fallbackTag, tagId, tags]);
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -100,9 +124,12 @@ function ActivityForm({
 
     const text = [title.trim(), notes.trim()].filter(Boolean).join("\n");
 
+    if (!text.trim()) return;
+
     onSave({
       text,
-      color,
+      tagId: selectedTag.id,
+      color: selectedTag.color,
       startMinute,
       endMinute,
       day,
@@ -110,101 +137,148 @@ function ActivityForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 p-6">
+    <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-800">
+        <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
           {copy.activityTitle}
         </label>
 
-        <input
+        <Input
           ref={inputRef}
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
           placeholder={copy.titlePlaceholder}
+          required
         />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-800">
+          <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
             {copy.day}
           </label>
 
-          <div className="rounded-xl border border-sborder bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-700">
-            {getDayName(day)}
-          </div>
+          <Select
+            value={day}
+            onChange={(event) => setDay(Number(event.target.value))}
+          >
+            {Array.from({ length: 7 }, (_, index) => (
+              <option key={index} value={index}>
+                {getDayName(index)}
+              </option>
+            ))}
+          </Select>
         </div>
 
         <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-800">
+          <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
             <Clock size={15} />
             {copy.timeRange}
           </label>
 
-          <div className="flex items-center gap-2">
-            <input
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+            <Input
               type="time"
               value={startTime}
               onChange={(event) => setStartTime(event.target.value)}
-              className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
               required
+              className="px-2"
             />
 
-            <span className="text-muted">-</span>
+            <span className="font-black text-black">-</span>
 
-            <input
+            <Input
               type="time"
               value={endTime}
               onChange={(event) => setEndTime(event.target.value)}
-              className="w-full rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
               required
+              className="px-2"
             />
           </div>
         </div>
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-800">
+        <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
+          <Tag size={15} />
+          {lang === "es" ? "Etiqueta" : "Tag"}
+        </label>
+
+        <div className="grid gap-2 sm:grid-cols-2">
+          {tags.map((tag) => {
+            const active = tag.id === selectedTag.id;
+
+            return (
+              <button
+                key={tag.id}
+                type="button"
+                onClick={() => setTagId(tag.id)}
+                className={`flex items-center gap-3 border-2 px-3 py-2.5 text-left text-sm transition ${active
+                  ? "border-black bg-white text-black shadow-[4px_4px_0_#000]"
+                  : "border-black bg-slate-50 text-slate-700 hover:bg-white"
+                  }`}
+              >
+                <span
+                  className="h-4 w-4 shrink-0 border-2 border-black"
+                  style={{ backgroundColor: tag.color }}
+                />
+
+                <span className="min-w-0 truncate font-black uppercase tracking-[0.04em]">
+                  {tag.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
           {copy.notes}
         </label>
 
-        <textarea
+        <Textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
-          className="h-24 w-full resize-none rounded-xl border border-sborder bg-white px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+          className="h-24"
           placeholder={copy.notesPlaceholder}
         />
       </div>
 
-      <div>
-        <label className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-800">
-          <Palette size={15} />
-          {copy.colorCategory}
-        </label>
+      <div className="border-2 border-black bg-slate-50 p-3">
+        <div className="flex items-center gap-3">
+          <span
+            className="h-10 w-10 border-2 border-black"
+            style={{ backgroundColor: selectedTag.color }}
+          />
 
-        <div className="flex flex-wrap gap-3">
-          {ACTIVITY_COLORS.map((activityColor) => (
-            <button
-              key={activityColor.id}
-              type="button"
-              onClick={() => setColor(activityColor.id)}
-              className={`h-9 w-9 rounded-full ${activityColor.picker} transition-all ${color === activityColor.id
-                ? "scale-110 ring-2 ring-primary ring-offset-2"
-                : "opacity-70 hover:scale-105 hover:opacity-100"
-                }`}
-              aria-label={activityColor.id}
-            />
-          ))}
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.04em] text-black">
+              {selectedTag.name}
+            </p>
+
+            <p className="text-xs font-bold text-slate-500">
+              {lang === "es"
+                ? "El color de la actividad viene de la etiqueta."
+                : "Activity color comes from the selected tag."}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 border-t border-sborder pt-5">
-        <Button variant="ghost" onClick={onClose}>
+      <div className="grid gap-3 border-t-2 border-black pt-5 sm:grid-cols-2">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onClose}
+          className="w-full"
+        >
           {copy.cancel}
         </Button>
 
-        <Button type="submit">{copy.saveTask}</Button>
+        <Button type="submit" className="w-full">
+          {copy.saveTask}
+        </Button>
       </div>
     </form>
   );
@@ -216,9 +290,11 @@ export function ActivityModal({
   onSave,
   dayIdx,
   initialText,
+  initialTagId,
   initialColor,
   initialStartMinute,
   initialEndMinute,
+  tags = DEFAULT_ACTIVITY_TAGS,
   getDayName,
   lang,
 }: ActivityModalProps) {
@@ -235,17 +311,21 @@ export function ActivityModal({
         key={[
           dayIdx,
           initialText,
+          initialTagId,
           initialColor,
           initialStartMinute,
           initialEndMinute,
+          tags.map((tag) => tag.id).join("_"),
         ].join("-")}
         onClose={onClose}
         onSave={onSave}
         dayIdx={dayIdx}
         initialText={initialText}
+        initialTagId={initialTagId}
         initialColor={initialColor}
         initialStartMinute={initialStartMinute}
         initialEndMinute={initialEndMinute}
+        tags={tags}
         getDayName={getDayName}
         lang={lang}
       />

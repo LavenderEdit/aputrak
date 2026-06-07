@@ -36,19 +36,19 @@ export function MonthCalendar({
             : activities.filter((activity) => activity.tagId === selectedTag);
 
     return (
-        <div className="min-h-0 flex-1 overflow-y-auto p-3">
-            <div className="grid grid-cols-7 border-b border-sborder bg-white">
-                {dayLabels.map((label) => (
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white p-3 sm:p-4">
+            <div className="mb-3 grid grid-cols-7 border-[3px] border-black bg-white">
+                {dayLabels.map((label, index) => (
                     <div
-                        key={label}
-                        className="py-2 text-center text-xs font-medium text-muted"
+                        key={`${label}-${index}`}
+                        className="border-r-2 border-black py-2 text-center text-[10px] font-black uppercase tracking-[0.12em] text-black last:border-r-0 sm:text-xs"
                     >
                         {label}
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-px overflow-hidden rounded-xl bg-sborder">
+            <div className="grid grid-cols-7 border-l-[3px] border-t-[3px] border-black bg-white">
                 {days.map((date) => {
                     const dateId = formatDateId(date);
                     const today = isToday(date);
@@ -61,30 +61,39 @@ export function MonthCalendar({
                     return (
                         <button
                             key={dateId}
+                            type="button"
                             onClick={() => onSelectDate(date)}
-                            className="min-h-[100px] bg-white p-2 text-left transition hover:bg-slate-50"
+                            className="min-h-[104px] border-b-[3px] border-r-[3px] border-black bg-white p-2 text-left transition hover:bg-slate-50 sm:min-h-[118px]"
                             style={{
-                                opacity: isOtherMonth ? 0.45 : 1,
-                                backgroundColor: today ? "rgba(99,102,241,0.04)" : undefined,
+                                opacity: isOtherMonth ? 0.42 : 1,
+                                backgroundColor: today ? "#F9EAC3" : "#FFFCF4",
                             }}
                         >
-                            <div
-                                className="text-sm"
-                                style={{
-                                    fontWeight: today ? 700 : 500,
-                                    color: today ? "#6366F1" : "#0F172A",
-                                }}
-                            >
-                                {date.getDate()}
+                            <div className="mb-2 flex items-center justify-between gap-1">
+                                <span
+                                    className={
+                                        today
+                                            ? "flex h-7 w-7 items-center justify-center border-2 border-black bg-black text-xs font-black text-white"
+                                            : "text-sm font-black text-black"
+                                    }
+                                >
+                                    {date.getDate()}
+                                </span>
+
+                                {dayActivities.length > 0 && (
+                                    <span className="border-2 border-black bg-white px-1.5 py-0.5 text-[10px] font-black text-black">
+                                        {dayActivities.length}
+                                    </span>
+                                )}
                             </div>
 
-                            <div className="mt-1 space-y-1">
+                            <div className="space-y-1">
                                 {dayActivities.slice(0, 3).map((activity) => (
                                     <div
                                         key={activity.id}
-                                        className="truncate rounded px-1 py-0.5 text-[10px] font-medium"
+                                        className="truncate border-2 border-black px-1.5 py-0.5 text-[10px] font-black uppercase tracking-[0.03em]"
                                         style={{
-                                            backgroundColor: `${activity.color}18`,
+                                            backgroundColor: `${activity.color}22`,
                                             color: activity.color,
                                         }}
                                     >
@@ -93,7 +102,7 @@ export function MonthCalendar({
                                 ))}
 
                                 {dayActivities.length > 3 && (
-                                    <div className="text-[10px] text-muted">
+                                    <div className="text-[10px] font-black uppercase tracking-[0.08em] text-black">
                                         +{dayActivities.length - 3}
                                     </div>
                                 )}

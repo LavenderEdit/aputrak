@@ -20,58 +20,68 @@ export function CalendarSidebar({
     onSelectTag,
     onCreateActivity,
 }: CalendarSidebarProps) {
-
     const copy = getCalendarCopy(lang);
+    const safeTags = Array.isArray(tags) ? tags : [];
+
     return (
-        <aside className="hidden w-[220px] shrink-0 flex-col border-r border-sborder bg-white md:flex">
-            <div className="border-b border-sborder p-5">
+        <aside className="hidden w-[240px] shrink-0 flex-col border-r-[3px] border-black bg-white md:flex">
+            <div className="border-b-[3px] border-black p-5">
                 <button
+                    type="button"
                     onClick={onCreateActivity}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-primary-dark"
+                    className="flex w-full items-center justify-center gap-2 border-2 border-black bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-white shadow-[4px_4px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000]"
                 >
-                    <Plus size={16} />
+                    <Plus size={16} strokeWidth={3} />
                     {copy.addTask}
                 </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
-                <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.08em] text-muted">
+                <h4 className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
                     {copy.tags}
                 </h4>
 
-                <div className="space-y-1">
+                <div className="space-y-2">
                     <button
+                        type="button"
                         onClick={() => onSelectTag("all")}
                         className={cn(
-                            "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
+                            "flex w-full items-center gap-3 border-2 border-black px-3 py-2.5 text-left text-sm font-black uppercase tracking-[0.06em] transition",
                             selectedTag === "all"
-                                ? "bg-indigo-50 text-primary"
-                                : "text-muted hover:bg-hover hover:text-slate-950",
+                                ? "bg-black text-white shadow-[4px_4px_0_#000]"
+                                : "bg-white text-black hover:bg-slate-100",
                         )}
                     >
-                        <span className="h-3 w-3 rounded-full bg-slate-400" />
-                        {copy.all}
+                        <span className="h-3.5 w-3.5 shrink-0 border-2 border-black bg-slate-400" />
+                        <span className="truncate">{copy.all}</span>
                     </button>
 
-                    {Array.isArray(tags) &&
-                        tags.map((tag) => (
+                    {safeTags.map((tag) => {
+                        const active = selectedTag === tag.id;
+
+                        return (
                             <button
                                 key={tag.id}
+                                type="button"
                                 onClick={() => onSelectTag(tag.id)}
                                 className={cn(
-                                    "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
-                                    selectedTag === tag.id
-                                        ? "bg-indigo-50 text-primary"
-                                        : "text-muted hover:bg-hover hover:text-slate-950",
+                                    "flex w-full items-center gap-3 border-2 border-black px-3 py-2.5 text-left text-sm font-black uppercase tracking-[0.06em] transition",
+                                    active
+                                        ? "bg-white text-black shadow-[4px_4px_0_#000]"
+                                        : "bg-white text-slate-700 hover:bg-slate-100",
                                 )}
                             >
                                 <span
-                                    className="h-3 w-3 rounded-full"
+                                    className="h-3.5 w-3.5 shrink-0 border-2 border-black"
                                     style={{ backgroundColor: tag.color }}
                                 />
-                                <span className="truncate">{tag.name}</span>
+
+                                <span className="min-w-0 truncate">
+                                    {tag.name}
+                                </span>
                             </button>
-                        ))}
+                        );
+                    })}
                 </div>
             </div>
         </aside>

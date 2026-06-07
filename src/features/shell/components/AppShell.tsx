@@ -23,6 +23,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { cn } from "@/shared/lib/cn";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
+import { useActivityTags } from "@/features/tags/hooks/useActivityTags";
 import type { AppView, GraphicExportType } from "../types/shell.types";
 import type { ExportOptions } from "@/features/export/hooks/useScheduleExport";
 
@@ -48,6 +49,7 @@ export function AppShell() {
     const scheduleData = useOfflineSchedule();
     const { lang, changeLanguage, toggleLanguage, t, getDayName } = useLanguage();
     const { showToast, showPromiseToast } = useToast();
+    const { tags } = useActivityTags();
     const toastCopy = getToastCopy(lang);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -230,7 +232,7 @@ export function AppShell() {
     };
 
     return (
-        <main className="min-h-screen bg-[#F8FAFC] text-slate-900">
+        <main className="min-h-screen bg-[#F5F0E6] text-slate-900">
             <div className="flex min-h-screen">
                 <div
                     className={cn(
@@ -273,6 +275,8 @@ export function AppShell() {
                 isOpen={modalState.isOpen}
                 onClose={closeModal}
                 dayIdx={modalState.day}
+                tags={tags}
+                initialTagId={modalState.taskToEdit?.tagId}
                 initialText={modalState.taskToEdit?.text || ""}
                 initialColor={modalState.taskToEdit?.color || "indigo"}
                 initialStartMinute={
@@ -295,6 +299,7 @@ export function AppShell() {
                         startMinute: payload.startMinute,
                         endMinute: payload.endMinute,
                         text: payload.text,
+                        tagId: payload.tagId,
                         color: payload.color,
                         completed: getCompletedState(payload.text, previousTask?.completed),
                     };

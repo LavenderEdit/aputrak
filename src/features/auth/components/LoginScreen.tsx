@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ArrowRight, CalendarCheck, Languages } from "lucide-react";
 import type { Language } from "@/shared/lib/i18n";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { getAuthCopy } from "../constants/auth.constants";
 
 interface LoginScreenProps {
@@ -44,7 +46,7 @@ export function LoginScreen({
       <section className="w-full max-w-md border-[3px] border-black bg-white shadow-[8px_8px_0_#000]">
         <div className="px-6 py-8 sm:px-10 sm:py-10">
           <div className="mb-8 flex flex-col items-center text-center">
-            <div className="mb-5 flex h-12 w-12 items-center justify-center border-[3px] border-black">
+            <div className="mb-5 flex h-12 w-12 items-center justify-center border-[3px] border-black bg-white">
               <CalendarCheck size={24} strokeWidth={3} />
             </div>
 
@@ -67,18 +69,18 @@ export function LoginScreen({
                 {copy.name}
               </label>
 
-              <input
+              <Input
                 value={name}
                 onChange={(event) => {
                   setName(event.target.value);
-                  if (error) setError("");
+
+                  if (error) {
+                    setError("");
+                  }
                 }}
                 type="text"
                 placeholder={copy.enterName}
-                className={`h-12 w-full border-2 bg-white px-4 text-sm font-semibold text-black outline-none transition ${error
-                  ? "border-red-500"
-                  : "border-black focus:border-slate-700"
-                  }`}
+                error={Boolean(error)}
                 autoFocus
               />
 
@@ -118,13 +120,10 @@ export function LoginScreen({
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="flex h-13 w-full items-center justify-center bg-black text-sm font-black uppercase tracking-[0.18em] text-white transition hover:bg-slate-800"
-            >
+            <Button type="submit" className="w-full">
               {copy.getStarted}
-              <ArrowRight size={16} className="ml-2" />
-            </button>
+              <ArrowRight size={16} />
+            </Button>
           </form>
 
           <div className="mt-7 flex items-center justify-center gap-2 text-center text-xs font-bold text-slate-500">

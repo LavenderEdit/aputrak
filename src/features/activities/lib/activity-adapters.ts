@@ -1,7 +1,14 @@
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
+import {
+    DEFAULT_ACTIVITY_TAGS,
+    GENERAL_TAG_ID,
+} from "@/features/tags/constants/tags.constants";
+import type { ActivityTag } from "@/features/tags/types/tag.types";
 import type { Activity } from "../types/activity.types";
-import { formatDateId, getWeekDatesFromWeekId } from "@/features/calendar/lib/calendar-utils";
-import { GENERAL_TAG_ID } from "@/features/tags/constants/tags.constants";
+import {
+    formatDateId,
+    getWeekDatesFromWeekId,
+} from "@/features/calendar/lib/calendar-utils";
 
 function createSubtaskId(taskId: string, index: number) {
     return `${taskId}_subtask_${index}`;
@@ -36,12 +43,24 @@ export function normalizeColor(color: string) {
     return colorMap[color] ?? "#6366F1";
 }
 
+function getTaskTag(task: ScheduleTask, tags: ActivityTag[]) {
+    const taskTagId = task.tagId ?? GENERAL_TAG_ID;
+
+    return (
+        tags.find((tag) => tag.id === taskTagId) ??
+        tags.find((tag) => tag.id === GENERAL_TAG_ID) ??
+        DEFAULT_ACTIVITY_TAGS[0]
+    );
+}
+
 export function scheduleTaskToActivity(
     task: ScheduleTask,
     weekId: string,
+    tags: ActivityTag[] = DEFAULT_ACTIVITY_TAGS,
 ): Activity {
     const weekDates = getWeekDatesFromWeekId(weekId);
     const date = weekDates[task.day] ?? weekDates[0];
+    const tag = getTaskTag(task, tags);
 
     const lines = task.text
         .split("\n")
@@ -57,11 +76,11 @@ export function scheduleTaskToActivity(
         id: task.id,
         title,
         description,
-        tagId: GENERAL_TAG_ID,
+        tagId: tag.id,
         date: formatDateId(date),
         startTime: minutesToTime(task.startMinute),
         endTime: minutesToTime(task.endMinute),
-        color: normalizeColor(task.color),
+        color: tag.color ?? normalizeColor(task.color),
         status: completed ? "completed" : "pending",
         priority: "none",
         subtasks: lines.map((line, index) => ({
@@ -75,6 +94,7 @@ export function scheduleTaskToActivity(
 export function scheduleTasksToActivities(
     tasks: ScheduleTask[],
     weekId: string,
+    tags: ActivityTag[] = DEFAULT_ACTIVITY_TAGS,
 ) {
-    return tasks.map((task) => scheduleTaskToActivity(task, weekId));
+    return tasks.map((task) => scheduleTaskToActivity(task, weekId, tags));
 }

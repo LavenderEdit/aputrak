@@ -21,8 +21,8 @@ interface WeekCalendarProps {
 }
 
 const HOUR_HEIGHT = 68;
-const HOUR_COLUMN_WIDTH = 64;
-const DAY_COLUMN_MIN_WIDTH = 112;
+const HOUR_COLUMN_WIDTH = 68;
+const DAY_COLUMN_MIN_WIDTH = 116;
 
 function formatHour(hour: number) {
     const period = hour >= 12 ? "PM" : "AM";
@@ -61,14 +61,14 @@ export function WeekCalendar({
     const calendarHeight = hours.length * HOUR_HEIGHT;
 
     return (
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
-            <div className="min-h-0 flex-1 overflow-auto">
-                <div className="min-w-[848px] lg:min-w-full">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#F5F0E6]">
+            <div className="min-h-0 flex-1 overflow-auto p-3">
+                <div className="min-w-[880px] border-[3px] border-black bg-[#FFFCF4] shadow-[6px_6px_0_#000] lg:min-w-full">
                     <div
-                        className="sticky top-0 z-40 grid border-b border-sborder bg-white shadow-[0_1px_0_rgba(226,232,240,1)]"
+                        className="sticky top-0 z-40 grid border-b-[3px] border-black bg-[#FFFCF4]"
                         style={{ gridTemplateColumns }}
                     >
-                        <div className="border-r border-sborder bg-white py-2 text-center text-xs text-muted" />
+                        <div className="border-r-2 border-black bg-[#F5F0E6] py-2" />
 
                         {week.map((date) => {
                             const today = isToday(date);
@@ -76,22 +76,18 @@ export function WeekCalendar({
                             return (
                                 <div
                                     key={formatDateId(date)}
-                                    className="border-r border-slate-100 bg-white py-2 text-center last:border-r-0"
-                                    style={{
-                                        backgroundColor: today
-                                            ? "rgba(99,102,241,0.05)"
-                                            : "#FFFFFF",
-                                    }}
+                                    className="border-r-2 border-black bg-[#FFFCF4] py-2 text-center last:border-r-0"
                                 >
-                                    <div className="text-xs font-medium text-muted">
+                                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
                                         {getShortDayName(date, lang)}
                                     </div>
 
                                     <div
-                                        className="font-display text-lg font-bold"
-                                        style={{
-                                            color: today ? "#6366F1" : "#0F172A",
-                                        }}
+                                        className={
+                                            today
+                                                ? "mx-auto mt-1 flex h-8 w-8 items-center justify-center border-2 border-black bg-black text-sm font-black text-white"
+                                                : "mt-1 text-lg font-black text-black"
+                                        }
                                     >
                                         {date.getDate()}
                                     </div>
@@ -107,14 +103,14 @@ export function WeekCalendar({
                             minHeight: `${calendarHeight}px`,
                         }}
                     >
-                        <div className="border-r border-sborder bg-white">
+                        <div className="border-r-2 border-black bg-[#F5F0E6]">
                             {hours.map((hour) => (
                                 <div
                                     key={hour}
-                                    className="relative border-b border-slate-100 text-right text-[10px] text-muted"
+                                    className="relative border-b border-black/20 text-right text-[10px] font-black uppercase tracking-[0.08em] text-slate-600"
                                     style={{ height: HOUR_HEIGHT }}
                                 >
-                                    <span className="absolute right-2 top-[-7px] rounded bg-white px-1">
+                                    <span className="absolute right-2 top-[-7px] bg-[#F5F0E6] px-1">
                                         {formatHour(hour)}
                                     </span>
                                 </div>
@@ -140,11 +136,11 @@ export function WeekCalendar({
                             return (
                                 <div
                                     key={dateId}
-                                    className="relative border-r border-slate-100 last:border-r-0"
+                                    className="relative border-r border-black/25 last:border-r-0"
                                     style={{
                                         backgroundColor: isToday(date)
-                                            ? "rgba(99,102,241,0.025)"
-                                            : "#FFFFFF",
+                                            ? "#F9EAC3"
+                                            : "#FFFCF4",
                                     }}
                                 >
                                     {hours.map((hour) => (
@@ -152,7 +148,7 @@ export function WeekCalendar({
                                             key={hour}
                                             type="button"
                                             onClick={() => onCreateActivity(dayIndex, hour)}
-                                            className="block w-full border-b border-slate-100 transition hover:bg-slate-50"
+                                            className="block w-full border-b border-black/15 transition hover:bg-black/5"
                                             style={{ height: HOUR_HEIGHT }}
                                         />
                                     ))}
@@ -175,7 +171,7 @@ export function WeekCalendar({
                                             HOUR_HEIGHT;
 
                                         const height = Math.max(
-                                            28,
+                                            30,
                                             ((clampedEnd - clampedStart) / 60) *
                                             HOUR_HEIGHT,
                                         );
@@ -188,25 +184,24 @@ export function WeekCalendar({
                                                     event.stopPropagation();
                                                     onActivityClick(activity.id);
                                                 }}
-                                                className="absolute left-1 right-1 z-20 overflow-hidden rounded-lg border-l-[3px] px-2 py-1 text-left text-xs leading-tight transition hover:scale-[1.01] hover:shadow-lg"
+                                                className="absolute left-1.5 right-1.5 z-20 overflow-hidden border-2 border-black px-2 py-1 text-left text-xs leading-tight shadow-[3px_3px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_#000]"
                                                 style={{
                                                     top,
                                                     height,
-                                                    backgroundColor: `${activity.color}18`,
-                                                    borderLeftColor: activity.color,
+                                                    backgroundColor: `${activity.color}24`,
                                                     color: activity.color,
                                                     opacity:
                                                         activity.status === "completed"
-                                                            ? 0.6
+                                                            ? 0.55
                                                             : 1,
                                                 }}
                                             >
-                                                <div className="truncate font-semibold">
+                                                <div className="truncate font-black uppercase tracking-[0.03em]">
                                                     {activity.title}
                                                 </div>
 
-                                                {height > 38 && (
-                                                    <div className="truncate text-[10px] opacity-85">
+                                                {height > 40 && (
+                                                    <div className="truncate text-[10px] font-bold opacity-80">
                                                         {activity.startTime} -{" "}
                                                         {activity.endTime}
                                                     </div>
@@ -217,10 +212,10 @@ export function WeekCalendar({
 
                                     {showNowLine && (
                                         <div
-                                            className="absolute left-0 right-0 z-30 h-0.5 bg-danger"
+                                            className="absolute left-0 right-0 z-30 h-[3px] bg-red-600"
                                             style={{ top: nowTop }}
                                         >
-                                            <span className="absolute -left-1 -top-[3px] h-2 w-2 rounded-full bg-danger" />
+                                            <span className="absolute -left-1 -top-[4px] h-3 w-3 border-2 border-black bg-red-600" />
                                         </div>
                                     )}
                                 </div>

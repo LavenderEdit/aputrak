@@ -10,6 +10,7 @@ export interface ScheduleTask {
     startMinute: number;
     endMinute: number;
     text: string;
+    tagId: string;
     color: string;
     completed: boolean[];
 }
