@@ -35,6 +35,7 @@ export function ScheduleControls({
                         size="md"
                         onClick={() => changeWeek(-1)}
                         className="h-10 w-10 px-0"
+                        aria-label={lang === "es" ? "Semana anterior" : "Previous week"}
                     >
                         <ChevronLeft size={18} />
                     </Button>
@@ -44,6 +45,7 @@ export function ScheduleControls({
                         size="md"
                         onClick={() => changeWeek(1)}
                         className="h-10 w-10 px-0"
+                        aria-label={lang === "es" ? "Semana siguiente" : "Next week"}
                     >
                         <ChevronRight size={18} />
                     </Button>
