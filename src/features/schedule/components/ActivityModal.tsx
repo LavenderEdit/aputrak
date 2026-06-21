@@ -155,7 +155,7 @@ function ActivityForm({
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         <div>
           <label htmlFor="activity-day" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
             {copy.day}
@@ -187,7 +187,7 @@ function ActivityForm({
               value={startTime}
               onChange={(event) => setStartTime(event.target.value)}
               required
-              className="px-2"
+              className="px-3"
               aria-label={lang === "es" ? "Hora de inicio" : "Start time"}
             />
 
@@ -199,7 +199,7 @@ function ActivityForm({
               value={endTime}
               onChange={(event) => setEndTime(event.target.value)}
               required
-              className="px-2"
+              className="px-3"
               aria-label={lang === "es" ? "Hora de fin" : "End time"}
             />
           </div>
