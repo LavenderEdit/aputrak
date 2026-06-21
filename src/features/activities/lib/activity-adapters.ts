@@ -9,14 +9,19 @@ import {
     formatDateId,
     getWeekDatesFromWeekId,
 } from "@/features/calendar/lib/calendar-utils";
+import {
+    MINUTES_IN_HOUR,
+    DEFAULT_TASK_COLOR,
+    COLOR_MAP,
+} from "@/shared/lib/constants";
 
 function createSubtaskId(taskId: string, index: number) {
     return `${taskId}_subtask_${index}`;
 }
 
 export function minutesToTime(minutes: number) {
-    const hour = Math.floor(minutes / 60);
-    const minute = minutes % 60;
+    const hour = Math.floor(minutes / MINUTES_IN_HOUR);
+    const minute = minutes % MINUTES_IN_HOUR;
 
     return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
@@ -24,23 +29,13 @@ export function minutesToTime(minutes: number) {
 export function timeToMinutes(time: string) {
     const [hour, minute] = time.split(":").map(Number);
 
-    return hour * 60 + minute;
+    return hour * MINUTES_IN_HOUR + minute;
 }
 
 export function normalizeColor(color: string) {
     if (color.startsWith("#")) return color;
 
-    const colorMap: Record<string, string> = {
-        indigo: "#6366F1",
-        teal: "#14B8A6",
-        amber: "#F59E0B",
-        rose: "#EC4899",
-        violet: "#8B5CF6",
-        emerald: "#10B981",
-        red: "#EF4444",
-    };
-
-    return colorMap[color] ?? "#6366F1";
+    return COLOR_MAP[color] ?? COLOR_MAP[DEFAULT_TASK_COLOR];
 }
 
 function getTaskTag(task: ScheduleTask, tags: ActivityTag[]) {
