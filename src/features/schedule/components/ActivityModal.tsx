@@ -13,6 +13,7 @@ import {
 } from "@/features/tags/constants/tags.constants";
 import type { ActivityTag } from "@/features/tags/types/tag.types";
 import { getScheduleCopy } from "../constants/schedule.constants";
+import { DAYS_IN_WEEK, MINUTES_IN_HOUR } from "@/shared/lib/constants";
 
 interface ActivityPayload {
   text: string;
@@ -41,8 +42,8 @@ interface ActivityModalProps {
 type ActivityFormProps = Omit<ActivityModalProps, "isOpen">;
 
 function formatTimeForInput(minutes: number) {
-  const hour = Math.floor(minutes / 60);
-  const minute = minutes % 60;
+  const hour = Math.floor(minutes / MINUTES_IN_HOUR);
+  const minute = minutes % MINUTES_IN_HOUR;
 
   return `${hour.toString().padStart(2, "0")}:${minute
     .toString()
@@ -117,10 +118,10 @@ function ActivityForm({
     const [startHour, startMinutes] = startTime.split(":").map(Number);
     const [endHour, endMinutes] = endTime.split(":").map(Number);
 
-    const startMinute = startHour * 60 + startMinutes;
-    const rawEndMinute = endHour * 60 + endMinutes;
+    const startMinute = startHour * MINUTES_IN_HOUR + startMinutes;
+    const rawEndMinute = endHour * MINUTES_IN_HOUR + endMinutes;
     const endMinute =
-      rawEndMinute <= startMinute ? startMinute + 60 : rawEndMinute;
+      rawEndMinute <= startMinute ? startMinute + MINUTES_IN_HOUR : rawEndMinute;
 
     const text = [title.trim(), notes.trim()].filter(Boolean).join("\n");
 
@@ -139,11 +140,12 @@ function ActivityForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
       <div>
-        <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+        <label htmlFor="activity-title" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
           {copy.activityTitle}
         </label>
 
         <Input
+          id="activity-title"
           ref={inputRef}
           value={title}
           onChange={(event) => setTitle(event.target.value)}
@@ -154,15 +156,16 @@ function ActivityForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+          <label htmlFor="activity-day" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
             {copy.day}
           </label>
 
           <Select
+            id="activity-day"
             value={day}
             onChange={(event) => setDay(Number(event.target.value))}
           >
-            {Array.from({ length: 7 }, (_, index) => (
+            {Array.from({ length: DAYS_IN_WEEK }, (_, index) => (
               <option key={index} value={index}>
                 {getDayName(index)}
               </option>
@@ -171,28 +174,32 @@ function ActivityForm({
         </div>
 
         <div>
-          <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
+          <label htmlFor="activity-start-time" className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
             <Clock size={15} />
             {copy.timeRange}
           </label>
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
             <Input
+              id="activity-start-time"
               type="time"
               value={startTime}
               onChange={(event) => setStartTime(event.target.value)}
               required
               className="px-2"
+              aria-label={lang === "es" ? "Hora de inicio" : "Start time"}
             />
 
             <span className="font-black text-black">-</span>
 
             <Input
+              id="activity-end-time"
               type="time"
               value={endTime}
               onChange={(event) => setEndTime(event.target.value)}
               required
               className="px-2"
+              aria-label={lang === "es" ? "Hora de fin" : "End time"}
             />
           </div>
         </div>
@@ -233,11 +240,12 @@ function ActivityForm({
       </div>
 
       <div>
-        <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+        <label htmlFor="activity-notes" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
           {copy.notes}
         </label>
 
         <Textarea
+          id="activity-notes"
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           className="h-24"
