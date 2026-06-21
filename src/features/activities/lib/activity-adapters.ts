@@ -75,7 +75,7 @@ export function scheduleTaskToActivity(
         date: formatDateId(date),
         startTime: minutesToTime(task.startMinute),
         endTime: minutesToTime(task.endMinute),
-        color: tag.color ?? normalizeColor(task.color),
+        color: normalizeColor(tag.color ?? task.color),
         status: completed ? "completed" : "pending",
         priority: "none",
         subtasks: lines.map((line, index) => ({
