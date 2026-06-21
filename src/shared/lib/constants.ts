@@ -8,6 +8,22 @@ export const DAYS_OF_WEEK = [
     "Domingo",
 ];
 
+export const MINUTES_IN_HOUR = 60;
+export const DAYS_IN_WEEK = 7;
+export const HOURS_IN_DAY = 24;
+export const DEFAULT_TASK_COLOR = "indigo";
+export const BASE_RADIX_36 = 36;
+
+export const COLOR_MAP: Record<string, string> = {
+    indigo: "#6366F1",
+    teal: "#14B8A6",
+    amber: "#F59E0B",
+    rose: "#EC4899",
+    violet: "#8B5CF6",
+    emerald: "#10B981",
+    red: "#EF4444",
+};
+
 export const DEFAULT_SETTINGS = {
     startHour: 8,
     endHour: 20,
