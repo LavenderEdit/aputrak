@@ -212,8 +212,14 @@ button:disabled {
 .border-b-\[3px\].border-black,
 .border-r-\[3px\].border-black,
 .border-t-\[3px\].border-black,
+.border-l-\[3px\].border-black,
 .border-2.border-black,
-.border-l-\[3px\].border-t-\[3px\].border-black {
+.border-b-2.border-black,
+.border-r-2.border-black,
+.border-t-2.border-black,
+.border-l-2.border-black,
+.border-l-\[3px\].border-t-\[3px\].border-black,
+.border-b-\[3px\].border-r-\[3px\].border-black {
   border-width: 1px !important;
   border-color: rgba(17, 17, 17, 0.08) !important;
 }
@@ -237,15 +243,20 @@ button:disabled {
   border: 1px solid rgba(17, 17, 17, 0.08) !important;
 }
 
-/* 4. Tarjetas secundarias y contenedores internos */
+/* 4. Tarjetas secundarias, contenedores internos y botones de acción */
 article button.flex.w-full,
 article .flex.items-start,
 .grid-cols-2 button,
 .grid-cols-4 button,
 .grid-cols-3 button,
 article.cursor-pointer,
-.space-y-3 article {
-  border-radius: 16px !important;
+.space-y-3 article,
+button.border-2.border-black,
+button.border-\[3px\].border-black,
+label.border-2.border-black,
+.border-2.border-dashed.border-black,
+.border-\[3px\].border-dashed.border-black {
+  border-radius: 12px !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
@@ -253,7 +264,9 @@ article button.flex.w-full:hover,
 article .flex.items-start:hover,
 .grid-cols-2 button:hover,
 .grid-cols-4 button:hover,
-article.cursor-pointer:hover {
+article.cursor-pointer:hover,
+button.border-2.border-black:hover:not(:disabled),
+button.border-\[3px\].border-black:hover:not(:disabled) {
   transform: translateY(-2px) !important;
   background-color: #ffffff !important;
   box-shadow: 0 10px 30px -5px rgba(17, 17, 17, 0.05), 0 4px 12px -2px rgba(17, 17, 17, 0.02) !important;
@@ -293,19 +306,22 @@ aside .flex.h-12.w-12 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
-aside nav button {
+aside nav button,
+aside button {
   border-radius: 12px !important;
   border-width: 1px !important;
   font-weight: 600 !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-aside nav button:hover {
+aside nav button:hover,
+aside button:hover {
   transform: translateX(3px) !important;
   background-color: rgba(17, 17, 17, 0.04) !important;
 }
 
-aside nav button.bg-black {
+aside nav button.bg-black,
+aside button.bg-black {
   background-color: #111111 !important;
   color: white !important;
   box-shadow: 0 8px 20px -5px rgba(17, 17, 17, 0.2) !important;
@@ -315,7 +331,9 @@ aside nav button.bg-black {
 article div span.border-2,
 aside .border-t-\[3px\] div,
 header .hidden.items-center,
-span.border-2.border-black {
+span.border-2.border-black,
+.min-w-0 div.border-2.border-black,
+.inline-flex.items-center.border-2.border-black {
   border-radius: 30px !important;
   border: 1px solid rgba(17, 17, 17, 0.06) !important;
   background-color: rgba(17, 17, 17, 0.02) !important;
@@ -327,8 +345,9 @@ aside .border-t-\[3px\] span,
 header .hidden.items-center span,
 article button.flex.w-full span.mt-0\.5,
 article .flex.items-start span.mt-0\.5,
-span.h-3\.5.w-3\.5.border-2,
-span.h-4.w-4.shrink-0.border-2 {
+span[class*="h-3.5"].border-2,
+span[class*="h-4"].border-2,
+span[class*="h-2.5"].border-2 {
   border-radius: 9999px !important;
   border-width: 1px !important;
 }
@@ -338,11 +357,13 @@ button.mt-0\.5.flex.h-6.w-6 {
   border-radius: 6px !important;
 }
 
-button.flex.h-9.w-9.shrink-0.border-2 {
+button.flex.h-9.w-9.border-2 {
   border-radius: 10px !important;
 }
 
 .grid.grid-cols-2.border-2.border-black,
+.grid.grid-cols-2.border-\[3px\].border-black,
+.grid.grid-cols-3.border-2.border-black,
 .grid.grid-cols-3.border-\[3px\].border-black {
   border-radius: 12px !important;
   overflow: hidden;
