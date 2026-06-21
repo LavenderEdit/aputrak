@@ -1,21 +1,39 @@
+import { DAYS_IN_WEEK, HOURS_IN_DAY } from "./constants";
+
 export const Utils = {
+    /**
+     * Formatea una hora en formato militar a formato de 12 horas (AM/PM).
+     */
     formatTime: (hour: number) => {
-        if (hour === 0 || hour === 24) return '12:00 am';
-        if (hour === 12) return '12:00 pm';
-        return hour > 12 ? `${hour - 12}:00 pm` : `${hour}:00 am`;
+        const MIDNIGHT = 0;
+        const NOON = 12;
+
+        if (hour === MIDNIGHT || hour === HOURS_IN_DAY) return '12:00 am';
+        if (hour === NOON) return '12:00 pm';
+        return hour > NOON ? `${hour - NOON}:00 pm` : `${hour}:00 am`;
     },
 
+    /**
+     * Obtiene el identificador de inicio de la semana (Lunes) en formato YYYY-MM-DD.
+     * Resta el offset necesario a las horas para encontrar el Lunes más cercano.
+     */
     getWeekStartIdentifier: (dateObj: Date) => {
         const d = new Date(dateObj);
-        const day = d.getDay() || 7;
-        d.setHours(-24 * (day - 1));
+        // getDay() devuelve 0 para Domingo. Lo convertimos a 7 para que la semana empiece en Lunes (1).
+        const dayOfWeek = d.getDay() || DAYS_IN_WEEK;
+        // Ajustamos la fecha retrocediendo las horas correspondientes para llegar al lunes anterior
+        d.setHours(-HOURS_IN_DAY * (dayOfWeek - 1));
         return d.toISOString().split('T')[0];
     },
 
+    /**
+     * Devuelve un array de strings con formato DD/MM/YY correspondientes a los 7 días de la semana
+     * a partir del identificador de la semana actual.
+     */
     getDatesOfWeek: (weekId: string) => {
         const startDate = new Date(weekId + 'T00:00:00');
         const dates = [];
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < DAYS_IN_WEEK; i++) {
             const d = new Date(startDate);
             d.setDate(d.getDate() + i);
             const day = String(d.getDate()).padStart(2, '0');
