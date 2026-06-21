@@ -10,6 +10,8 @@ import { cn } from "@/shared/lib/cn";
 import { getTagsCopy } from "../constants/tags.constants";
 import type { ActivityTag } from "../types/tag.types";
 
+import { COLOR_MAP } from "@/shared/lib/constants";
+
 interface TagModalProps {
     isOpen: boolean;
     tag: ActivityTag | null;
@@ -33,12 +35,13 @@ function createTagId() {
 }
 
 function normalizeHex(value: string) {
-    const cleanValue = value.trim().toUpperCase();
+    if (!value) return defaultCustomColor;
+    const cleanValue = value.trim().toLowerCase();
+    
+    if (COLOR_MAP[cleanValue]) return COLOR_MAP[cleanValue];
+    if (cleanValue.startsWith("#")) return value.trim();
 
-    if (!cleanValue) return defaultCustomColor;
-    if (cleanValue.startsWith("#")) return cleanValue;
-
-    return `#${cleanValue}`;
+    return `#${value.trim()}`;
 }
 
 function isPresetColor(color: string) {
