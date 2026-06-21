@@ -7,6 +7,7 @@ import { Input } from "@/shared/components/ui/Input";
 import { Modal } from "@/shared/components/ui/Modal";
 import { Select } from "@/shared/components/ui/Select";
 import { Textarea } from "@/shared/components/ui/Textarea";
+import { cn } from "@/shared/lib/cn";
 import {
   DEFAULT_ACTIVITY_TAGS,
   GENERAL_TAG_ID,
@@ -211,7 +212,7 @@ function ActivityForm({
           {lang === "es" ? "Etiqueta" : "Tag"}
         </label>
 
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-2 grid-cols-2 sm:grid-cols-3">
           {tags.map((tag) => {
             const active = tag.id === selectedTag.id;
 
@@ -220,17 +221,19 @@ function ActivityForm({
                 key={tag.id}
                 type="button"
                 onClick={() => setTagId(tag.id)}
-                className={`flex items-center gap-3 border-2 px-3 py-2.5 text-left text-sm transition ${active
-                  ? "border-black bg-white text-black shadow-[4px_4px_0_#000]"
-                  : "border-black bg-slate-50 text-slate-700 hover:bg-white"
-                  }`}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-xs font-bold uppercase tracking-wider transition-all duration-200",
+                  active
+                    ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+                )}
               >
                 <span
-                  className="h-4 w-4 shrink-0 border-2 border-black"
+                  className="h-3 w-3 shrink-0 rounded-full border border-black/10"
                   style={{ backgroundColor: tag.color }}
                 />
 
-                <span className="min-w-0 truncate font-black uppercase tracking-[0.04em]">
+                <span className="min-w-0 truncate">
                   {tag.name}
                 </span>
               </button>
@@ -253,28 +256,28 @@ function ActivityForm({
         />
       </div>
 
-      <div className="border-2 border-black bg-slate-50 p-3">
+      <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5">
         <div className="flex items-center gap-3">
           <span
-            className="h-10 w-10 border-2 border-black"
+            className="h-8 w-8 rounded-lg border border-black/10 shadow-sm"
             style={{ backgroundColor: selectedTag.color }}
           />
 
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.04em] text-black">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-800">
               {selectedTag.name}
             </p>
 
-            <p className="text-xs font-bold text-slate-500">
+            <p className="text-[11px] font-medium text-slate-500">
               {lang === "es"
-                ? "El color de la actividad viene de la etiqueta."
-                : "Activity color comes from the selected tag."}
+                ? "El color de la actividad viene de la etiqueta seleccionada."
+                : "Activity color is inherited from the selected tag."}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-3 border-t-2 border-black pt-5 sm:grid-cols-2">
+      <div className="grid gap-3 border-t border-slate-200/60 pt-5 sm:grid-cols-2">
         <Button
           type="button"
           variant="secondary"
@@ -313,7 +316,7 @@ export function ActivityModal({
       isOpen={isOpen}
       onClose={onClose}
       title={copy.activityTitle}
-      className="max-w-lg"
+      className="max-w-xl"
     >
       <ActivityForm
         key={[
