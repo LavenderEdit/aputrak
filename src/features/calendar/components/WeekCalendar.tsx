@@ -150,6 +150,11 @@ export function WeekCalendar({
                                             onClick={() => onCreateActivity(dayIndex, hour)}
                                             className="block w-full border-b border-black/15 transition hover:bg-black/5"
                                             style={{ height: HOUR_HEIGHT }}
+                                            aria-label={
+                                                lang === "es"
+                                                    ? `Crear actividad el ${getShortDayName(date, lang)} a las ${formatHour(hour)}`
+                                                    : `Create activity on ${getShortDayName(date, lang)} at ${formatHour(hour)}`
+                                            }
                                         />
                                     ))}
 
