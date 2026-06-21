@@ -37,24 +37,24 @@ export function Modal({
                 aria-label={title}
                 onClick={handleDialogClick}
                 className={cn(
-                    "w-full max-w-md overflow-hidden border-[3px] border-black bg-[#FFFCF4] shadow-[8px_8px_0_#000]",
-                    "max-h-[calc(100vh-2rem)] overflow-y-auto",
+                    "w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/80 bg-[#FFFCF4] shadow-2xl",
+                    "max-h-[calc(100vh-2rem)] overflow-y-auto transition-all duration-200",
                     className,
                 )}
             >
                 {title && (
-                    <div className="sticky top-0 z-10 flex items-center justify-between border-b-[3px] border-black bg-[#FFFCF4] px-5 py-4">
-                        <h3 className="font-display text-lg font-black uppercase tracking-[0.08em] text-black">
+                    <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/60 bg-[#FFFCF4] px-5 py-4">
+                        <h3 className="font-display text-lg font-bold uppercase tracking-[0.06em] text-black">
                             {title}
                         </h3>
 
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex h-9 w-9 items-center justify-center border-2 border-black bg-white text-black transition hover:bg-black hover:text-white"
+                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:bg-slate-50 hover:text-black hover:border-slate-300"
                             aria-label="Close"
                         >
-                            <X size={18} strokeWidth={3} />
+                            <X size={18} strokeWidth={2} />
                         </button>
                     </div>
                 )}
