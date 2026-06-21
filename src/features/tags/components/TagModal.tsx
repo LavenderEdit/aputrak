@@ -99,14 +99,14 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                 });
             }}
         >
-            <div className="border-2 border-black bg-slate-50 p-4">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
                     Preview
                 </p>
 
-                <div className="flex items-center gap-3 border-2 border-black bg-white p-3">
+                <div className="flex items-center gap-3 rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
                     <div
-                        className="flex h-11 w-11 shrink-0 items-center justify-center border-2 border-black text-white"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white shadow-sm"
                         style={{ backgroundColor: color }}
                     >
                         <Tag size={18} />
@@ -194,7 +194,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                 </div>
 
                 {showCustomPicker && (
-                    <div className="mt-3 border-2 border-black bg-slate-50 p-3">
+                    <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
                         <div className="mb-3 flex items-center justify-between gap-3">
                             <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
                                 {lang === "es"
@@ -202,12 +202,12 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                                     : "Custom color"}
                             </span>
 
-                            <span className="border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-black text-black">
+                            <span className="rounded-md border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs font-bold text-black shadow-sm">
                                 {customColor}
                             </span>
                         </div>
 
-                        <div className="border-2 border-black bg-white p-3">
+                        <div className="rounded-lg border border-slate-200 bg-white p-3 overflow-hidden shadow-sm">
                             <HexColorPicker
                                 color={customColor}
                                 onChange={handleCustomColor}
@@ -218,7 +218,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                 )}
             </div>
 
-            <div className="grid gap-3 border-t-2 border-black pt-5 sm:grid-cols-2">
+            <div className="grid gap-3 border-t border-slate-200/60 pt-5 sm:grid-cols-2">
                 <Button
                     type="button"
                     variant="secondary"
