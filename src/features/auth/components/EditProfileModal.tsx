@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { Modal } from "@/shared/components/ui/Modal";
 import type { TranslateFn } from "@/shared/types/i18n.types";
 
@@ -46,12 +47,17 @@ function EditProfileForm({
       }}
       className="p-6"
     >
-      <input
+      <label htmlFor="profile-name" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+        {t("yourName")}
+      </label>
+
+      <Input
+        id="profile-name"
         ref={inputRef}
         type="text"
         value={name}
         onChange={(event) => setName(event.target.value)}
-        className="mb-6 w-full rounded-xl border-2 border-slate-200 p-3 font-medium text-slate-800 focus:border-indigo-500 focus:outline-none"
+        className="mb-6"
         placeholder={t("yourName")}
         required
       />
