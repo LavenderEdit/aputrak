@@ -65,11 +65,12 @@ export function LoginScreen({
 
           <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
             <div>
-              <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-black">
+              <label htmlFor="login-username" className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-black">
                 {copy.name}
               </label>
 
               <Input
+                id="login-username"
                 value={name}
                 onChange={(event) => {
                   setName(event.target.value);
