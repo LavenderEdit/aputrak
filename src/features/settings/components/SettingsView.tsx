@@ -32,7 +32,7 @@ const END_HOURS = Array.from({ length: 25 }, (_, index) => index);
 
 function SectionIcon({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center border-2 border-black bg-white shadow-[3px_3px_0_#000]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
             {children}
         </div>
     );
@@ -279,12 +279,12 @@ export function SettingsView({
                     </h3>
 
                     <div className="space-y-3">
-                        <div className="flex flex-col gap-3 border-2 border-black bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between shadow-sm">
                             <div className="flex items-center gap-3">
-                                <Globe2 size={20} strokeWidth={3} />
+                                <Globe2 size={20} strokeWidth={2} className="text-slate-600" />
 
                                 <div>
-                                    <p className="text-sm font-black uppercase tracking-[0.06em] text-black">
+                                    <p className="text-sm font-semibold uppercase tracking-[0.06em] text-slate-800">
                                         {copy.language}
                                     </p>
                                     <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
@@ -298,12 +298,12 @@ export function SettingsView({
                             </Button>
                         </div>
 
-                        <div className="flex flex-col gap-3 border-2 border-black bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between shadow-sm">
                             <div className="flex items-center gap-3">
-                                <Bell size={20} strokeWidth={3} />
+                                <Bell size={20} strokeWidth={2} className="text-slate-600" />
 
                                 <div>
-                                    <p className="text-sm font-black uppercase tracking-[0.06em] text-black">
+                                    <p className="text-sm font-semibold uppercase tracking-[0.06em] text-slate-800">
                                         {copy.notifications}
                                     </p>
                                     <p className="text-xs font-bold text-slate-500">
@@ -312,17 +312,17 @@ export function SettingsView({
                                 </div>
                             </div>
 
-                            <span className="w-fit border-2 border-black bg-[#FFF3C4] px-2.5 py-1 text-xs font-black uppercase tracking-[0.08em] text-black">
+                            <span className="w-fit rounded-lg border border-amber-200 bg-[#FFF3C4] px-2.5 py-1 text-xs font-black uppercase tracking-[0.08em] text-amber-800 shadow-sm">
                                 {copy.soon}
                             </span>
                         </div>
 
-                        <div className="flex items-center justify-between border-2 border-black bg-white p-4">
+                        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                             <div className="flex items-center gap-3">
-                                <Database size={20} strokeWidth={3} />
+                                <Database size={20} strokeWidth={2} className="text-slate-600" />
 
                                 <div>
-                                    <p className="text-sm font-black uppercase tracking-[0.06em] text-black">
+                                    <p className="text-sm font-semibold uppercase tracking-[0.06em] text-slate-800">
                                         {copy.storage}
                                     </p>
                                     <p className="text-xs font-bold text-slate-500">
@@ -331,7 +331,7 @@ export function SettingsView({
                                 </div>
                             </div>
 
-                            <span className="h-3 w-3 border-2 border-black bg-emerald-500" />
+                            <span className="h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-sm" />
                         </div>
                     </div>
                 </section>
