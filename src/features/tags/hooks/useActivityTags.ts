@@ -5,6 +5,8 @@ import { DB } from "@/shared/lib/db";
 import { DEFAULT_ACTIVITY_TAGS } from "../constants/tags.constants";
 import type { ActivityTag } from "../types/tag.types";
 
+import { COLOR_MAP, DEFAULT_TASK_COLOR } from "@/shared/lib/constants";
+
 const TAGS_RECORD_ID = "activity-tags";
 
 interface StoredActivityTags {
@@ -12,8 +14,20 @@ interface StoredActivityTags {
     data: ActivityTag[];
 }
 
+function normalizeColor(color: string) {
+    if (!color) return COLOR_MAP[DEFAULT_TASK_COLOR];
+    const trimmed = color.trim().toLowerCase();
+    if (COLOR_MAP[trimmed]) return COLOR_MAP[trimmed];
+    if (trimmed.startsWith("#")) return color.trim();
+    return `#${color.trim()}`;
+}
+
 function normalizeTags(tags: ActivityTag[]) {
-    return tags.length > 0 ? tags : DEFAULT_ACTIVITY_TAGS;
+    const list = tags.length > 0 ? tags : DEFAULT_ACTIVITY_TAGS;
+    return list.map(tag => ({
+        ...tag,
+        color: normalizeColor(tag.color)
+    }));
 }
 
 export function useActivityTags() {
