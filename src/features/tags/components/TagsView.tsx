@@ -96,7 +96,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                 className="flex items-center gap-4 border-[3px] border-black bg-white p-4 shadow-[5px_5px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#000]"
                             >
                                 <div
-                                    className="flex h-12 w-12 shrink-0 items-center justify-center border-2 border-black text-white"
+                                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
                                     style={{ backgroundColor: tag.color }}
                                 >
                                     <Icon size={18} strokeWidth={3} />
