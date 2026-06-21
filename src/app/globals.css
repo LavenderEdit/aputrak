@@ -79,21 +79,21 @@ button:disabled {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f5f0e6;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #111111;
-  border: 2px solid #f5f0e6;
+  background: rgba(17, 17, 17, 0.15);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #333333;
+  background: rgba(17, 17, 17, 0.3);
 }
 
 .login-bg {
@@ -101,65 +101,66 @@ button:disabled {
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 10% 10%, rgba(255, 243, 196, 0.95), transparent 32%),
-    radial-gradient(circle at 85% 20%, rgba(255, 252, 244, 0.9), transparent 30%),
+    radial-gradient(circle at 10% 10%, rgba(255, 243, 196, 0.6), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(20, 184, 166, 0.08), transparent 40%),
     linear-gradient(135deg, #f5f0e6 0%, #fffcf4 100%);
 }
 
 .login-bg .orb {
-  position: absolute;
-  border: 3px solid #111111;
-  background: #fffcf4;
-  opacity: 0.8;
-  animation: orbFloat 8s ease-in-out infinite;
+  position: absolute !important;
+  border-radius: 50% !important;
+  border: none !important;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.18) 0%, rgba(99, 102, 241, 0.06) 50%, transparent 80%) !important;
+  filter: blur(40px) !important;
+  opacity: 0.8 !important;
+  box-shadow: none !important;
+  animation: orbFloat 12s ease-in-out infinite !important;
   pointer-events: none;
-  box-shadow: 8px 8px 0 #111111;
 }
 
 .login-bg .orb:nth-child(1) {
-  width: 220px;
-  height: 220px;
-  top: -80px;
-  left: -60px;
+  width: 320px;
+  height: 320px;
+  top: -120px;
+  left: -100px;
   animation-delay: 0s;
 }
 
 .login-bg .orb:nth-child(2) {
-  width: 180px;
-  height: 180px;
-  bottom: -50px;
-  right: -40px;
-  animation-delay: 2s;
+  width: 280px;
+  height: 280px;
+  bottom: -80px;
+  right: -80px;
+  animation-delay: 3s;
 }
 
 .login-bg .orb:nth-child(3) {
-  width: 140px;
-  height: 140px;
-  top: 42%;
-  left: 62%;
-  animation-delay: 4s;
+  width: 200px;
+  height: 200px;
+  top: 35%;
+  left: 55%;
+  animation-delay: 6s;
 }
 
 @keyframes orbFloat {
-
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) scale(1);
   }
 
   50% {
-    transform: translateY(-24px) rotate(4deg);
+    transform: translateY(-24px) scale(1.05);
   }
 }
 
 .fade-in {
-  animation: fadeIn 0.28s ease forwards;
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
 
   to {
@@ -173,7 +174,6 @@ button:disabled {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -193,7 +193,6 @@ button:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -202,4 +201,165 @@ button:disabled {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ========================================================= */
+/* REDISEÑO PREMIUM: OVERRIDES DE ESTILO A MODERNO & ROUNDED */
+/* ========================================================= */
+
+/* 1. Suavizar y modernizar todos los bordes rígidos */
+.border-\[3px\].border-black,
+.border-b-\[3px\].border-black,
+.border-r-\[3px\].border-black,
+.border-t-\[3px\].border-black,
+.border-2.border-black,
+.border-l-\[3px\].border-t-\[3px\].border-black {
+  border-width: 1px !important;
+  border-color: rgba(17, 17, 17, 0.08) !important;
+}
+
+/* 2. Redefinir las sombras duras a sombras de elevación suaves */
+.shadow-\[3px_3px_0_\#000\],
+.shadow-\[4px_4px_0_\#000\],
+.shadow-\[5px_5px_0_\#000\],
+.shadow-\[6px_6px_0_\#000\],
+.shadow-\[7px_7px_0_\#000\],
+.shadow-\[8px_8px_0_\#000\] {
+  box-shadow: 0 10px 30px -10px rgba(17, 17, 17, 0.06), 0 1px 3px rgba(17, 17, 17, 0.01) !important;
+}
+
+/* 3. Esquinas redondeadas para contenedores y tarjetas principales */
+.login-bg section,
+.border-\[3px\].border-black,
+.min-w-\[880px\].border-\[3px\] {
+  border-radius: 20px !important;
+  overflow: hidden;
+  border: 1px solid rgba(17, 17, 17, 0.08) !important;
+}
+
+/* 4. Tarjetas secundarias y contenedores internos */
+article button.flex.w-full,
+article .flex.items-start,
+.grid-cols-2 button,
+.grid-cols-4 button,
+.grid-cols-3 button,
+article.cursor-pointer,
+.space-y-3 article {
+  border-radius: 16px !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+article button.flex.w-full:hover,
+article .flex.items-start:hover,
+.grid-cols-2 button:hover,
+.grid-cols-4 button:hover,
+article.cursor-pointer:hover {
+  transform: translateY(-2px) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 10px 30px -5px rgba(17, 17, 17, 0.05), 0 4px 12px -2px rgba(17, 17, 17, 0.02) !important;
+}
+
+/* 5. Indicador de hoy en calendarios */
+.bg-black.text-white.font-black,
+.bg-black.text-white.text-xs.font-black {
+  border-radius: 9999px !important;
+  background-color: var(--color-secondary, #14b8a6) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(20, 184, 166, 0.25) !important;
+}
+
+/* 6. Rediseño de items de actividades dentro de la cuadrícula semanal */
+.absolute.left-1\.5.right-1\.5 {
+  border-radius: 10px !important;
+  border-width: 1px !important;
+  border-left-width: 4px !important;
+  border-color: currentColor !important;
+  font-weight: 600 !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.absolute.left-1\.5.right-1\.5:hover {
+  transform: translateY(-1px) scale(1.01) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  z-index: 30 !important;
+}
+
+/* 7. Estilo de los orificios del logo y el sidebar */
+aside .flex.h-12.w-12 {
+  border-radius: 12px !important;
+  border: 1px solid rgba(17, 17, 17, 0.08) !important;
+  background: linear-gradient(135deg, #111111 0%, #333333 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+aside nav button {
+  border-radius: 12px !important;
+  border-width: 1px !important;
+  font-weight: 600 !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+aside nav button:hover {
+  transform: translateX(3px) !important;
+  background-color: rgba(17, 17, 17, 0.04) !important;
+}
+
+aside nav button.bg-black {
+  background-color: #111111 !important;
+  color: white !important;
+  box-shadow: 0 8px 20px -5px rgba(17, 17, 17, 0.2) !important;
+}
+
+/* 8. Badges, píldoras e indicadores locales */
+article div span.border-2,
+aside .border-t-\[3px\] div,
+header .hidden.items-center,
+span.border-2.border-black {
+  border-radius: 30px !important;
+  border: 1px solid rgba(17, 17, 17, 0.06) !important;
+  background-color: rgba(17, 17, 17, 0.02) !important;
+  font-weight: 700 !important;
+  padding: 6px 12px !important;
+}
+
+aside .border-t-\[3px\] span,
+header .hidden.items-center span,
+article button.flex.w-full span.mt-0\.5,
+article .flex.items-start span.mt-0\.5,
+span.h-3\.5.w-3\.5.border-2,
+span.h-4.w-4.shrink-0.border-2 {
+  border-radius: 9999px !important;
+  border-width: 1px !important;
+}
+
+/* 9. Botones de interacción: Checkbox, Borrar e Idioma */
+button.mt-0\.5.flex.h-6.w-6 {
+  border-radius: 6px !important;
+}
+
+button.flex.h-9.w-9.shrink-0.border-2 {
+  border-radius: 10px !important;
+}
+
+.grid.grid-cols-2.border-2.border-black,
+.grid.grid-cols-3.border-\[3px\].border-black {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* 10. Vista general de la barra superior */
+header.flex.h-16 {
+  border-bottom: 1px solid rgba(17, 17, 17, 0.06) !important;
+}
+
+header button.bg-black {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(17, 17, 17, 0.08) !important;
+  background-color: #111111 !important;
+  box-shadow: 0 4px 10px rgba(17, 17, 17, 0.15) !important;
+}
+
+header button.border-2.border-black {
+  border-radius: 12px !important;
 }
