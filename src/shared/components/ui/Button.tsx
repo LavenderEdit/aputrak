@@ -13,19 +13,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<ButtonVariant, string> = {
     primary:
-        "border-2 border-black bg-black text-white shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
+        "bg-slate-900 text-white shadow-sm hover:bg-black hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:bg-slate-950",
     secondary:
-        "border-2 border-black bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
+        "border border-slate-200 bg-white text-slate-800 shadow-sm hover:bg-slate-50 hover:text-black hover:border-slate-300 hover:-translate-y-0.5 active:translate-y-0 active:bg-slate-100",
     ghost:
-        "border-2 border-black bg-transparent text-black hover:bg-white hover:shadow-[3px_3px_0_#000]",
+        "bg-transparent text-slate-700 hover:bg-slate-100 hover:text-black",
     danger:
-        "border-2 border-black bg-red-600 text-white shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[6px_6px_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#000]",
+        "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:-translate-y-0.5 active:translate-y-0 active:bg-red-800",
 };
 
 const sizes: Record<ButtonSize, string> = {
-    sm: "px-3 py-2 text-xs",
-    md: "px-4 py-2.5 text-sm",
-    lg: "px-5 py-3 text-sm",
+    sm: "px-3.5 py-2 text-xs rounded-lg",
+    md: "px-4.5 py-2.5 text-sm rounded-xl",
+    lg: "px-5.5 py-3 text-sm rounded-xl",
 };
 
 export function Button({
@@ -40,7 +40,7 @@ export function Button({
         <button
             type={type}
             className={cn(
-                "inline-flex items-center justify-center gap-2 font-black uppercase tracking-[0.08em] transition disabled:cursor-not-allowed disabled:translate-x-0 disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none",
+                "inline-flex items-center justify-center gap-2 font-bold uppercase tracking-[0.06em] transition-all duration-200 disabled:cursor-not-allowed disabled:translate-x-0 disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none",
                 variants[variant],
                 sizes[size],
                 className,
