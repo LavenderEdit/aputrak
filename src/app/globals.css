@@ -332,13 +332,9 @@ article div span.border-2,
 aside .border-t-\[3px\] div,
 header .hidden.items-center,
 span.border-2.border-black,
-.min-w-0 div.border-2.border-black,
-.inline-flex.items-center.border-2.border-black {
-  border-radius: 30px !important;
-  border: 1px solid rgba(17, 17, 17, 0.06) !important;
-  background-color: rgba(17, 17, 17, 0.02) !important;
-  font-weight: 700 !important;
-  padding: 6px 12px !important;
+.inline-flex.items-center.border-2.border-black,
+.inline-block.border-2.border-black {
+  border-radius: 9999px !important;
 }
 
 aside .border-t-\[3px\] span,
