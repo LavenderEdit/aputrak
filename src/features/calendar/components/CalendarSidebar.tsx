@@ -52,7 +52,7 @@ export function CalendarSidebar({
                                 : "bg-white text-black hover:bg-slate-100",
                         )}
                     >
-                        <span className="h-3.5 w-3.5 shrink-0 border-2 border-black bg-slate-400" />
+                        <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-black/10 bg-slate-400 shadow-sm" />
                         <span className="truncate">{copy.all}</span>
                     </button>
 
@@ -72,7 +72,7 @@ export function CalendarSidebar({
                                 )}
                             >
                                 <span
-                                    className="h-3.5 w-3.5 shrink-0 border-2 border-black"
+                                    className="h-3.5 w-3.5 shrink-0 rounded-full border border-black/10 shadow-sm"
                                     style={{ backgroundColor: tag.color }}
                                 />
 
