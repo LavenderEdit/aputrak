@@ -68,6 +68,18 @@ export function MonthCalendar({
                                 opacity: isOtherMonth ? 0.42 : 1,
                                 backgroundColor: today ? "#F9EAC3" : "#FFFCF4",
                             }}
+                            aria-label={(() => {
+                                const formattedDate = date.toLocaleDateString(lang === "es" ? "es-ES" : "en-US", {
+                                    weekday: "long",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                });
+                                const count = dayActivities.length;
+                                return lang === "es"
+                                    ? `${formattedDate}. ${count === 1 ? "1 actividad" : `${count} actividades`}.`
+                                    : `${formattedDate}. ${count === 1 ? "1 activity" : `${count} activities`}.`;
+                            })()}
                         >
                             <div className="mb-2 flex items-center justify-between gap-1">
                                 <span
