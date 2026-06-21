@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { DB } from "@/shared/lib/db";
 import { Utils } from "@/shared/lib/utils";
-import { DEFAULT_SETTINGS } from "@/shared/lib/constants";
+import {
+    BASE_RADIX_36,
+    DAYS_IN_WEEK,
+    DEFAULT_SETTINGS,
+    DEFAULT_TASK_COLOR,
+    MINUTES_IN_HOUR,
+} from "@/shared/lib/constants";
 import type {
     ScheduleSettings,
     ScheduleTask,
@@ -23,14 +29,14 @@ interface SmartRescheduleResult {
 }
 
 function createTaskId(prefix = "task") {
-    return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    return `${prefix}_${Date.now()}_${Math.random().toString(BASE_RADIX_36).substring(2, 9)}`;
 }
 
 function parseLegacyTaskValue(value: string) {
     if (!value.startsWith("{")) {
         return {
             text: value,
-            color: "indigo",
+            color: DEFAULT_TASK_COLOR,
             completed: [] as boolean[],
         };
     }
@@ -44,13 +50,13 @@ function parseLegacyTaskValue(value: string) {
 
         return {
             text: parsed.text ?? value,
-            color: parsed.color ?? "indigo",
+            color: parsed.color ?? DEFAULT_TASK_COLOR,
             completed: parsed.completed ?? [],
         };
     } catch {
         return {
             text: value,
-            color: "indigo",
+            color: DEFAULT_TASK_COLOR,
             completed: [] as boolean[],
         };
     }
@@ -66,8 +72,8 @@ function migrateLegacyWeekData(data: LegacyWeekData): ScheduleTask[] {
         return {
             id: createTaskId(`task_${day}_${hour}`),
             day,
-            startMinute: hour * 60,
-            endMinute: (hour + 1) * 60,
+            startMinute: hour * MINUTES_IN_HOUR,
+            endMinute: (hour + 1) * MINUTES_IN_HOUR,
             text: parsedValue.text,
             tagId: GENERAL_TAG_ID,
             color: parsedValue.color,
@@ -80,7 +86,7 @@ function normalizeTask(task: ScheduleTask): ScheduleTask {
     return {
         ...task,
         tagId: task.tagId ?? GENERAL_TAG_ID,
-        color: task.color ?? "indigo",
+        color: task.color ?? DEFAULT_TASK_COLOR,
         completed: task.completed ?? [],
     };
 }
@@ -131,6 +137,139 @@ async function readWeekTasks(targetWeekId: string) {
     return normalizedTasks;
 }
 
+interface ExtractedTasksResult {
+    updatedTasks: ScheduleTask[];
+    tasksToMove: ScheduleTask[];
+}
+
+interface Slot {
+    day: number;
+    startMinute: number;
+    endMinute: number;
+}
+
+function extractPastIncompleteTasks(
+    tasks: ScheduleTask[],
+    activeDays: number[],
+    currentDayOfWeekIndex: number,
+    currentHour: number,
+): ExtractedTasksResult {
+    const updatedTasks = [...tasks];
+    const tasksToMove: ScheduleTask[] = [];
+
+    for (let index = updatedTasks.length - 1; index >= 0; index--) {
+        const task = updatedTasks[index];
+
+        if (!activeDays.includes(task.day)) continue;
+
+        const taskHour = Math.floor(task.startMinute / MINUTES_IN_HOUR);
+        const isPast =
+            task.day < currentDayOfWeekIndex ||
+            (task.day === currentDayOfWeekIndex && taskHour < currentHour);
+
+        if (!isPast) continue;
+
+        const lines = task.text.split("\n").filter((line) => line.trim() !== "");
+        let hasIncomplete = false;
+        const remainingLines: string[] = [];
+        const remainingCompleted: boolean[] = [];
+
+        lines.forEach((line, lineIndex) => {
+            if (task.completed[lineIndex]) {
+                remainingLines.push(line);
+                remainingCompleted.push(true);
+                return;
+            }
+
+            hasIncomplete = true;
+            tasksToMove.push({
+                id: createTaskId("task_resched"),
+                day: -1,
+                startMinute: -1,
+                endMinute: -1,
+                text: line,
+                tagId: task.tagId,
+                color: task.color,
+                completed: [false],
+            });
+        });
+
+        if (!hasIncomplete) continue;
+
+        if (remainingLines.length === 0) {
+            updatedTasks.splice(index, 1);
+        } else {
+            updatedTasks[index] = {
+                ...task,
+                text: remainingLines.join("\n"),
+                completed: remainingCompleted,
+            };
+        }
+    }
+
+    return { updatedTasks, tasksToMove };
+}
+
+function findAvailableFutureSlots(
+    tasks: ScheduleTask[],
+    settings: ScheduleSettings,
+    currentDayOfWeekIndex: number,
+    currentHour: number,
+): Slot[] {
+    const futureDays = settings.activeDays
+        .filter((day) => day >= currentDayOfWeekIndex)
+        .sort((a, b) => a - b);
+
+    const emptySlots: Slot[] = [];
+
+    for (const day of futureDays) {
+        for (let hour = settings.startHour; hour < settings.endHour; hour++) {
+            if (day === currentDayOfWeekIndex && hour <= currentHour) continue;
+
+            const startMinute = hour * MINUTES_IN_HOUR;
+            const endMinute = (hour + 1) * MINUTES_IN_HOUR;
+
+            const isOccupied = tasks.some(
+                (task) =>
+                    task.day === day &&
+                    task.startMinute < endMinute &&
+                    task.endMinute > startMinute,
+            );
+
+            if (!isOccupied) {
+                emptySlots.push({
+                    day,
+                    startMinute,
+                    endMinute,
+                });
+            }
+        }
+    }
+
+    return emptySlots;
+}
+
+function allocateTasksToSlots(
+    tasks: ScheduleTask[],
+    tasksToMove: ScheduleTask[],
+    emptySlots: Slot[],
+): ScheduleTask[] {
+    const finalTasks = [...tasks];
+
+    tasksToMove.forEach((task, index) => {
+        const slot = emptySlots[index];
+
+        finalTasks.push({
+            ...task,
+            day: slot.day,
+            startMinute: slot.startMinute,
+            endMinute: slot.endMinute,
+        });
+    });
+
+    return finalTasks;
+}
+
 export const useOfflineSchedule = () => {
     const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
     const weekId = Utils.getWeekStartIdentifier(currentWeekDate);
@@ -177,10 +316,10 @@ export const useOfflineSchedule = () => {
 
     const saveTask = async (task: ScheduleTask) => {
         const currentTasks = tasksRef.current;
-        const existingIdx = currentTasks.findIndex((item) => item.id === task.id);
+        const existingTaskIndex = currentTasks.findIndex((item) => item.id === task.id);
 
         const nextTasks =
-            existingIdx >= 0
+            existingTaskIndex >= 0
                 ? currentTasks.map((item) => (item.id === task.id ? task : item))
                 : [...currentTasks, task];
 
@@ -226,7 +365,7 @@ export const useOfflineSchedule = () => {
             if (task.id !== taskId) return task;
 
             const duration = task.endMinute - task.startMinute;
-            const startMinute = targetHour * 60;
+            const startMinute = targetHour * MINUTES_IN_HOUR;
 
             return {
                 ...task,
@@ -242,7 +381,7 @@ export const useOfflineSchedule = () => {
     const copyPreviousWeek = async () => {
         try {
             const prevDate = new Date(currentWeekDate);
-            prevDate.setDate(prevDate.getDate() - 7);
+            prevDate.setDate(prevDate.getDate() - DAYS_IN_WEEK);
 
             const prevWeekId = Utils.getWeekStartIdentifier(prevDate);
             const prevWeekData = await DB.get<StoredWeek>("weeks", prevWeekId);
@@ -270,62 +409,17 @@ export const useOfflineSchedule = () => {
 
     const smartReschedule = async (): Promise<SmartRescheduleResult> => {
         const now = new Date();
-        const jsDay = now.getDay();
-        const currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
+        const dayOfWeekFromDate = now.getDay();
+        // Convertimos Domingo (0) a 6, y Lunes (1) a 0 para que coincida con el índice de la vista semanal (Lunes-Domingo)
+        const currentDayOfWeekIndex = dayOfWeekFromDate === 0 ? DAYS_IN_WEEK - 1 : dayOfWeekFromDate - 1;
         const currentHour = now.getHours();
 
-        const newTasks = [...tasksRef.current];
-        const tasksToMove: ScheduleTask[] = [];
-
-        for (let index = newTasks.length - 1; index >= 0; index--) {
-            const task = newTasks[index];
-
-            if (!settings.activeDays.includes(task.day)) continue;
-
-            const taskHour = Math.floor(task.startMinute / 60);
-            const isPast =
-                task.day < currentDayIdx ||
-                (task.day === currentDayIdx && taskHour < currentHour);
-
-            if (!isPast) continue;
-
-            const lines = task.text.split("\n").filter((line) => line.trim() !== "");
-            let hasIncomplete = false;
-            const remainingLines: string[] = [];
-            const remainingCompleted: boolean[] = [];
-
-            lines.forEach((line, lineIndex) => {
-                if (task.completed[lineIndex]) {
-                    remainingLines.push(line);
-                    remainingCompleted.push(true);
-                    return;
-                }
-
-                hasIncomplete = true;
-                tasksToMove.push({
-                    id: createTaskId("task_resched"),
-                    day: -1,
-                    startMinute: -1,
-                    endMinute: -1,
-                    text: line,
-                    tagId: task.tagId,
-                    color: task.color,
-                    completed: [false],
-                });
-            });
-
-            if (!hasIncomplete) continue;
-
-            if (remainingLines.length === 0) {
-                newTasks.splice(index, 1);
-            } else {
-                newTasks[index] = {
-                    ...task,
-                    text: remainingLines.join("\n"),
-                    completed: remainingCompleted,
-                };
-            }
-        }
+        const { updatedTasks, tasksToMove } = extractPastIncompleteTasks(
+            tasksRef.current,
+            settings.activeDays,
+            currentDayOfWeekIndex,
+            currentHour,
+        );
 
         if (tasksToMove.length === 0) {
             return {
@@ -334,39 +428,12 @@ export const useOfflineSchedule = () => {
             };
         }
 
-        const futureDays = settings.activeDays
-            .filter((day) => day >= currentDayIdx)
-            .sort((a, b) => a - b);
-
-        const emptySlots: Array<{
-            day: number;
-            startMinute: number;
-            endMinute: number;
-        }> = [];
-
-        for (const day of futureDays) {
-            for (let hour = settings.startHour; hour < settings.endHour; hour++) {
-                if (day === currentDayIdx && hour <= currentHour) continue;
-
-                const startMinute = hour * 60;
-                const endMinute = (hour + 1) * 60;
-
-                const isOccupied = newTasks.some(
-                    (task) =>
-                        task.day === day &&
-                        task.startMinute < endMinute &&
-                        task.endMinute > startMinute,
-                );
-
-                if (!isOccupied) {
-                    emptySlots.push({
-                        day,
-                        startMinute,
-                        endMinute,
-                    });
-                }
-            }
-        }
+        const emptySlots = findAvailableFutureSlots(
+            updatedTasks,
+            settings,
+            currentDayOfWeekIndex,
+            currentHour,
+        );
 
         if (emptySlots.length < tasksToMove.length) {
             return {
@@ -375,18 +442,9 @@ export const useOfflineSchedule = () => {
             };
         }
 
-        tasksToMove.forEach((task, index) => {
-            const slot = emptySlots[index];
+        const finalTasks = allocateTasksToSlots(updatedTasks, tasksToMove, emptySlots);
+        await persistTasks(finalTasks);
 
-            newTasks.push({
-                ...task,
-                day: slot.day,
-                startMinute: slot.startMinute,
-                endMinute: slot.endMinute,
-            });
-        });
-
-        await persistTasks(newTasks);
         return {
             success: true,
         };
@@ -399,7 +457,7 @@ export const useOfflineSchedule = () => {
 
     const changeWeek = (direction: number) => {
         const newDate = new Date(currentWeekDate);
-        newDate.setDate(newDate.getDate() + direction * 7);
+        newDate.setDate(newDate.getDate() + direction * DAYS_IN_WEEK);
         setCurrentWeekDate(newDate);
     };
 
