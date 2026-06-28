@@ -9,8 +9,11 @@ import {
     ListTodo,
     Settings,
     Tags,
+    Moon,
+    Sun,
 } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
+import { useTheme } from "@/shared/components/providers/ThemeProvider";
 import { getShellCopy } from "../constants/shell.constants";
 import type { AppView } from "../types/shell.types";
 
@@ -34,6 +37,7 @@ export function AppSidebar({
     onOpenSettings,
 }: AppSidebarProps) {
     const copy = getShellCopy(lang);
+    const { theme, toggleTheme } = useTheme();
 
     const navItems = [
         { id: "dashboard" as const, label: copy.dashboard, icon: Grid2X2 },
@@ -115,7 +119,16 @@ export function AppSidebar({
                 </button>
             </nav>
 
-            <div className="border-t-[3px] border-black p-4">
+            <div className="border-t-[3px] border-black p-4 flex flex-col gap-3">
+                <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className="flex w-full items-center justify-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000] transition"
+                >
+                    {theme === 'dark' ? <Sun size={14} strokeWidth={3} /> : <Moon size={14} strokeWidth={3} />}
+                    {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                </button>
+
                 <div className="flex items-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black">
                     <span className="h-2.5 w-2.5 border-2 border-black bg-emerald-500" />
                     {copy.savedLocally}

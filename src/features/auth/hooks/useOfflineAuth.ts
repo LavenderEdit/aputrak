@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { DB } from "@/shared/lib/db";
+import { SyncManager } from "@/shared/lib/sync";
 
 interface UserProfile {
     id: string;
@@ -38,6 +39,7 @@ export const useOfflineAuth = () => {
 
         await DB.put("profile", newProfile);
         setProfile(newProfile);
+        await SyncManager.queueMutation('profile', 'current_user', 'UPDATE', newProfile);
     };
 
     return {

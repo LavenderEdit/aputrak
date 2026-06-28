@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { DB } from "@/shared/lib/db";
+import { SyncManager } from "@/shared/lib/sync";
 import { DEFAULT_ACTIVITY_TAGS } from "../constants/tags.constants";
 import type { ActivityTag } from "../types/tag.types";
 
@@ -77,10 +78,12 @@ export function useActivityTags() {
 
         setTags(normalizedTags);
 
-        await DB.put("tags", {
+        const dataToSave = {
             id: TAGS_RECORD_ID,
             data: normalizedTags,
-        });
+        };
+        await DB.put("tags", dataToSave);
+        await SyncManager.queueMutation('tags', TAGS_RECORD_ID, 'UPDATE', dataToSave);
     };
 
     const saveTag = async (tag: ActivityTag) => {

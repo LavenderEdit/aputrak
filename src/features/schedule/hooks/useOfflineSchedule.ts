@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DB } from "@/shared/lib/db";
+import { SyncManager } from "@/shared/lib/sync";
 import { Utils } from "@/shared/lib/utils";
 import {
     BASE_RADIX_36,
@@ -311,7 +312,9 @@ export const useOfflineSchedule = () => {
     const persistTasks = async (nextTasks: ScheduleTask[]) => {
         tasksRef.current = nextTasks;
         setTasks(nextTasks);
-        await DB.put("weeks", { id: weekId, data: nextTasks });
+        const dataToSave = { id: weekId, data: nextTasks };
+        await DB.put("weeks", dataToSave);
+        await SyncManager.queueMutation('aputrak_schedule', weekId, 'UPDATE', dataToSave);
     };
 
     const saveTask = async (task: ScheduleTask) => {
@@ -452,7 +455,9 @@ export const useOfflineSchedule = () => {
 
     const updateSettings = async (newSettings: ScheduleSettings) => {
         setSettings(newSettings);
-        await DB.put("settings", { id: "global", ...newSettings });
+        const dataToSave = { id: "global", ...newSettings };
+        await DB.put("settings", dataToSave);
+        await SyncManager.queueMutation('aputrak_settings', "global", 'UPDATE', dataToSave);
     };
 
     const changeWeek = (direction: number) => {
@@ -474,7 +479,9 @@ export const useOfflineSchedule = () => {
         const existingTasks = await readWeekTasks(targetWeekId);
         const nextTasks = mergeTasksBySlot(existingTasks, incomingTasks);
 
-        await DB.put("weeks", { id: targetWeekId, data: nextTasks });
+        const dataToSave = { id: targetWeekId, data: nextTasks };
+        await DB.put("weeks", dataToSave);
+        await SyncManager.queueMutation('aputrak_schedule', targetWeekId, 'UPDATE', dataToSave);
 
         if (targetWeekId === weekId) {
             tasksRef.current = nextTasks;

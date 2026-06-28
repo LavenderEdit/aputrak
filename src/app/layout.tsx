@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans, Outfit } from "next/font/google";
 import { SileoProvider } from "@/shared/components/providers/SileoProvider";
+import { SyncProvider } from "@/shared/components/providers/SyncProvider";
+import { ThemeProvider } from "@/shared/components/providers/ThemeProvider";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -28,7 +30,11 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${dmSans.variable} ${outfit.variable}`}>
       <body>
-        <SileoProvider>{children}</SileoProvider>
+        <SyncProvider>
+          <ThemeProvider>
+            <SileoProvider>{children}</SileoProvider>
+          </ThemeProvider>
+        </SyncProvider>
       </body>
     </html>
   );

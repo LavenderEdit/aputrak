@@ -1,7 +1,7 @@
 const DB_NAME = "AputrakDB";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
-type StoreName = "profile" | "settings" | "weeks" | "tags";
+type StoreName = "profile" | "settings" | "weeks" | "tags" | "sync_queue";
 
 type StoredRecord = {
     id: string;
@@ -15,8 +15,9 @@ const initDB = (): Promise<IDBDatabase> => {
 
         request.onsuccess = () => resolve(request.result);
 
-        request.onupgradeneeded = () => {
+        request.onupgradeneeded = (event) => {
             const db = request.result;
+            const oldVersion = event.oldVersion;
 
             if (!db.objectStoreNames.contains("profile")) {
                 db.createObjectStore("profile", { keyPath: "id" });
@@ -32,6 +33,11 @@ const initDB = (): Promise<IDBDatabase> => {
 
             if (!db.objectStoreNames.contains("tags")) {
                 db.createObjectStore("tags", { keyPath: "id" });
+            }
+            
+            if (!db.objectStoreNames.contains("sync_queue")) {
+                const store = db.createObjectStore("sync_queue", { keyPath: "id" });
+                store.createIndex("timestamp", "timestamp", { unique: false });
             }
         };
     });
@@ -82,4 +88,21 @@ export const DB = {
             request.onerror = () => reject(request.error);
         });
     },
+
+    delete: async (storeName: StoreName, id: string): Promise<void> => {
+        const db = await initDB();
+
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, "readwrite");
+            const store = tx.objectStore(storeName);
+            const request = store.delete(id);
+
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    },
+
+    getDb: async () => {
+        return await initDB();
+    }
 };
