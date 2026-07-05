@@ -47,7 +47,7 @@ function EditProfileForm({
       }}
       className="p-6"
     >
-      <label htmlFor="profile-name" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+      <label htmlFor="profile-name" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
         {t("yourName")}
       </label>
 

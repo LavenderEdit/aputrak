@@ -1,7 +1,8 @@
 import { OpenAPI } from './generated/core/OpenAPI';
 
 export const setupApiClient = () => {
-    OpenAPI.BASE = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api.studios-tkoh.online/api/v1';
+    const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api.studios-tkoh.online';
+    OpenAPI.BASE = envUrl.replace('/api/v1', '');
     
     // Add custom token resolver if needed
     OpenAPI.TOKEN = async () => {
