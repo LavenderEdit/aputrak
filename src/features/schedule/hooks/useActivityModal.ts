@@ -6,6 +6,11 @@ import type {
     ScheduleTask,
 } from "@/features/schedule/types/schedule.types";
 
+function getTodayDayIndex(): number {
+    const jsDay = new Date().getDay();
+    return (jsDay + 6) % 7;
+}
+
 export function useActivityModal(firstActiveDay: number, startHour: number) {
     const [modalState, setModalState] = useState<ActivityModalState>({
         isOpen: false,
@@ -13,10 +18,10 @@ export function useActivityModal(firstActiveDay: number, startHour: number) {
         taskToEdit: null,
     });
 
-    const openCreateModal = (day = firstActiveDay, defaultStartMin?: number) => {
+    const openCreateModal = (day?: number, defaultStartMin?: number) => {
         setModalState({
             isOpen: true,
-            day,
+            day: day ?? getTodayDayIndex(),
             taskToEdit: null,
             defaultStartMin: defaultStartMin ?? startHour * 60,
         });

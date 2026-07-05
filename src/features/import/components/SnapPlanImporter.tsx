@@ -169,28 +169,28 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
     return (
         <section className="space-y-5">
             <header>
-                <h2 className="font-display text-xl font-black uppercase tracking-tight text-black">
+                <h2 className="font-display text-xl font-black uppercase tracking-tight text-black dark:text-white">
                     {copy.imageImportTitle}
                 </h2>
 
-                <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
+                <p className="mt-2 text-sm font-bold leading-6 text-slate-600 dark:text-white/60">
                     {copy.imageImportSubtitle}
                 </p>
 
-                <div className="mt-4 border-[3px] border-black bg-[#FFF3C4] p-4">
+                <div className="mt-4 border-[3px] border-black dark:border-white/10 bg-[#FFF3C4] dark:bg-amber-900/30 p-4">
                     <div className="flex items-start gap-3">
                         <AlertTriangle
                             size={20}
                             strokeWidth={3}
-                            className="mt-0.5 shrink-0 text-black"
+                            className="mt-0.5 shrink-0 text-black dark:text-white"
                         />
 
                         <div>
-                            <p className="text-sm font-black uppercase tracking-[0.08em] text-black">
+                            <p className="text-sm font-black uppercase tracking-[0.08em] text-black dark:text-white">
                                 {copy.imageImportWarningTitle}
                             </p>
 
-                            <p className="mt-1 text-sm font-bold text-slate-700">
+                            <p className="mt-1 text-sm font-bold text-slate-700 dark:text-white/70">
                                 {copy.imageImportWarningDescription}
                             </p>
                         </div>
@@ -222,13 +222,13 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                     </Button>
 
                     {isProcessing && (
-                        <div className="border-2 border-black bg-white p-3">
-                            <div className="mb-2 flex justify-between text-xs font-black uppercase tracking-[0.08em] text-black">
+                        <div className="border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 p-3">
+                            <div className="mb-2 flex justify-between text-xs font-black uppercase tracking-[0.08em] text-black dark:text-white">
                                 <span>{progress?.status || copy.preparingOcr}</span>
                                 <span>{progressPercent}%</span>
                             </div>
 
-                            <div className="h-3 border-2 border-black bg-[#F5F0E6]">
+                            <div className="h-3 border-2 border-black dark:border-white/10 bg-[#F5F0E6] dark:bg-[#0a1628]">
                                 <div
                                     className="h-full bg-black transition-all"
                                     style={{ width: `${progressPercent}%` }}
@@ -238,18 +238,18 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                     )}
 
                     {(fileError || error) && (
-                        <p className="border-2 border-black bg-red-100 px-3 py-2 text-sm font-black text-red-700">
+                        <p className="border-2 border-black dark:border-white/10 bg-red-100 dark:bg-red-900/30 px-3 py-2 text-sm font-black text-red-700">
                             {fileError || error}
                         </p>
                     )}
 
                     {status === "success" && (
-                        <div className="border-2 border-black bg-white px-4 py-3 text-sm">
-                            <p className="font-black uppercase tracking-[0.08em] text-black">
+                        <div className="border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm">
+                            <p className="font-black uppercase tracking-[0.08em] text-black dark:text-white">
                                 {copy.detectedWeek}
                             </p>
 
-                            <p className="mt-1 font-bold text-slate-600">
+                            <p className="mt-1 font-bold text-slate-600 dark:text-white/60">
                                 {detectedWeekLabel ?? copy.noDetectedWeek}
                             </p>
                         </div>
@@ -257,8 +257,8 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                 </div>
 
                 <div className="space-y-4">
-                    <details className="border-2 border-black bg-white p-3 sm:p-4">
-                        <summary className="cursor-pointer text-sm font-black uppercase tracking-[0.08em] text-black">
+                    <details className="border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 p-3 sm:p-4">
+                        <summary className="cursor-pointer text-sm font-black uppercase tracking-[0.08em] text-black dark:text-white">
                             {copy.detectedTextSummary}
                         </summary>
 
@@ -283,9 +283,9 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
 
                     {parseMessage && (
                         <p
-                            className={`border-2 border-black px-3 py-2 text-sm font-black ${items.length > 0
+                            className={`border-2 border-black dark:border-white/10 px-3 py-2 text-sm font-black ${items.length > 0
                                 ? "bg-emerald-100 text-emerald-700"
-                                : "bg-[#FFF3C4] text-black"
+                                : "bg-[#FFF3C4] dark:bg-amber-900/30 text-black dark:text-white"
                                 }`}
                         >
                             {parseMessage}
@@ -293,7 +293,7 @@ export function SnapPlanImporter({ lang, onConfirm }: SnapPlanImporterProps) {
                     )}
 
                     {status === "success" && !items.length && (
-                        <p className="text-sm font-bold text-slate-600">
+                        <p className="text-sm font-bold text-slate-600 dark:text-white/60">
                             {copy.reviewDetectedText}
                         </p>
                     )}

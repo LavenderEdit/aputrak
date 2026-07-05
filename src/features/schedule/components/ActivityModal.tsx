@@ -15,6 +15,7 @@ import {
 import type { ActivityTag } from "@/features/tags/types/tag.types";
 import { getScheduleCopy } from "../constants/schedule.constants";
 import { DAYS_IN_WEEK, MINUTES_IN_HOUR } from "@/shared/lib/constants";
+import { useToast } from "@/shared/hooks/useToast";
 
 interface ActivityPayload {
   text: string;
@@ -83,11 +84,18 @@ function ActivityForm({
   const copy = getScheduleCopy(lang);
   const initial = splitInitialText(initialText);
   const fallbackTag = getFallbackTag(tags);
+  const { showToast } = useToast();
+
+  const todayDayIdx = useMemo(() => {
+    const jsDay = new Date().getDay();
+    return (jsDay + 6) % 7;
+  }, []);
 
   const [title, setTitle] = useState(initial.title);
   const [notes, setNotes] = useState(initial.notes);
   const [tagId, setTagId] = useState(initialTagId ?? fallbackTag.id);
   const [day, setDay] = useState(dayIdx);
+  const [pastDayWarned, setPastDayWarned] = useState(false);
 
   const [startTime, setStartTime] = useState(
     initialStartMinute !== undefined
@@ -112,6 +120,19 @@ function ActivityForm({
   const selectedTag = useMemo(() => {
     return tags.find((tag) => tag.id === tagId) ?? fallbackTag;
   }, [fallbackTag, tagId, tags]);
+
+  const handleDayChange = (newDay: number) => {
+    setDay(newDay);
+    if (newDay < todayDayIdx && !pastDayWarned) {
+      setPastDayWarned(true);
+      showToast(
+        lang === "es"
+          ? "Esta actividad se reorganizará automáticamente al día siguiente"
+          : "This activity will be automatically rescheduled to the next day",
+        "info"
+      );
+    }
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -141,7 +162,7 @@ function ActivityForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
       <div>
-        <label htmlFor="activity-title" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+        <label htmlFor="activity-title" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
           {copy.activityTitle}
         </label>
 
@@ -157,14 +178,14 @@ function ActivityForm({
 
       <div className="grid gap-4">
         <div>
-          <label htmlFor="activity-day" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+          <label htmlFor="activity-day" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
             {copy.day}
           </label>
 
           <Select
             id="activity-day"
             value={day}
-            onChange={(event) => setDay(Number(event.target.value))}
+            onChange={(event) => handleDayChange(Number(event.target.value))}
           >
             {Array.from({ length: DAYS_IN_WEEK }, (_, index) => (
               <option key={index} value={index}>
@@ -175,7 +196,7 @@ function ActivityForm({
         </div>
 
         <div>
-          <label htmlFor="activity-start-time" className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
+          <label htmlFor="activity-start-time" className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
             <Clock size={15} />
             {copy.timeRange}
           </label>
@@ -191,7 +212,7 @@ function ActivityForm({
               aria-label={lang === "es" ? "Hora de inicio" : "Start time"}
             />
 
-            <span className="font-black text-black">-</span>
+            <span className="font-black text-black dark:text-white">-</span>
 
             <Input
               id="activity-end-time"
@@ -207,7 +228,7 @@ function ActivityForm({
       </div>
 
       <div>
-        <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
+        <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
           <Tag size={15} />
           {lang === "es" ? "Etiqueta" : "Tag"}
         </label>
@@ -225,7 +246,7 @@ function ActivityForm({
                   "flex items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-xs font-bold uppercase tracking-wider transition-all duration-200",
                   active
                     ? "border-slate-900 bg-slate-900 text-white shadow-sm"
-                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+                    : "border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/20"
                 )}
               >
                 <span
@@ -243,7 +264,7 @@ function ActivityForm({
       </div>
 
       <div>
-        <label htmlFor="activity-notes" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+        <label htmlFor="activity-notes" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
           {copy.notes}
         </label>
 
@@ -256,7 +277,7 @@ function ActivityForm({
         />
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5">
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 p-3.5">
         <div className="flex items-center gap-3">
           <span
             className="h-8 w-8 rounded-lg border border-black/10 shadow-sm"
@@ -264,11 +285,11 @@ function ActivityForm({
           />
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white">
               {selectedTag.name}
             </p>
 
-            <p className="text-[11px] font-medium text-slate-500">
+            <p className="text-[11px] font-medium text-slate-500 dark:text-white/50">
               {lang === "es"
                 ? "El color de la actividad viene de la etiqueta seleccionada."
                 : "Activity color is inherited from the selected tag."}
@@ -277,7 +298,7 @@ function ActivityForm({
         </div>
       </div>
 
-      <div className="grid gap-3 border-t border-slate-200/60 pt-5 sm:grid-cols-2">
+      <div className="grid gap-3 border-t border-slate-200/60 dark:border-white/10 pt-5 sm:grid-cols-2">
         <Button
           type="button"
           variant="secondary"

@@ -23,19 +23,19 @@ export function OverdueTasksBanner({
     const copy = getScheduleCopy(lang);
 
     return (
-        <section className="border-[3px] border-black bg-[#FFF3C4] p-5 shadow-[6px_6px_0_#000]">
+        <section className="border-[3px] border-black dark:border-white/10 bg-[#FFF3C4] dark:bg-amber-900/30 p-5 shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0">
-                    <div className="mb-2 inline-flex items-center gap-2 border-2 border-black bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-black">
+                    <div className="mb-2 inline-flex items-center gap-2 border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-black dark:text-white">
                         <Sparkles size={13} strokeWidth={3} />
                         {lang === "es" ? "Reordenar" : "Reschedule"}
                     </div>
 
-                    <h2 className="text-xl font-black uppercase tracking-tight text-black">
+                    <h2 className="text-xl font-black uppercase tracking-tight text-black dark:text-white">
                         {t("smartTetrisTitle").replace("{count}", String(count))}
                     </h2>
 
-                    <p className="mt-2 text-sm font-bold text-slate-700">
+                    <p className="mt-2 text-sm font-bold text-slate-700 dark:text-white/70">
                         {t("smartTetrisDesc")}
                     </p>
                 </div>

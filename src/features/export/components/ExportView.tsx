@@ -39,10 +39,10 @@ function OptionButton({
             type="button"
             onClick={onClick}
             className={cn(
-                "flex min-h-[64px] items-center justify-center gap-2 border-[3px] border-black px-4 py-3 text-sm font-black uppercase tracking-[0.08em] transition",
+                "flex min-h-[64px] items-center justify-center gap-2 border-[3px] border-black dark:border-white/10 px-4 py-3 text-sm font-black uppercase tracking-[0.08em] transition",
                 active
                     ? "bg-black text-white shadow-[4px_4px_0_#000]"
-                    : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[4px_4px_0_#000]",
+                    : "bg-white dark:bg-white/5 text-black dark:text-white hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] dark:hover:bg-white/10 hover:shadow-[4px_4px_0_#000] dark:hover:shadow-[4px_4px_0_rgba(0,0,0,0.5)]",
             )}
         >
             {icon}
@@ -61,11 +61,11 @@ function CheckboxOption({
     onChange: (checked: boolean) => void;
 }) {
     return (
-        <label className="flex cursor-pointer items-center gap-3 border-2 border-black bg-white p-3 transition hover:bg-[#F5F0E6]">
+        <label className="flex cursor-pointer items-center gap-3 border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 p-3 transition hover:bg-[#F5F0E6] dark:hover:bg-white/10">
             <span
                 className={cn(
-                    "flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black",
-                    checked ? "bg-black text-white" : "bg-white text-black",
+                    "flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black dark:border-white/10",
+                    checked ? "bg-black text-white" : "bg-white dark:bg-white/5 text-black dark:text-white",
                 )}
             >
                 {checked && <Check size={15} strokeWidth={3} />}
@@ -78,7 +78,7 @@ function CheckboxOption({
                 className="sr-only"
             />
 
-            <span className="text-sm font-black uppercase tracking-[0.06em] text-black">
+            <span className="text-sm font-black uppercase tracking-[0.06em] text-black dark:text-white">
                 {label}
             </span>
         </label>
@@ -109,24 +109,24 @@ export function ExportView({
 
     return (
         <div className="mx-auto max-w-4xl p-4 pb-8 fade-in sm:p-6 lg:p-8">
-            <div className="mb-6 border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
-                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+            <div className="mb-6 border-[3px] border-black dark:border-white/10 bg-[#FFFCF4] dark:bg-[#111827] p-5 shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500 dark:text-white/50">
                     Aputrak
                 </p>
 
-                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black">
+                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black dark:text-white">
                     {copy.title}
                 </h2>
 
-                <p className="mt-2 text-sm font-bold text-slate-600">
+                <p className="mt-2 text-sm font-bold text-slate-600 dark:text-white/60">
                     {copy.subtitle}
                 </p>
             </div>
 
-            <section className="border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000] sm:p-6">
+            <section className="border-[3px] border-black dark:border-white/10 bg-[#FFFCF4] dark:bg-[#111827] p-5 shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)] sm:p-6">
                 <div className="space-y-6">
                     <div>
-                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black dark:text-white">
                             {copy.dateRange}
                         </label>
 
@@ -148,7 +148,7 @@ export function ExportView({
                     </div>
 
                     <div>
-                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black dark:text-white">
                             {lang === "es" ? "Contenido" : "Content"}
                         </label>
 
@@ -168,7 +168,7 @@ export function ExportView({
                     </div>
 
                     <div>
-                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black dark:text-white">
                             {copy.layoutStyle}
                         </label>
 
@@ -187,8 +187,8 @@ export function ExportView({
                         </div>
                     </div>
 
-                    <div className="border-t-2 border-black pt-6">
-                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black">
+                    <div className="pt-6">
+                        <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black dark:text-white">
                             {lang === "es" ? "Formato de exportación" : "Export format"}
                         </label>
 
