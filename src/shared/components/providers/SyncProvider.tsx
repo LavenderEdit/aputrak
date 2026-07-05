@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { SyncManager } from "@/shared/lib/sync";
 // Import to initialize API client configuration
 import "@/shared/api/client";
+import "@/shared/lib/console-suppress";
 
 export function SyncProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
