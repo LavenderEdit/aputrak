@@ -9,6 +9,7 @@ import {
     Heart,
     Pencil,
     Plus,
+    RefreshCw,
     Tag,
     Tags,
     Trash2,
@@ -43,9 +44,16 @@ const iconMap: Record<string, LucideIcon> = {
 export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
     const copy = getTagsCopy(lang);
 
-    const { tags, saveTag, deleteTag } = useActivityTags();
+    const { tags, saveTag, deleteTag, refreshTags } = useActivityTags();
     const [editingTag, setEditingTag] = useState<ActivityTag | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await refreshTags();
+        setIsRefreshing(false);
+    };
 
     const activities = useMemo(
         () => scheduleTasksToActivities(tasks, weekId, tags),
@@ -61,27 +69,39 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
         <div className="mx-auto max-w-3xl p-4 fade-in sm:p-6 lg:p-8">
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 className="font-display text-2xl font-black uppercase tracking-tight text-black">
+                    <h2 className="font-display text-2xl font-black uppercase tracking-tight text-black dark:text-white">
                         {copy.title}
                     </h2>
 
-                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-white/50">
                         {lang === "es"
                             ? "Organiza tus actividades por categorías"
                             : "Organize your activities by categories"}
                     </p>
                 </div>
 
-                <Button
-                    onClick={() => {
-                        setEditingTag(null);
-                        setIsModalOpen(true);
-                    }}
-                    className="w-full sm:w-auto"
-                >
-                    <Plus size={16} />
-                    {copy.addTag}
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        variant="secondary"
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className="w-full sm:w-auto"
+                        title={lang === "es" ? "Actualizar desde servidor" : "Refresh from server"}
+                    >
+                        <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
+                    </Button>
+
+                    <Button
+                        onClick={() => {
+                            setEditingTag(null);
+                            setIsModalOpen(true);
+                        }}
+                        className="w-full sm:w-auto"
+                    >
+                        <Plus size={16} />
+                        {copy.addTag}
+                    </Button>
+                </div>
             </div>
 
             <div className="space-y-3">
@@ -93,7 +113,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                         return (
                             <article
                                 key={tag.id}
-                                className="flex items-center gap-4 border-[3px] border-black bg-white p-4 shadow-[5px_5px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#000]"
+                                className="flex items-center gap-4 border-[3px] border-black dark:border-white/10 bg-white dark:bg-white/5 p-4 shadow-[5px_5px_0_#000] dark:shadow-[5px_5px_0_rgba(0,0,0,0.5)] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#000] dark:hover:shadow-[7px_7px_0_rgba(0,0,0,0.5)]"
                             >
                                 <div
                                     className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
@@ -103,11 +123,11 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-                                    <div className="truncate text-sm font-black uppercase tracking-[0.06em] text-black">
+                                    <div className="truncate text-sm font-black uppercase tracking-[0.06em] text-black dark:text-white">
                                         {tag.name}
                                     </div>
 
-                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-white/50">
                                         {counts[tag.id] ?? 0} {copy.activities}
                                     </div>
                                 </div>
@@ -119,7 +139,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                             setEditingTag(tag);
                                             setIsModalOpen(true);
                                         }}
-                                        className="flex h-9 w-9 items-center justify-center border-2 border-black bg-white text-black transition hover:bg-black hover:text-white"
+                                        className="flex h-9 w-9 items-center justify-center border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 text-black dark:text-white transition hover:bg-black hover:text-white"
                                         aria-label={copy.editTag}
                                     >
                                         <Pencil size={15} strokeWidth={3} />
@@ -132,7 +152,7 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                                             void deleteTag(tag.id);
                                         }}
                                         disabled={isGeneralTag}
-                                        className="flex h-9 w-9 items-center justify-center border-2 border-black bg-white text-black transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-black"
+                                        className="flex h-9 w-9 items-center justify-center border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 text-black dark:text-white transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-black"
                                         aria-label={copy.deleteTag}
                                     >
                                         <Trash2 size={15} strokeWidth={3} />
@@ -142,14 +162,14 @@ export function TagsView({ lang, weekId, tasks }: TagsViewProps) {
                         );
                     })
                 ) : (
-                    <div className="border-[3px] border-black bg-white py-16 text-center shadow-[6px_6px_0_#000]">
-                        <Tags size={42} className="mx-auto mb-3 text-black" />
+                    <div className="border-[3px] border-black dark:border-white/10 bg-white dark:bg-white/5 py-16 text-center shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
+                        <Tags size={42} className="mx-auto mb-3 text-black dark:text-white" />
 
-                        <p className="text-sm font-black uppercase tracking-[0.08em] text-black">
+                        <p className="text-sm font-black uppercase tracking-[0.08em] text-black dark:text-white">
                             {copy.emptyTitle}
                         </p>
 
-                        <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                        <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-white/50">
                             {copy.emptyDescription}
                         </p>
                     </div>

@@ -45,7 +45,7 @@ const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
 };
 
 export function AppShell() {
-    const { profile, saveUsername, loadingAuth } = useOfflineAuth();
+    const { profile, saveUsername, saveAvatar, logout, login, register, loadingAuth } = useOfflineAuth();
     const scheduleData = useOfflineSchedule();
     const { lang, changeLanguage, toggleLanguage, t, getDayName } = useLanguage();
     const { showToast, showPromiseToast } = useToast();
@@ -92,9 +92,9 @@ export function AppShell() {
 
     if (loadingAuth) {
         return (
-            <main className="grid min-h-screen place-items-center bg-[#F5F0E6]">
-                <div className="border-[3px] border-black bg-[#FFFCF4] p-6 shadow-[6px_6px_0_#000]">
-                    <div className="h-10 w-10 animate-spin border-[3px] border-black border-t-transparent" />
+            <main className="grid min-h-screen place-items-center bg-[#F5F0E6] dark:bg-[#0B0F19]">
+                <div className="border-[3px] border-black bg-[#FFFCF4] p-6 shadow-[6px_6px_0_#000] dark:border-white/10 dark:bg-[#111827] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
+                    <div className="h-10 w-10 animate-spin border-[3px] border-black border-t-transparent dark:border-white/10" />
                 </div>
             </main>
         );
@@ -105,7 +105,9 @@ export function AppShell() {
             <LoginScreen
                 lang={lang}
                 onSelectLanguage={changeLanguage}
-                onSave={saveUsername}
+                onLogin={login}
+                onRegister={register}
+                onSaveUsername={saveUsername}
             />
         );
     }
@@ -221,10 +223,13 @@ export function AppShell() {
                 <SettingsView
                     lang={lang}
                     username={profile.username}
+                    avatarUrl={profile.avatarUrl}
                     settings={scheduleData.settings}
                     updateSettings={scheduleData.updateSettings}
                     getDayName={getDayName}
                     onUpdateUsername={saveUsername}
+                    onUpdateAvatar={saveAvatar}
+                    onLogout={logout}
                     onToggleLanguage={toggleLanguage}
                 />
             );
@@ -234,7 +239,7 @@ export function AppShell() {
     };
 
     return (
-        <main className="min-h-screen bg-[#F5F0E6] text-slate-900">
+        <main className="min-h-screen bg-[#F5F0E6] text-slate-900 dark:bg-[#0B0F19] dark:text-white">
             <div className="flex min-h-screen">
                 <div
                     className={cn(
@@ -257,6 +262,7 @@ export function AppShell() {
                 <section className="flex min-w-0 flex-1 flex-col">
                     <AppTopbar
                         username={profile.username}
+                        avatarUrl={profile.avatarUrl}
                         activeView={activeView}
                         lang={lang}
                         onToggleSidebar={() => setSidebarOpen((current) => !current)}

@@ -11,7 +11,7 @@ export function Select({ className, error, children, ...props }: SelectProps) {
     return (
         <select
             className={cn(
-                "w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-black outline-none transition-all duration-200",
+                "w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-black outline-none transition-all duration-200 dark:border-white/10 dark:bg-white/5 dark:text-white",
                 error
                     ? "border-red-500 focus:border-red-500"
                     : "border-slate-200/80 focus:border-slate-800 focus:shadow-sm focus:bg-slate-50/10",

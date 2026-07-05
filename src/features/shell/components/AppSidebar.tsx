@@ -56,18 +56,18 @@ export function AppSidebar({
     return (
         <aside
             className={cn(
-                "no-print fixed inset-y-0 left-0 z-40 flex w-[270px] min-w-[270px] flex-col border-r-[3px] border-black bg-[#FFFCF4] transition-transform duration-300 md:static md:translate-x-0",
+                "no-print fixed inset-y-0 left-0 z-40 flex w-[270px] min-w-[270px] flex-col border-r-[3px] border-black bg-[#FFFCF4] transition-transform duration-300 dark:border-white/10 dark:bg-[#111827] md:static md:translate-x-0",
                 sidebarOpen ? "translate-x-0" : "-translate-x-full",
             )}
         >
-            <div className="border-b-[3px] border-black p-5">
+            <div className="border-b-[3px] border-black p-5 dark:border-white/10">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center border-2 border-black bg-white shadow-[3px_3px_0_#000]">
+                    <div className="flex h-12 w-12 items-center justify-center border-2 border-black bg-white shadow-[3px_3px_0_#000] dark:border-white/10 dark:bg-white/10 dark:shadow-[3px_3px_0_rgba(0,0,0,0.5)]">
                         <CalendarCheck size={22} strokeWidth={3} />
                     </div>
 
                     <div className="min-w-0">
-                        <h2 className="font-display text-lg font-black uppercase tracking-tight text-black">
+                        <h2 className="font-display text-lg font-black uppercase tracking-tight text-black dark:text-white">
                             {copy.appName}
                         </h2>
 
@@ -89,10 +89,10 @@ export function AppSidebar({
                             type="button"
                             onClick={() => handleChangeView(item.id)}
                             className={cn(
-                                "flex w-full items-center gap-3 border-2 border-black px-3 py-2.5 text-left text-sm font-black uppercase tracking-[0.06em] transition",
+                                "flex w-full items-center gap-3 border-2 border-black px-3 py-2.5 text-left text-sm font-black uppercase tracking-[0.06em] transition dark:border-white/10",
                                 active
-                                    ? "bg-black text-white shadow-[4px_4px_0_#000]"
-                                    : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[4px_4px_0_#000]",
+                                    ? "bg-black text-white shadow-[4px_4px_0_#000] dark:bg-white/15 dark:text-white dark:shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
+                                    : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[4px_4px_0_#000] dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:shadow-[4px_4px_0_rgba(0,0,0,0.5)]",
                             )}
                         >
                             <Icon size={18} strokeWidth={3} />
@@ -108,10 +108,10 @@ export function AppSidebar({
                         onCloseSidebar();
                     }}
                     className={cn(
-                        "flex w-full items-center gap-3 border-2 border-black px-3 py-2.5 text-left text-sm font-black uppercase tracking-[0.06em] transition",
+                        "flex w-full items-center gap-3 border-2 border-black px-3 py-2.5 text-left text-sm font-black uppercase tracking-[0.06em] transition dark:border-white/10",
                         activeView === "settings"
-                            ? "bg-black text-white shadow-[4px_4px_0_#000]"
-                            : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[4px_4px_0_#000]",
+                            ? "bg-black text-white shadow-[4px_4px_0_#000] dark:bg-white/15 dark:text-white dark:shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
+                            : "bg-white text-black hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#F5F0E6] hover:shadow-[4px_4px_0_#000] dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:shadow-[4px_4px_0_rgba(0,0,0,0.5)]",
                     )}
                 >
                     <Settings size={18} strokeWidth={3} />
@@ -119,18 +119,18 @@ export function AppSidebar({
                 </button>
             </nav>
 
-            <div className="border-t-[3px] border-black p-4 flex flex-col gap-3">
+            <div className="border-t-[3px] border-black p-4 flex flex-col gap-3 dark:border-white/10">
                 <button
                     type="button"
                     onClick={toggleTheme}
-                    className="flex w-full items-center justify-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000] transition"
+                    className="flex w-full items-center justify-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000] transition dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
                 >
                     {theme === 'dark' ? <Sun size={14} strokeWidth={3} /> : <Moon size={14} strokeWidth={3} />}
                     {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                 </button>
 
-                <div className="flex items-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black">
-                    <span className="h-2.5 w-2.5 border-2 border-black bg-emerald-500" />
+                <div className="flex items-center gap-2 border-2 border-black bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-black dark:border-white/10 dark:bg-white/10 dark:text-white">
+                    <span className="h-2.5 w-2.5 border-2 border-black bg-emerald-500 dark:border-white/10" />
                     {copy.savedLocally}
                 </div>
             </div>

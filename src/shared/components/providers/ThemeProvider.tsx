@@ -1,7 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { PaintTransitionOverlay } from './PaintTransitionOverlay';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 type ThemeContextType = {
   theme: string;
@@ -15,7 +14,6 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState('light');
-  const triggerPaintRef = useRef<((nextTheme: string) => void) | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('aputrak_theme') || 'light';
@@ -26,32 +24,18 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     root.classList.add(`theme-${stored}`);
   }, []);
 
-  const applyThemeChange = useCallback((newTheme: string) => {
-    localStorage.setItem('aputrak_theme', newTheme);
-    setTheme(newTheme);
+  const toggleTheme = useCallback(() => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('aputrak_theme', next);
+    setTheme(next);
     const root = document.documentElement;
     root.classList.remove('theme-light', 'theme-dark');
-    root.classList.add(`theme-${newTheme}`);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    if (triggerPaintRef.current) {
-      triggerPaintRef.current(nextTheme);
-    } else {
-      applyThemeChange(nextTheme);
-    }
-  }, [theme, applyThemeChange]);
+    root.classList.add(`theme-${next}`);
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
-      <PaintTransitionOverlay
-        triggerRef={triggerPaintRef}
-        onMidpoint={(nextTheme) => {
-          applyThemeChange(nextTheme);
-        }}
-      />
     </ThemeContext.Provider>
   );
 };

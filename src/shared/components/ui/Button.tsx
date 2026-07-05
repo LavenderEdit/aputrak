@@ -15,9 +15,9 @@ const variants: Record<ButtonVariant, string> = {
     primary:
         "bg-slate-900 text-white shadow-sm hover:bg-black hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:bg-slate-950",
     secondary:
-        "border border-slate-200 bg-white text-slate-800 shadow-sm hover:bg-slate-50 hover:text-black hover:border-slate-300 hover:-translate-y-0.5 active:translate-y-0 active:bg-slate-100",
+        "border border-slate-200 bg-white text-slate-800 shadow-sm hover:bg-slate-50 hover:text-black hover:border-slate-300 hover:-translate-y-0.5 active:translate-y-0 active:bg-slate-100 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15 dark:hover:text-white dark:hover:border-white/20 dark:active:bg-white/5",
     ghost:
-        "bg-transparent text-slate-700 hover:bg-slate-100 hover:text-black",
+        "bg-transparent text-slate-700 hover:bg-slate-100 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white",
     danger:
         "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:-translate-y-0.5 active:translate-y-0 active:bg-red-800",
 };

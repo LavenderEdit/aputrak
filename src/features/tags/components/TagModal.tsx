@@ -99,12 +99,12 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                 });
             }}
         >
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+            <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500 dark:text-white/50">
                     Preview
                 </p>
 
-                <div className="flex items-center gap-3 rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
+                <div className="flex items-center gap-3 rounded-lg border border-slate-100 dark:border-white/10 bg-white dark:bg-white/5 p-3 shadow-sm">
                     <div
                         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white shadow-sm"
                         style={{ backgroundColor: color }}
@@ -113,11 +113,11 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                     </div>
 
                     <div className="min-w-0">
-                        <p className="truncate text-sm font-black uppercase text-black">
+                        <p className="truncate text-sm font-black uppercase text-black dark:text-white">
                             {previewName}
                         </p>
 
-                        <p className="text-xs font-bold text-slate-500">
+                        <p className="text-xs font-bold text-slate-500 dark:text-white/50">
                             0 {copy.activities}
                         </p>
                     </div>
@@ -125,7 +125,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
             </div>
 
             <div>
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black">
+                <label className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
                     {copy.tagName}
                 </label>
 
@@ -138,7 +138,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
             </div>
 
             <div>
-                <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black">
+                <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-black dark:text-white">
                     <Palette size={15} />
                     {copy.color}
                 </label>
@@ -155,7 +155,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                                 type="button"
                                 onClick={() => handlePresetColor(item)}
                                 className={cn(
-                                    "relative h-12 border-2 border-black transition hover:-translate-x-0.5 hover:-translate-y-0.5",
+                                    "relative h-12 border-2 border-black dark:border-white/10 transition hover:-translate-x-0.5 hover:-translate-y-0.5",
                                     active && "shadow-[4px_4px_0_#000]",
                                 )}
                                 style={{ backgroundColor: item }}
@@ -177,7 +177,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                             setShowCustomPicker((current) => !current);
                         }}
                         className={cn(
-                            "relative flex h-12 items-center justify-center border-2 border-black transition hover:-translate-x-0.5 hover:-translate-y-0.5",
+                            "relative flex h-12 items-center justify-center border-2 border-black dark:border-white/10 transition hover:-translate-x-0.5 hover:-translate-y-0.5",
                             customColorIsActive &&
                             showCustomPicker &&
                             "shadow-[4px_4px_0_#000]",
@@ -194,20 +194,20 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                 </div>
 
                 {showCustomPicker && (
-                    <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                    <div className="mt-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3">
                         <div className="mb-3 flex items-center justify-between gap-3">
-                            <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+                            <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500 dark:text-white/50">
                                 {lang === "es"
                                     ? "Color personalizado"
                                     : "Custom color"}
                             </span>
 
-                            <span className="rounded-md border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs font-bold text-black shadow-sm">
+                            <span className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 px-2.5 py-1 font-mono text-xs font-bold text-black dark:text-white shadow-sm">
                                 {customColor}
                             </span>
                         </div>
 
-                        <div className="rounded-lg border border-slate-200 bg-white p-3 overflow-hidden shadow-sm">
+                        <div className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 p-3 overflow-hidden shadow-sm">
                             <HexColorPicker
                                 color={customColor}
                                 onChange={handleCustomColor}
@@ -218,7 +218,7 @@ function TagForm({ tag, lang, onClose, onSave }: TagFormProps) {
                 )}
             </div>
 
-            <div className="grid gap-3 border-t border-slate-200/60 pt-5 sm:grid-cols-2">
+            <div className="grid gap-3 border-t border-slate-200/60 dark:border-white/10 pt-5 sm:grid-cols-2">
                 <Button
                     type="button"
                     variant="secondary"

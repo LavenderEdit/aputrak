@@ -5,10 +5,10 @@ import { ArrowLeft } from "lucide-react";
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-bg text-text selection:bg-black selection:text-white pb-24">
-      <header className="sticky top-0 z-50 border-b-[3px] border-black bg-surface/90 p-4 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b-[3px] border-black dark:border-white/10 bg-surface/90 p-4 backdrop-blur-md">
         <div className="mx-auto flex max-w-4xl items-center gap-4">
           <Link href="/">
-            <button className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-white transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000]">
+            <button className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000] dark:hover:shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
               <ArrowLeft size={18} strokeWidth={3} />
             </button>
           </Link>
