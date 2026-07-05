@@ -60,7 +60,7 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
                 return (
                     <article
                         key={stat.label}
-                        className="border-[3px] border-black bg-[#FFFCF4] p-4 shadow-[5px_5px_0_#000]"
+                        className="border-[3px] border-black bg-[#FFFCF4] p-4 shadow-[5px_5px_0_#000] dark:border-white/10 dark:bg-[#111827] dark:shadow-[5px_5px_0_rgba(0,0,0,0.5)]"
                     >
                         <div
                             className="mb-3 flex h-10 w-10 items-center justify-center border-2 border-black"
@@ -73,11 +73,11 @@ export function DashboardStats({ lang, tasks }: DashboardStatsProps) {
                             />
                         </div>
 
-                        <div className="font-display text-3xl font-black uppercase tracking-tight text-black">
+                        <div className="font-display text-3xl font-black uppercase tracking-tight text-black dark:text-white">
                             {stat.value}
                         </div>
 
-                        <div className="mt-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
+                        <div className="mt-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 dark:text-white/50">
                             {stat.label}
                         </div>
                     </article>

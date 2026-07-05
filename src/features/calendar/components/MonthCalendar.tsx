@@ -1,6 +1,7 @@
 "use client";
 
 import type { Activity } from "@/features/activities/types/activity.types";
+import { useTheme } from "@/shared/components/providers/ThemeProvider";
 import {
     formatDateId,
     getMonthGrid,
@@ -23,6 +24,8 @@ export function MonthCalendar({
     selectedTag,
     onSelectDate,
 }: MonthCalendarProps) {
+    const { theme } = useTheme();
+    const isDark = theme === "dark";
     const days = getMonthGrid(selectedDate);
 
     const dayLabels = Array.from({ length: 7 }, (_, index) => {
@@ -36,19 +39,19 @@ export function MonthCalendar({
             : activities.filter((activity) => activity.tagId === selectedTag);
 
     return (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-white p-3 sm:p-4">
-            <div className="mb-3 grid grid-cols-7 border-[3px] border-black bg-white">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white dark:bg-white/5 p-3 sm:p-4">
+            <div className="mb-3 grid grid-cols-7 border-[3px] border-black dark:border-white/10 bg-white dark:bg-white/5">
                 {dayLabels.map((label, index) => (
                     <div
                         key={`${label}-${index}`}
-                        className="border-r-2 border-black py-2 text-center text-[10px] font-black uppercase tracking-[0.12em] text-black last:border-r-0 sm:text-xs"
+                        className="border-r-2 border-black dark:border-white/10 py-2 text-center text-[10px] font-black uppercase tracking-[0.12em] text-black dark:text-white last:border-r-0 sm:text-xs"
                     >
                         {label}
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 border-l-[3px] border-t-[3px] border-black bg-white">
+            <div className="grid grid-cols-7 border-l-[3px] border-t-[3px] border-black dark:border-white/10 bg-white dark:bg-white/5">
                 {days.map((date) => {
                     const dateId = formatDateId(date);
                     const today = isToday(date);
@@ -63,10 +66,10 @@ export function MonthCalendar({
                             key={dateId}
                             type="button"
                             onClick={() => onSelectDate(date)}
-                            className="min-h-[104px] border-b-[3px] border-r-[3px] border-black bg-white p-2 text-left transition hover:bg-slate-50 sm:min-h-[118px]"
+                            className="min-h-[104px] border-b-[3px] border-r-[3px] border-black dark:border-white/10 bg-white dark:bg-white/5 p-2 text-left transition hover:bg-slate-50 dark:hover:bg-white/10 sm:min-h-[118px]"
                             style={{
                                 opacity: isOtherMonth ? 0.42 : 1,
-                                backgroundColor: today ? "#F9EAC3" : "#FFFCF4",
+                                backgroundColor: today ? (isDark ? "#3d3520" : "#F9EAC3") : (isDark ? "#1a1f2e" : "#FFFCF4"),
                             }}
                             aria-label={(() => {
                                 const formattedDate = date.toLocaleDateString(lang === "es" ? "es-ES" : "en-US", {
@@ -86,14 +89,14 @@ export function MonthCalendar({
                                     className={
                                         today
                                             ? "flex h-7 w-7 items-center justify-center border-2 border-black bg-black text-xs font-black text-white"
-                                            : "text-sm font-black text-black"
+                                            : "text-sm font-black text-black dark:text-white"
                                     }
                                 >
                                     {date.getDate()}
                                 </span>
 
                                 {dayActivities.length > 0 && (
-                                    <span className="border-2 border-black bg-white px-1.5 py-0.5 text-[10px] font-black text-black">
+                                    <span className="border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 px-1.5 py-0.5 text-[10px] font-black text-black dark:text-white">
                                         {dayActivities.length}
                                     </span>
                                 )}
@@ -103,7 +106,7 @@ export function MonthCalendar({
                                 {dayActivities.slice(0, 3).map((activity) => (
                                     <div
                                         key={activity.id}
-                                        className="truncate border-2 border-black px-1.5 py-0.5 text-[10px] font-black uppercase tracking-[0.03em]"
+                                        className="truncate border-2 border-black dark:border-white/10 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-[0.03em]"
                                         style={{
                                             backgroundColor: `${activity.color}22`,
                                             color: activity.color,
@@ -114,7 +117,7 @@ export function MonthCalendar({
                                 ))}
 
                                 {dayActivities.length > 3 && (
-                                    <div className="text-[10px] font-black uppercase tracking-[0.08em] text-black">
+                                    <div className="text-[10px] font-black uppercase tracking-[0.08em] text-black dark:text-white">
                                         +{dayActivities.length - 3}
                                     </div>
                                 )}

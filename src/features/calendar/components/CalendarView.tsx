@@ -131,7 +131,7 @@ export function CalendarView({
     };
 
     return (
-        <div className="flex h-full overflow-hidden bg-white fade-in">
+        <div className="flex h-full overflow-hidden bg-white dark:bg-white/5 fade-in">
             <CalendarSidebar
                 lang={lang}
                 tags={tags}
@@ -141,7 +141,7 @@ export function CalendarView({
             />
 
             <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                <div className="flex shrink-0 flex-col gap-3 border-b-[3px] border-black bg-white px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex shrink-0 flex-col gap-3 border-b-[3px] border-black dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
                     <div className="flex items-center gap-2">
                         <Button
                             variant="secondary"
@@ -174,21 +174,16 @@ export function CalendarView({
                     </div>
 
                     <div className="min-w-0 flex-1">
-                        <h2 className="font-display truncate text-xl font-black uppercase tracking-tight text-black">
+                        <h2 className="font-display truncate text-xl font-black uppercase tracking-tight text-black dark:text-white">
                             {getMonthName(visibleDate, lang)}
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 border-2 border-black sm:w-auto">
+                    <div className="grid grid-cols-2 border-2 border-black dark:border-white/10 sm:w-auto">
                         <button
                             type="button"
                             onClick={() => setView("month")}
-                            className={cn(
-                                "px-4 py-2 text-xs font-black uppercase tracking-[0.12em] transition",
-                                view === "month"
-                                    ? "bg-black text-white"
-                                    : "bg-white text-black hover:bg-slate-100",
-                            )}
+                            className={`px-4 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${view === "month" ? "bg-black text-white" : "bg-white text-black hover:bg-slate-100 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"}`}
                         >
                             {copy.month}
                         </button>
@@ -196,12 +191,7 @@ export function CalendarView({
                         <button
                             type="button"
                             onClick={() => setView("week")}
-                            className={cn(
-                                "border-l-2 border-black px-4 py-2 text-xs font-black uppercase tracking-[0.12em] transition",
-                                view === "week"
-                                    ? "bg-black text-white"
-                                    : "bg-white text-black hover:bg-slate-100",
-                            )}
+                            className={`border-l-2 border-black px-4 py-2 text-xs font-black uppercase tracking-[0.12em] transition dark:border-white/10 ${view === "week" ? "bg-black text-white" : "bg-white text-black hover:bg-slate-100 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"}`}
                         >
                             {copy.week}
                         </button>
