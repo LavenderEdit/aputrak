@@ -91,16 +91,16 @@ export function ActivitiesView({
 
     return (
         <div className="mx-auto max-w-5xl p-4 fade-in sm:p-6 lg:p-8">
-            <div className="mb-6 border-[3px] border-black bg-[#FFFCF4] p-5 shadow-[6px_6px_0_#000]">
-                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+            <div className="mb-6 border-[3px] border-black dark:border-white/10 bg-[#FFFCF4] dark:bg-[#111827] p-5 shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500 dark:text-white/50">
                     Aputrak
                 </p>
 
-                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black">
+                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-black dark:text-white">
                     {copy.title}
                 </h2>
 
-                <p className="mt-2 text-sm font-bold text-slate-600">
+                <p className="mt-2 text-sm font-bold text-slate-600 dark:text-white/60">
                     {copy.subtitle}
                 </p>
             </div>
@@ -110,7 +110,7 @@ export function ActivitiesView({
                     <Search
                         size={16}
                         strokeWidth={3}
-                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-black"
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-black dark:text-white"
                     />
 
                     <Input
@@ -140,17 +140,17 @@ export function ActivitiesView({
                 </Button>
             </div>
 
-            <div className="mb-5 grid grid-cols-3 border-[3px] border-black bg-[#FFFCF4] shadow-[5px_5px_0_#000]">
+            <div className="mb-5 grid grid-cols-3 border-[3px] border-black dark:border-white/10 bg-[#FFFCF4] dark:bg-[#111827] shadow-[5px_5px_0_#000] dark:shadow-[5px_5px_0_rgba(0,0,0,0.5)]">
                 {(["all", "pending", "completed"] as const).map((status) => (
                     <button
                         key={status}
                         type="button"
                         onClick={() => setStatusFilter(status)}
                         className={cn(
-                            "border-r-[3px] border-black px-3 py-3 text-xs font-black uppercase tracking-[0.1em] transition last:border-r-0",
+                            "border-r-[3px] border-black dark:border-white/10 px-3 py-3 text-xs font-black uppercase tracking-[0.1em] transition last:border-r-0",
                             statusFilter === status
                                 ? "bg-black text-white"
-                                : "bg-[#FFFCF4] text-black hover:bg-white",
+                                : "bg-[#FFFCF4] dark:bg-[#111827] text-black dark:text-white hover:bg-white dark:hover:bg-white/10",
                         )}
                     >
                         {statusLabels[status]}
@@ -174,7 +174,7 @@ export function ActivitiesView({
                                         onEditTask(sourceTask);
                                     }
                                 }}
-                                className="flex cursor-pointer items-start gap-3 border-[3px] border-black bg-[#FFFCF4] p-4 shadow-[5px_5px_0_#000] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-white hover:shadow-[7px_7px_0_#000]"
+                                className="flex cursor-pointer items-start gap-3 border-[3px] border-black dark:border-white/10 bg-[#FFFCF4] dark:bg-[#111827] p-4 shadow-[5px_5px_0_#000] dark:shadow-[5px_5px_0_rgba(0,0,0,0.5)] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-white dark:hover:bg-white/10 hover:shadow-[7px_7px_0_#000] dark:hover:shadow-[7px_7px_0_rgba(0,0,0,0.5)]"
                             >
                                 <button
                                     type="button"
@@ -183,10 +183,10 @@ export function ActivitiesView({
                                         onToggleComplete(activity.id, 0);
                                     }}
                                     className={cn(
-                                        "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black",
+                                        "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black dark:border-white/10",
                                         completed
                                             ? "bg-black text-white"
-                                            : "bg-white text-black",
+                                            : "bg-white dark:bg-white/5 text-black dark:text-white",
                                     )}
                                     aria-label={
                                         completed
@@ -198,7 +198,7 @@ export function ActivitiesView({
                                 </button>
 
                                 <div
-                                    className="w-2 self-stretch border-2 border-black"
+                                    className="w-2 self-stretch border-2 border-black dark:border-white/10"
                                     style={{ backgroundColor: color }}
                                 />
 
@@ -209,33 +209,33 @@ export function ActivitiesView({
                                                 "text-sm font-black uppercase tracking-[0.04em]",
                                                 completed
                                                     ? "text-slate-400 line-through"
-                                                    : "text-black",
+                                                    : "text-black dark:text-white",
                                             )}
                                         >
                                             {activity.title}
                                         </span>
 
                                         <span
-                                            className="border-2 border-black bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em]"
+                                            className="border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em]"
                                             style={{ color }}
                                         >
                                             {tag?.name ?? copy.untagged}
                                         </span>
                                     </div>
 
-                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
+                                    <div className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500 dark:text-white/50">
                                         {getShortDate(activity.date, lang)} ·{" "}
                                         {activity.startTime} - {activity.endTime}
                                     </div>
 
                                     {activity.description && (
-                                        <div className="mt-1 line-clamp-1 text-xs font-bold text-slate-500">
+                                        <div className="mt-1 line-clamp-1 text-xs font-bold text-slate-500 dark:text-white/50">
                                             {activity.description}
                                         </div>
                                     )}
 
                                     {activity.priority !== "none" && (
-                                        <span className="mt-2 inline-block border-2 border-black bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-black">
+                                        <span className="mt-2 inline-block border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-black dark:text-white">
                                             {priorityLabels[activity.priority]}
                                         </span>
                                     )}
@@ -247,7 +247,7 @@ export function ActivitiesView({
                                         event.stopPropagation();
                                         onDeleteTask(activity.id);
                                     }}
-                                    className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black bg-white text-black transition hover:bg-red-600 hover:text-white"
+                                    className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 text-black dark:text-white transition hover:bg-red-600 hover:text-white"
                                     aria-label={copy.delete}
                                 >
                                     <Trash2 size={15} strokeWidth={3} />
@@ -257,14 +257,14 @@ export function ActivitiesView({
                     })}
                 </div>
             ) : (
-                <div className="border-[3px] border-black bg-[#FFFCF4] py-16 text-center shadow-[6px_6px_0_#000]">
-                    <Inbox size={42} strokeWidth={3} className="mx-auto mb-3 text-black" />
+                <div className="border-[3px] border-black dark:border-white/10 bg-[#FFFCF4] dark:bg-[#111827] py-16 text-center shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
+                    <Inbox size={42} strokeWidth={3} className="mx-auto mb-3 text-black dark:text-white" />
 
-                    <p className="text-sm font-black uppercase tracking-[0.08em] text-black">
+                    <p className="text-sm font-black uppercase tracking-[0.08em] text-black dark:text-white">
                         {copy.emptyTitle}
                     </p>
 
-                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-white/50">
                         {copy.emptyDescription}
                     </p>
                 </div>
