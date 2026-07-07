@@ -183,16 +183,13 @@ function ActivityForm({
           </label>
 
           <Select
-            id="activity-day"
-            value={day}
-            onChange={(event) => handleDayChange(Number(event.target.value))}
-          >
-            {Array.from({ length: DAYS_IN_WEEK }, (_, index) => (
-              <option key={index} value={index}>
-                {getDayName(index)}
-              </option>
-            ))}
-          </Select>
+            value={day.toString()}
+            onChange={(val) => handleDayChange(Number(val))}
+            options={Array.from({ length: DAYS_IN_WEEK }, (_, index) => ({
+              value: index.toString(),
+              label: getDayName(index),
+            }))}
+          />
         </div>
 
         <div>
@@ -233,34 +230,22 @@ function ActivityForm({
           {lang === "es" ? "Etiqueta" : "Tag"}
         </label>
 
-        <div className="grid gap-2 grid-cols-2 sm:grid-cols-3">
-          {tags.map((tag) => {
-            const active = tag.id === selectedTag.id;
-
-            return (
-              <button
-                key={tag.id}
-                type="button"
-                onClick={() => setTagId(tag.id)}
-                className={cn(
-                  "flex items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-xs font-bold uppercase tracking-wider transition-all duration-200",
-                  active
-                    ? "border-slate-900 bg-slate-900 text-white shadow-sm"
-                    : "border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/20"
-                )}
-              >
+        <Select
+          value={tagId}
+          onChange={(val) => setTagId(val)}
+          options={tags.map((tag) => ({
+            value: tag.id,
+            label: (
+              <div className="flex items-center gap-2">
                 <span
-                  className="h-3 w-3 shrink-0 rounded-full border border-black/10"
-                  style={{ backgroundColor: tag.color }}
+                  className="h-3 w-3 rounded-full border-2 border-black dark:border-white/20"
+                  style={{ backgroundColor: tag.color || "black" }}
                 />
-
-                <span className="min-w-0 truncate">
-                  {tag.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                <span className="truncate">{tag.name}</span>
+              </div>
+            ),
+          }))}
+        />
       </div>
 
       <div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, CalendarCheck, Languages } from "lucide-react";
+import Link from "next/link";
 import type { Language } from "@/shared/lib/i18n";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
@@ -231,6 +232,19 @@ export function LoginScreen({
                   </button>
                 )}
               </div>
+              
+              {mode === "register" && (
+                <div className="text-[10px] text-center font-bold text-slate-500 dark:text-white/50 tracking-widest uppercase mt-2">
+                  {copy.byRegistering}{" "}
+                  <Link href="/terms" className="underline hover:text-black dark:hover:text-white" target="_blank">
+                    {copy.terms}
+                  </Link>{" "}
+                  {copy.and}{" "}
+                  <Link href="/privacy" className="underline hover:text-black dark:hover:text-white" target="_blank">
+                    {copy.privacy}
+                  </Link>
+                </div>
+              )}
             </div>
           </form>
 

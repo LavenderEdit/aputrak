@@ -1,0 +1,110 @@
+export const LEGAL_COPY = {
+    es: {
+        privacy: {
+            title: "Políticas de Privacidad",
+            introTitle: "1. Introducción",
+            introContent: "En TKOH Studios (\"nosotros\", \"nuestro\"), tu privacidad es nuestra principal prioridad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos tu información cuando utilizas Aputrak y Ataraxia (los \"Servicios\").",
+            offlineTitle: "2. Arquitectura Offline-First",
+            offlineContent: "Nuestras aplicaciones están construidas bajo la filosofía Offline-First (Primero sin conexión). Por defecto, todos tus horarios, etiquetas, temporizadores y configuraciones personales se almacenan localmente en tu dispositivo mediante IndexedDB. Creemos que tus datos te pertenecen y permanecen en tu dispositivo hasta que decides explícitamente sincronizarlos con nuestros servidores en la nube.",
+            syncTitle: "3. Recopilación de Datos y Sincronización en la Nube",
+            syncContent: "Cuando creas una cuenta y habilitas la Sincronización en la Nube para conectar tus datos entre Aputrak y Ataraxia o en múltiples dispositivos, transmitimos y almacenamos de forma segura los siguientes datos en nuestros servidores:",
+            syncItem1: "Información de la Cuenta: Nombre de usuario, correo electrónico y credenciales de autenticación.",
+            syncItem2: "Datos de la Aplicación: Tareas, horarios, registros de tiempo y etiquetas personalizadas.",
+            syncItem3: "Configuraciones de la Aplicación: Tus preferencias de interfaz (como modo Oscuro/Claro) y configuraciones de temporizador.",
+            useTitle: "4. Cómo Usamos tus Datos",
+            useContent: "Usamos tus datos estrictamente con el único propósito de proveer y mantener los Servicios. Esto incluye:",
+            useItem1: "Sincronizar tus tareas y horarios sin problemas entre tus dispositivos.",
+            useItem2: "Restaurar tus datos en caso de que cambies de dispositivo o pierdas acceso a tu almacenamiento local.",
+            useItem3: "Garantizar la funcionalidad operativa básica y la seguridad.",
+            noSell: "NO vendemos tus datos. No ejecutamos anuncios de terceros ni usamos píxeles de seguimiento para monitorear tu comportamiento con fines de marketing.",
+            securityTitle: "5. Seguridad de los Datos",
+            securityContent: "Todas las comunicaciones entre tu dispositivo local y nuestras APIs backend (ataraxia-api.studios-tkoh.online) están encriptadas mediante HTTPS. Aunque implementamos medidas estándar en la industria para proteger tus datos sincronizados, ningún método de transmisión es 100% seguro. Eres responsable de mantener la confidencialidad de tus credenciales de inicio de sesión.",
+            deletionTitle: "6. Eliminación de Datos y tus Derechos",
+            deletionContent: "Debido a nuestra naturaleza offline-first, puedes borrar instantáneamente tus datos locales limpiando los datos del sitio en tu navegador o desinstalando la aplicación. Si has sincronizado tus datos en nuestra nube y deseas eliminar permanentemente tu cuenta y todos los datos asociados, puedes solicitar la eliminación de la cuenta a través de las configuraciones de la app.",
+            updatesTitle: "7. Actualizaciones a esta Política",
+            updatesContent: "Podemos actualizar esta Política de Privacidad de vez en cuando a medida que nuestros Servicios evolucionan. La versión más actual siempre estará disponible dentro de la aplicación y en nuestro sitio web oficial.",
+            lastUpdated: "Última Actualización: Junio 2026",
+            company: "TKOH Studios"
+        },
+        terms: {
+            title: "Términos y Condiciones",
+            agreementTitle: "1. Aceptación de los Términos",
+            agreementContent: "Al acceder o utilizar Ataraxia y Aputrak (los \"Servicios\") proporcionados por TKOH Studios, aceptas estar sujeto a estos Términos y Condiciones. Si no estás de acuerdo con alguna parte de los términos, no podrás acceder a los Servicios.",
+            useTitle: "2. Uso de los Servicios",
+            useContent: "Ataraxia y Aputrak son herramientas de productividad diseñadas para ayudarte a gestionar tus horarios y tiempos de enfoque. Aceptas usar los Servicios solo con fines lícitos y de manera que no infrinjan los derechos, restrinjan o inhiban el uso y disfrute de los Servicios por parte de terceros.",
+            offlineTitle: "3. Naturaleza Offline-First y Responsabilidad de los Datos",
+            offlineContent: "Los Servicios están diseñados para operar principalmente sin conexión. Tus datos se almacenan localmente en tu navegador o dispositivo mediante IndexedDB. Ofrecemos la Sincronización en la Nube como una comodidad opcional para conectar datos entre dispositivos. TKOH Studios no es responsable por la pérdida de datos que resulte de:",
+            offlineItem1: "Limpiar los datos del sitio o el caché de tu navegador antes de sincronizar.",
+            offlineItem2: "Usar los Servicios en modos de navegación privada/incógnito donde los datos no persisten.",
+            offlineItem3: "Fallas de hardware o corrupción de software en tu dispositivo local.",
+            offlineWarning: "Recomendamos encarecidamente exportar regularmente tus datos o asegurarte de que la Sincronización en la Nube esté activa si tus datos son críticos.",
+            accountsTitle: "4. Cuentas de Usuario",
+            accountsContent: "Si eliges usar las funciones de Sincronización en la Nube, debes crear una cuenta. Eres responsable de salvaguardar la contraseña que usas para acceder al Servicio y de cualquier actividad o acción bajo tu contraseña.",
+            ipTitle: "5. Propiedad Intelectual",
+            ipContent: "Los Servicios y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de TKOH Studios y sus licenciantes. Los Servicios están protegidos por derechos de autor, marcas registradas y otras leyes tanto a nivel local como internacional.",
+            liabilityTitle: "6. Limitación de Responsabilidad",
+            liabilityContent: "En ningún caso TKOH Studios, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por cualquier daño indirecto, incidental, especial, consecuente o punitivo, incluyendo sin limitación, pérdida de beneficios, datos, uso, buena voluntad u otras pérdidas intangibles, resultantes de tu acceso, uso, o incapacidad de acceso o uso de los Servicios.",
+            changesTitle: "7. Cambios en los Términos",
+            changesContent: "Nos reservamos el derecho, a nuestra sola discreción, de modificar o reemplazar estos Términos en cualquier momento. Al continuar accediendo o utilizando nuestros Servicios después de que esas revisiones entren en vigencia, aceptas estar sujeto a los términos revisados.",
+            lastUpdated: "Última Actualización: Junio 2026",
+            company: "TKOH Studios"
+        }
+    },
+    en: {
+        privacy: {
+            title: "Privacy Policy",
+            introTitle: "1. Introduction",
+            introContent: "At TKOH Studios (\"we\", \"our\", \"us\"), your privacy is a top priority. This Privacy Policy explains how we collect, use, and protect your information when you use Aputrak and Ataraxia (the \"Services\").",
+            offlineTitle: "2. Offline-First Architecture",
+            offlineContent: "Our applications are built with an Offline-First philosophy. By default, all your schedules, tags, timers, and personal settings are stored locally on your device using IndexedDB. We believe that your data belongs to you, and it remains on your device until you explicitly decide to synchronize it with our cloud servers.",
+            syncTitle: "3. Data Collection and Cloud Sync",
+            syncContent: "When you create an account and enable Cloud Synchronization to bridge your data between Aputrak and Ataraxia or across multiple devices, we securely transmit and store the following data on our servers:",
+            syncItem1: "Account Information: Username, email address, and authentication credentials.",
+            syncItem2: "Application Data: Tasks, schedules, time logs, and custom tags.",
+            syncItem3: "Application Settings: Your UI preferences (like Dark/Light mode) and timer configurations.",
+            useTitle: "4. How We Use Your Data",
+            useContent: "We strictly use your data for the sole purpose of providing and maintaining the Services. This includes:",
+            useItem1: "Synchronizing your tasks and schedules seamlessly across your devices.",
+            useItem2: "Restoring your data in case you switch devices or lose access to your local storage.",
+            useItem3: "Ensuring basic operational functionality and security.",
+            noSell: "We do NOT sell your data. We do not run third-party advertisements or use tracking pixels to monitor your behavior for marketing purposes.",
+            securityTitle: "5. Data Security",
+            securityContent: "All communications between your local device and our backend APIs (ataraxia-api.studios-tkoh.online) are encrypted over HTTPS. While we implement industry-standard measures to protect your synchronized data, no method of transmission is 100% secure. You are responsible for keeping your login credentials confidential.",
+            deletionTitle: "6. Data Deletion and Your Rights",
+            deletionContent: "Because of our offline-first nature, you can instantly erase your local data by clearing your browser's site data or uninstalling the application. If you have synchronized your data to our cloud and wish to permanently delete your account and all associated cloud data, you can request account deletion through the app's settings or by contacting our support team.",
+            updatesTitle: "7. Updates to this Policy",
+            updatesContent: "We may update this Privacy Policy from time to time as our Services evolve. The most current version will always be available within the application and on our official website.",
+            lastUpdated: "Last Updated: June 2026",
+            company: "TKOH Studios"
+        },
+        terms: {
+            title: "Terms & Conditions",
+            agreementTitle: "1. Agreement to Terms",
+            agreementContent: "By accessing or using Ataraxia and Aputrak (the \"Services\") provided by TKOH Studios, you agree to be bound by these Terms & Conditions. If you disagree with any part of the terms, you may not access the Services.",
+            useTitle: "2. Use of the Services",
+            useContent: "Ataraxia and Aputrak are productivity tools designed to help you manage your schedules and focus time. You agree to use the Services only for lawful purposes and in a way that does not infringe the rights of, restrict, or inhibit anyone else's use and enjoyment of the Services.",
+            offlineTitle: "3. Offline-First Nature & Data Responsibility",
+            offlineContent: "The Services are designed to operate primarily offline. Your data is stored locally in your browser or device using IndexedDB. We provide Cloud Synchronization as an optional convenience to bridge data across devices. TKOH Studios is not responsible for data loss resulting from:",
+            offlineItem1: "Clearing your browser's site data or cache before syncing.",
+            offlineItem2: "Using the Services in private/incognito browsing modes where data is not persisted.",
+            offlineItem3: "Hardware failure or software corruption on your local device.",
+            offlineWarning: "We highly recommend regularly exporting your data or ensuring Cloud Synchronization is active if your data is critical.",
+            accountsTitle: "4. User Accounts",
+            accountsContent: "If you choose to use the Cloud Synchronization features, you must create an account. You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password.",
+            ipTitle: "5. Intellectual Property",
+            ipContent: "The Services and their original content, features, and functionality are and will remain the exclusive property of TKOH Studios and its licensors. The Services are protected by copyright, trademark, and other laws of both the local and international jurisdictions.",
+            liabilityTitle: "6. Limitation of Liability",
+            liabilityContent: "In no event shall TKOH Studios, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Services.",
+            changesTitle: "7. Changes to Terms",
+            changesContent: "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Services after those revisions become effective, you agree to be bound by the revised terms.",
+            lastUpdated: "Last Updated: June 2026",
+            company: "TKOH Studios"
+        }
+    }
+} as const;
+
+export type LegalLanguage = keyof typeof LEGAL_COPY;
+
+export function getLegalCopy(lang: string) {
+    return LEGAL_COPY[lang as LegalLanguage] ?? LEGAL_COPY.es;
+}

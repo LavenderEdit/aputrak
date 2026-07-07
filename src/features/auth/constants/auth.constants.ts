@@ -20,6 +20,10 @@ export const AUTH_COPY = {
         worksOffline: "Funciona sin internet — no requiere conexión",
         validationError: "Por favor, completa todos los campos.",
         authError: "Error de autenticación. Verifica tus credenciales.",
+        byRegistering: "Al registrarte, aceptas nuestros",
+        terms: "Términos",
+        and: "y",
+        privacy: "Políticas de Privacidad",
     },
     en: {
         appName: "Aputrak",
@@ -42,6 +46,10 @@ export const AUTH_COPY = {
         worksOffline: "Works offline — no internet required",
         validationError: "Please fill in all fields.",
         authError: "Authentication error. Check your credentials.",
+        byRegistering: "By registering, you agree to our",
+        terms: "Terms",
+        and: "and",
+        privacy: "Privacy Policy",
     },
 } as const;
 

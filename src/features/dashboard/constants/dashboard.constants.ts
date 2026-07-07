@@ -17,6 +17,7 @@ export const DASHBOARD_COPY = {
         noActivitiesYet: "Sin actividades aún",
         emptyToday: "No tienes actividades para hoy.",
         emptyUpcoming: "Nada pendiente por ahora.",
+        subtitle: "Gestiona tu semana, importa horarios y mantén tus actividades bajo control.",
     },
     en: {
         hello: "Hello",
@@ -36,6 +37,7 @@ export const DASHBOARD_COPY = {
         noActivitiesYet: "No activities yet",
         emptyToday: "You have no activities today.",
         emptyUpcoming: "Nothing pending for now.",
+        subtitle: "Manage your week, import schedules, and keep your activities under control.",
     },
 } as const;
 

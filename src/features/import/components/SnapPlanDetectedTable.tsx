@@ -96,18 +96,16 @@ export function SnapPlanDetectedTable({
 
                                 <Select
                                     value={item.day}
-                                    onChange={(event) =>
+                                    onChange={(val) =>
                                         onUpdateItem(item.id, {
-                                            day: event.target.value,
+                                            day: val,
                                         })
                                     }
-                                >
-                                    {SCHEDULE_DAYS.map((day) => (
-                                        <option key={day} value={day}>
-                                            {day}
-                                        </option>
-                                    ))}
-                                </Select>
+                                    options={SCHEDULE_DAYS.map((day) => ({
+                                        value: day,
+                                        label: day,
+                                    }))}
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
@@ -195,19 +193,17 @@ export function SnapPlanDetectedTable({
                                 <td className="border-r-2 border-black dark:border-white/10 px-3 py-3">
                                     <Select
                                         value={item.day}
-                                        onChange={(event) =>
+                                        onChange={(val) =>
                                             onUpdateItem(item.id, {
-                                                day: event.target.value,
+                                                day: val,
                                             })
                                         }
                                         className="py-2"
-                                    >
-                                        {SCHEDULE_DAYS.map((day) => (
-                                            <option key={day} value={day}>
-                                                {day}
-                                            </option>
-                                        ))}
-                                    </Select>
+                                        options={SCHEDULE_DAYS.map((day) => ({
+                                            value: day,
+                                            label: day,
+                                        }))}
+                                    />
                                 </td>
 
                                 <td className="border-r-2 border-black px-3 py-3">

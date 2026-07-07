@@ -149,7 +149,7 @@ export function ExportView({
 
                     <div>
                         <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black dark:text-white">
-                            {lang === "es" ? "Contenido" : "Content"}
+                            {copy.contentLabel}
                         </label>
 
                         <div className="grid gap-3 sm:grid-cols-2">
@@ -189,7 +189,7 @@ export function ExportView({
 
                     <div className="pt-6">
                         <label className="mb-3 block text-xs font-black uppercase tracking-[0.14em] text-black dark:text-white">
-                            {lang === "es" ? "Formato de exportación" : "Export format"}
+                            {copy.exportFormat}
                         </label>
 
                         <div className="grid gap-3 sm:grid-cols-2">

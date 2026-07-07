@@ -148,7 +148,7 @@ export function CalendarView({
                             size="sm"
                             onClick={handlePrevious}
                             className="h-9 w-9 px-0"
-                            aria-label={lang === "es" ? "Anterior" : "Previous"}
+                            aria-label={copy.previous}
                         >
                             <ChevronLeft size={15} strokeWidth={3} />
                         </Button>
@@ -167,7 +167,7 @@ export function CalendarView({
                             size="sm"
                             onClick={handleNext}
                             className="h-9 w-9 px-0"
-                            aria-label={lang === "es" ? "Siguiente" : "Next"}
+                            aria-label={copy.next}
                         >
                             <ChevronRight size={15} strokeWidth={3} />
                         </Button>

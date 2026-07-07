@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, Inbox, Plus, Search, Trash2 } from "lucide-react";
+import { Check, Inbox, Plus, Search, Trash2, ChevronDown } from "lucide-react";
 import type { ScheduleTask } from "@/features/schedule/types/schedule.types";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
@@ -123,16 +123,24 @@ export function ActivitiesView({
 
                 <Select
                     value={tagFilter}
-                    onChange={(event) => setTagFilter(event.target.value)}
-                >
-                    <option value="all">{copy.allTags}</option>
-
-                    {tags.map((tag) => (
-                        <option key={tag.id} value={tag.id}>
-                            {tag.name}
-                        </option>
-                    ))}
-                </Select>
+                    onChange={(val) => setTagFilter(val)}
+                    placeholder={copy.allTags}
+                    options={[
+                        { value: "all", label: copy.allTags },
+                        ...tags.map((tag) => ({
+                            value: tag.id,
+                            label: (
+                                <div className="flex items-center gap-2">
+                                    <span
+                                        className="h-3 w-3 rounded-full border-2 border-black dark:border-white/20"
+                                        style={{ backgroundColor: tag.color || "black" }}
+                                    />
+                                    <span className="truncate">{tag.name}</span>
+                                </div>
+                            ),
+                        })),
+                    ]}
+                />
 
                 <Button onClick={onCreateTask} className="w-full lg:w-auto">
                     <Plus size={16} />

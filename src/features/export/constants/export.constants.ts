@@ -19,6 +19,8 @@ export const EXPORT_COPY = {
         mobile: "Móvil",
         backup: "Backup",
         restore: "Restore",
+        contentLabel: "Contenido",
+        exportFormat: "Formato de exportación",
     },
     en: {
         title: "Export Schedule",
@@ -40,6 +42,8 @@ export const EXPORT_COPY = {
         mobile: "Mobile",
         backup: "Backup",
         restore: "Restore",
+        contentLabel: "Content",
+        exportFormat: "Export format",
     },
 } as const;
 

@@ -6,6 +6,7 @@ import { LoginScreen } from "@/features/auth/components/LoginScreen";
 import { useOfflineAuth } from "@/features/auth/hooks/useOfflineAuth";
 import { CalendarView } from "@/features/calendar/components/CalendarView";
 import { DashboardOverview } from "@/features/dashboard/components/DashboardOverview";
+import { BoardView } from "@/features/board/components/BoardView";
 import { ExportView } from "@/features/export/components/ExportView";
 import { useScheduleExport } from "@/features/export/hooks/useScheduleExport";
 import { ImportView } from "@/features/import/components/ImportView";
@@ -197,6 +198,10 @@ export function AppShell() {
             );
         }
 
+        if (activeView === "board") {
+            return <BoardView />;
+        }
+
         if (activeView === "import") {
             return (
                 <ImportView
@@ -239,8 +244,8 @@ export function AppShell() {
     };
 
     return (
-        <main className="min-h-screen bg-[#F5F0E6] text-slate-900 dark:bg-[#0B0F19] dark:text-white">
-            <div className="flex min-h-screen">
+        <main className="h-screen overflow-hidden bg-[#F5F0E6] text-slate-900 dark:bg-[#0B0F19] dark:text-white">
+            <div className="flex h-full">
                 <div
                     className={cn(
                         "fixed inset-0 z-30 bg-black/45 md:hidden",

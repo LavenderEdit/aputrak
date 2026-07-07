@@ -1,7 +1,7 @@
 const DB_NAME = "AputrakDB";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
-type StoreName = "profile" | "settings" | "weeks" | "tags" | "sync_queue";
+type StoreName = "profile" | "settings" | "weeks" | "tags" | "boards" | "sync_queue";
 
 type StoredRecord = {
     id: string;
@@ -38,6 +38,10 @@ const initDB = (): Promise<IDBDatabase> => {
             if (!db.objectStoreNames.contains("sync_queue")) {
                 const store = db.createObjectStore("sync_queue", { keyPath: "id" });
                 store.createIndex("timestamp", "timestamp", { unique: false });
+            }
+
+            if (!db.objectStoreNames.contains("boards")) {
+                db.createObjectStore("boards", { keyPath: "id" });
             }
         };
     });

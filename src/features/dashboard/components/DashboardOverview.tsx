@@ -107,9 +107,7 @@ export function DashboardOverview({
                 </h2>
 
                 <p className="mt-3 max-w-2xl text-sm font-bold text-slate-600 dark:text-white/60">
-                    {lang === "es"
-                        ? "Gestiona tu semana, importa horarios y mantén tus actividades bajo control."
-                        : "Manage your week, import schedules, and keep your activities under control."}
+                    {copy.subtitle}
                 </p>
             </div>
 

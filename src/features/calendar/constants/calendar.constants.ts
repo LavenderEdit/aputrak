@@ -6,6 +6,8 @@ export const CALENDAR_COPY = {
         today: "Hoy",
         week: "Semana",
         month: "Mes",
+        previous: "Anterior",
+        next: "Siguiente",
     },
     en: {
         addTask: "Add task",
@@ -14,6 +16,8 @@ export const CALENDAR_COPY = {
         today: "Today",
         week: "Week",
         month: "Month",
+        previous: "Previous",
+        next: "Next",
     },
 } as const;
 

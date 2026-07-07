@@ -36,6 +36,7 @@ export function AppTopbar({
         calendar: copy.calendar,
         activities: copy.activities,
         tags: copy.tags,
+        board: copy.board || "Kanban",
         import: copy.import,
         export: copy.export,
         settings: copy.settings,
