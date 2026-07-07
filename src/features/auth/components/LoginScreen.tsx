@@ -87,7 +87,7 @@ export function LoginScreen({
       : "bg-white text-black hover:bg-slate-100 dark:bg-white/5 dark:text-white dark:hover:bg-white/15";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#e9e9e9] px-4 py-8">
+    <main className="flex min-h-screen items-center justify-center bg-[#e9e9e9] dark:bg-[#0a0a0a] px-4 py-8">
       <section className="w-full max-w-md border-[3px] border-black bg-white shadow-[8px_8px_0_#000] dark:border-white/10 dark:bg-white/5 dark:shadow-[8px_8px_0_rgba(0,0,0,0.5)]">
         <div className="px-6 py-8 sm:px-10 sm:py-10">
           <div className="mb-8 flex flex-col items-center text-center">
@@ -249,7 +249,7 @@ export function LoginScreen({
           </form>
 
           <div className="mt-7 flex items-center justify-center gap-2 text-center text-xs font-bold text-slate-500 dark:text-white/50">
-            <span className="h-2 w-2 rounded-full bg-black" />
+            <span className="h-2 w-2 rounded-full bg-black dark:bg-white/50" />
             {copy.worksOffline}
           </div>
         </div>
