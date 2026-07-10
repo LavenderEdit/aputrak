@@ -6,7 +6,7 @@ export const SHELL_COPY = {
         dashboard: "Panel",
         calendar: "Calendario",
         activities: "Actividades",
-        board: "Tablero Kanban",
+
         tags: "Etiquetas",
         import: "Importar",
         export: "Exportar",
@@ -26,7 +26,7 @@ export const SHELL_COPY = {
         dashboard: "Dashboard",
         calendar: "Calendar",
         activities: "Activities",
-        board: "Kanban Board",
+
         tags: "Tags",
         import: "Import",
         export: "Export",
