@@ -3,7 +3,7 @@ export type AppView =
     | "calendar"
     | "activities"
     | "tags"
-    | "board"
+
     | "import"
     | "export"
     | "settings";
