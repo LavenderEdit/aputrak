@@ -45,7 +45,6 @@ export function AppSidebar({
 
     const navItems = [
         { id: "dashboard" as const, label: copy.dashboard, icon: Grid2X2 },
-        { id: "board" as const, label: copy.board, icon: LayoutDashboard },
         { id: "calendar" as const, label: copy.calendar, icon: CalendarDays },
         { id: "activities" as const, label: copy.activities, icon: ListTodo },
         { id: "tags" as const, label: copy.tags, icon: Tags },
