@@ -6,7 +6,7 @@ import { LoginScreen } from "@/features/auth/components/LoginScreen";
 import { useOfflineAuth } from "@/features/auth/hooks/useOfflineAuth";
 import { CalendarView } from "@/features/calendar/components/CalendarView";
 import { DashboardOverview } from "@/features/dashboard/components/DashboardOverview";
-import { BoardView } from "@/features/board/components/BoardView";
+
 import { ExportView } from "@/features/export/components/ExportView";
 import { useScheduleExport } from "@/features/export/hooks/useScheduleExport";
 import { ImportView } from "@/features/import/components/ImportView";
@@ -198,9 +198,6 @@ export function AppShell() {
             );
         }
 
-        if (activeView === "board") {
-            return <BoardView />;
-        }
 
         if (activeView === "import") {
             return (
