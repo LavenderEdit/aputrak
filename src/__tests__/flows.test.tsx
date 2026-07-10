@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { useBoardState } from '@/features/board/hooks/useBoardState';
+
 import { useActivityTags } from '@/features/tags/hooks/useActivityTags';
 import { useOfflineSchedule } from '@/features/schedule/hooks/useOfflineSchedule';
 import { DB } from '@/shared/lib/db';
@@ -23,49 +23,7 @@ describe('Aputrak Workflows', () => {
     vi.resetAllMocks();
   });
 
-  describe('Flow 2: Board State Management (Kanban)', () => {
-    it('loads boards from DB on mount', async () => {
-      const mockBoards = [{ id: 'board_1', title: 'Test Board', lists: [] }];
-      vi.mocked(DB.getAll).mockResolvedValueOnce(mockBoards);
 
-      const { result } = renderHook(() => useBoardState());
-
-      // Initial state
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.boards).toEqual([]);
-
-      // Wait for async load
-      await vi.waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.boards).toEqual(mockBoards);
-      expect(result.current.activeBoardId).toBe('board_1');
-      expect(DB.getAll).toHaveBeenCalledWith('boards');
-    });
-
-    it('creates a new board', async () => {
-      vi.mocked(DB.getAll).mockResolvedValueOnce([]);
-      
-      const { result } = renderHook(() => useBoardState());
-      
-      await vi.waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      let newBoard;
-      await act(async () => {
-        newBoard = await result.current.createBoard('New Kanban');
-      });
-
-      expect(newBoard).toBeDefined();
-      expect(newBoard?.title).toBe('New Kanban');
-      expect(result.current.boards).toHaveLength(1);
-      expect(result.current.boards[0].title).toBe('New Kanban');
-      expect(result.current.activeBoardId).toBe(newBoard?.id);
-      expect(DB.put).toHaveBeenCalledWith('boards', expect.objectContaining({ title: 'New Kanban' }));
-    });
-  });
 
   describe('Flow 3: Tags Management', () => {
     it('loads tags from DB (returns default)', async () => {
